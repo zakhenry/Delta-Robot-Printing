@@ -5,6 +5,7 @@
 #include "ofx3DModelLoader.h"
 
 #include "deltaKinematics.h"
+#include "geneticAlgorithm.h"
 
 class testApp : public ofBaseApp{
 	

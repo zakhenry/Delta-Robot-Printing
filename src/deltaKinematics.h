@@ -60,6 +60,8 @@ public:
     void calculateWorkingPointCloud();
     
     void drawWorkingPointCloud();
+    
+    int calculatePointCloudSize(int, int); //this is the fitness function that the ga runs
 };
 
 

@@ -2,13 +2,11 @@
 
 float effectorSideLength =  115.0; //every dimension is based off this master length
 
-float baseSideLength = effectorSideLength*1.8;
-float upperArmLength = effectorSideLength*1.5;
-float lowerArmLength = effectorSideLength*0.9;
-
 bool showWorkPointCloud = false;
 
 DeltaKinematics deltaRobot(effectorSideLength);
+
+GeneticAlgorithm ga;
 
 //--------------------------------------------------------------
 void testApp::setup(){	
@@ -19,7 +17,12 @@ void testApp::setup(){
     //some model / light stuff
     glEnable (GL_DEPTH_TEST);
     glShadeModel (GL_SMOOTH);
-
+    
+    ga.parms.maxX = 100;
+    ga.parms.minX = -100;
+    ga.parms.maxY = 100;
+    ga.parms.minY = -100;
+    ga.parms.increment = 1;
 
 }
 
@@ -140,6 +143,10 @@ void testApp::keyPressed  (int key){
         case 'n':
             deltaRobot.changeProportions(deltaRobot.baseSideMultiplier, deltaRobot.upperArmMultiplier, deltaRobot.lowerArmMultiplier-=0.1);
 			break;
+            
+        case 'o':
+            ga.run();
+            break;
             
 			
 		default:

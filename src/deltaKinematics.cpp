@@ -314,5 +314,8 @@ void DeltaKinematics::changeProportions(float ibaseSideMultiplier, float iupperA
 }
 
 
-
+int DeltaKinematics::calculatePointCloudSize(int inputX, int inputY){
+    cout << "external fitness function ran\n";
+    cout << "inputs multiplied: "<<inputX*inputY<<"\n";
+}
 
