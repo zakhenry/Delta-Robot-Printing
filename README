@@ -1,1 +1,18 @@
-this is the repo of the src
+Current controls:
+
+w,s -> Move actuator up/down
+a,d -> Move actuator left/right
+q,e -> Move actuator forward/back
+
+t,g -> change stepper0 angle
+y,h -> change stepper1 angle
+u,j -> change stepper2 angle
+
+p   -> toggle point cloud
+o   -> run genetic algorithm calculation (doesn't do anything interesting yet)
+
+z,x -> change ratio of effector side length to base side length
+c,v -> change ratio of effector side length to upper arm length
+b,n -> change ratio of effector side length to lower arm length
+
+
