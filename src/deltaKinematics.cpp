@@ -243,67 +243,6 @@ void DeltaKinematics::drawRobot(){
     glVertex3f(baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
     glVertex3f(0, 0, (sin(ofDegToRad(60))*baseSideLength)-(tan(ofDegToRad(30))*baseSideLength/2));
     glEnd();
-
-/*	
-	glPushMatrix();
-    float baseDistanceFromAxis = tan(ofDegToRad(30))*baseSideLength/2;
-    float effectorDistanceFromAxis = tan(ofDegToRad(30))*effectorSideLength/2;
-    glBegin(GL_LINES); //theta0 upper arm
-    glVertex3f(0, 0, -baseDistanceFromAxis);
-    glVertex3f(0, sin(ofDegToRad(theta0))*upperArmLength, (-cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
-    glEnd();
-    
-    glBegin(GL_LINES); //theta0 forearm
-    glVertex3f(0, sin(ofDegToRad(theta0))*upperArmLength, (-cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
-    glVertex3f(effectorX, -effectorZ, effectorY-effectorDistanceFromAxis);
-    glEnd();	
-    glRotatef(-120, 0, 1, 0);
-    
-    glBegin(GL_LINES); //theta0 upper arm
-    glVertex3f(0, 0, -tan(ofDegToRad(30))*baseSideLength/2);
-    glVertex3f(0, sin(ofDegToRad(theta0))*upperArmLength, (-cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
-    glEnd();
-    glBegin(GL_LINES); //theta0 forearm
-    glVertex3f(0, sin(ofDegToRad(theta0))*upperArmLength, (-cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
-	float rotEffectX, rotEffectY;
-    rotateCoordAboutOrigin(120, effectorX, effectorY, rotEffectX, rotEffectY);
-    glVertex3f(rotEffectX, -effectorZ, rotEffectY-effectorDistanceFromAxis); //ignore middle one, that is the height
-    glEnd();
-	
-    glRotatef(-120, 0, 1, 0);
-	
-    glBegin(GL_LINES); //theta1 upper arm
-    glVertex3f(0, 0, -tan(ofDegToRad(30))*baseSideLength/2);
-    glVertex3f(0, sin(ofDegToRad(theta1))*upperArmLength, (-cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis);
-    glEnd();
-    
-    glBegin(GL_LINES); //theta1 forearm //there is something seriously wrong with the forearms - they change in length for some reason
-    glVertex3f(0, sin(ofDegToRad(theta1))*upperArmLength, (-cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis);
-	rotateCoordAboutOrigin(-120, effectorX, effectorY, rotEffectX, rotEffectY);
-    glVertex3f(rotEffectX, -effectorZ, rotEffectY-effectorDistanceFromAxis); //ignore middle one, that is the height
-    glEnd();
-	
-	glPopMatrix();
-	
-	
-	glPushMatrix();
-	glTranslatef(effectorX, -effectorZ, effectorY); // y and z swapped
-	
-	ofSetColor(255, 0, 0);
-	glBegin(GL_TRIANGLES); //effector triangle
-	glVertex3f(-effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
-	glVertex3f(effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
-	glVertex3f(0, 0, (sin(ofDegToRad(60))*effectorSideLength)-(tan(ofDegToRad(30))*effectorSideLength/2));
-	glEnd();
-	glPopMatrix();
-	
-	ofSetColor(0, 255, 0);
-    glBegin(GL_TRIANGLES); //base triangle (placed down here so tranparency works)
-    glVertex3f(-baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
-    glVertex3f(baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
-    glVertex3f(0, 0, (sin(ofDegToRad(60))*baseSideLength)-(tan(ofDegToRad(30))*baseSideLength/2));
-    glEnd();
-	*/
 }
 
 
