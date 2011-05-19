@@ -20,24 +20,34 @@ class GeneticAlgorithm {
     
     DeltaKinematics deltaRobot;
     
-    
-public:
-    
     struct parameters {
         float minX, maxX, minY, maxY, increment;
     } parms;
     
-    int (*fitnessFunction)(int, int); //pointer to function
+    struct specimen {
+        float x, y, fitness;
+        int age;
+    };
+    
+    specimen generateRandomSpecimen(parameters parms);
+    
+    bool compareSpecimenFitness(specimen a, specimen b);
+    void sortPopulationByFitness();
+    
+    vector<specimen> population;
+    
+public:
+    
+    
     
     GeneticAlgorithm(); //constructor
     
     void run();
     
     
+    
+    
 };
-
-
-
 
 
 #endif 

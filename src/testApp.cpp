@@ -18,11 +18,6 @@ void testApp::setup(){
     glEnable (GL_DEPTH_TEST);
     glShadeModel (GL_SMOOTH);
     
-    ga.parms.maxX = 100;
-    ga.parms.minX = -100;
-    ga.parms.maxY = 100;
-    ga.parms.minY = -100;
-    ga.parms.increment = 1;
 
 }
 
@@ -123,6 +118,9 @@ void testApp::keyPressed  (int key){
             deltaRobot.setAngles(deltaRobot.theta0, deltaRobot.theta1, deltaRobot.theta2+=5);
 			break;
         case 'p':
+            if (!(deltaRobot.workingPointCloud.size()>0)){
+                deltaRobot.calculateWorkingPointCloud();
+            }
             showWorkPointCloud = !showWorkPointCloud;
 			break;
         case 'z':
@@ -153,8 +151,8 @@ void testApp::keyPressed  (int key){
 			break;
 	}
 	
-	cout << "Theta 0: " << deltaRobot.theta0 << " Theta 1: " << deltaRobot.theta1 <<" Theta 2: " << deltaRobot.theta2 << "\n";
-	cout << "EffectorX: " << deltaRobot.effectorX << " EffectorY: " << deltaRobot.effectorY << " EffectorZ: " << deltaRobot.effectorZ << "\n\n\n";
+//	cout << "Theta 0: " << deltaRobot.theta0 << " Theta 1: " << deltaRobot.theta1 <<" Theta 2: " << deltaRobot.theta2 << "\n";
+//	cout << "EffectorX: " << deltaRobot.effectorX << " EffectorY: " << deltaRobot.effectorY << " EffectorZ: " << deltaRobot.effectorZ << "\n\n\n";
     
 }
 

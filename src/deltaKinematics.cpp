@@ -33,7 +33,7 @@ DeltaKinematics::DeltaKinematics(float ieffectorSideLength){ //constructor
 //    directControl = false; //start in cartesian control mode
     setAngles(0, 0, 0); //set arms to home position
     
-    calculateWorkingPointCloud(); //calculate point cloud straight away
+    //calculateWorkingPointCloud(); //calculate point cloud straight away
 	
 	cout << "Delta Kinematics calculator instantiated \n";
 }
@@ -314,8 +314,12 @@ void DeltaKinematics::changeProportions(float ibaseSideMultiplier, float iupperA
 }
 
 
-int DeltaKinematics::calculatePointCloudSize(int inputX, int inputY){
-    cout << "external fitness function ran\n";
-    cout << "inputs multiplied: "<<inputX*inputY<<"\n";
+int DeltaKinematics::calculatePointCloudSize(float x, float y){
+    
+    int z = 100*powf((y-powf(x, 2)), 2)+powf((1-x), 2); //rosenbrock's banana function
+    
+    cout << "Fitness function for ("<<x<<","<<y<<") gives "<<z<<"\n";
+    
+    return z;
 }
 
