@@ -8,23 +8,32 @@ DeltaKinematics deltaRobot(effectorSideLength);
 
 GeneticAlgorithm ga;
 
+ofSerial serial;
+
 //--------------------------------------------------------------
 void testApp::setup(){	
 	ofBackground(255,255,255);
 		
-	ofSetVerticalSync(true);
+//	ofSetVerticalSync(true);
 
     //some model / light stuff
     glEnable (GL_DEPTH_TEST);
     glShadeModel (GL_SMOOTH);
     
+    serial.enumerateDevices();
+    
+    if(!serial.setup(/*"tty.usbserial-A9007Mbm"*/5, 9600)){
+        
+        printf("Serial setup failed!");
+        
+    }
 
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
     
-      
+    cout << "Serial output: "<<serial.readByte()<< "\n";
 
 }
 
@@ -145,6 +154,11 @@ void testApp::keyPressed  (int key){
         case 'o':
             ga.run();
             break;
+            
+        case 'm':
+            break;
+            
+            //HOW IS THE COMMIT GOING?
             
 			
 		default:

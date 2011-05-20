@@ -259,7 +259,7 @@ void DeltaKinematics::calculateWorkingPointCloud(){ //could be really nice if th
     int degreesToCheck = 180;
     int topValue = degreesToCheck/2;
     int bottomValue = -topValue;
-    int increment = 10; //this is key to how many points are generated
+    int increment = 1; //this is key to how many points are generated
     
     for (int testTheta0=bottomValue; testTheta0<=topValue; testTheta0+=increment){ //increment by 1 degree at a time
         for (int testTheta1=bottomValue; testTheta1<=topValue; testTheta1+=increment){ //increment by 1 degree at a time
