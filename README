@@ -9,7 +9,7 @@ y,h -> change stepper1 angle
 u,j -> change stepper2 angle
 
 p   -> toggle point cloud
-o   -> run genetic algorithm calculation (doesn't do anything interesting yet)
+o   -> run genetic algorithm calculation (only runs a ga against the Himmelblau equation for now)
 
 z,x -> change ratio of effector side length to base side length
 c,v -> change ratio of effector side length to upper arm length
