@@ -13,6 +13,7 @@
 #include "ofMain.h"
 #include "deltaKinematics.h"
 
+
 class DeltaKinematics;
 
 class GeneticAlgorithm {
@@ -26,8 +27,11 @@ class GeneticAlgorithm {
     
     struct specimen {
         float x, y, fitness;
-        int age;
+        unsigned int age, generation, children, idNum;
     };
+    
+    int currentIdNumber;
+    int nextIdNumber();
     
     
     struct compareFitness{
@@ -36,23 +40,42 @@ class GeneticAlgorithm {
         }
     };
     
+    struct compareSpecimenEquality{
+        bool operator()(const specimen& a , const specimen& b) const{
+            if (a.fitness==b.fitness){
+                if (a.x == b.x && a.y == b.y){
+                    return true;
+                }
+            }
+            return false;
+        }
+    };
+    
     specimen generateRandomSpecimen(parameters parms);
     
-    bool compareSpecimenFitness(specimen a, specimen b);
+    bool specimensAreEqual(specimen a, specimen b);
     void sortPopulationByFitness();
     void cullPopulation();
+    void removeDuplicatesFromPopulation();
     void breedPopulation();
+    void padPopulationWithRandomSpecimens();
+    
+    specimen createChild(specimen a, specimen b);
+    
+    
     
     vector<specimen> population;
     
 public:
     
+    int generations;
     int populationSize;
-    float breedingPopulation; //percentage of population size (must be less than 66.66). This size also defines the randoms added each cull
+    float breedingPopulationSize; //percentage of population size (must be less than 66.66). This size also defines the randoms added each cull
     
     GeneticAlgorithm(); //constructor
     
     void run();
+    void reset();
     
     
     

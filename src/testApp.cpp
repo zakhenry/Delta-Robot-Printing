@@ -153,6 +153,7 @@ void testApp::keyPressed  (int key){
             
         case 'o':
             ga.run();
+            ga.reset();
             break;
             
         case 'm':

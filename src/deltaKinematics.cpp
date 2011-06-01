@@ -314,9 +314,11 @@ void DeltaKinematics::changeProportions(float ibaseSideMultiplier, float iupperA
 }
 
 
-float DeltaKinematics::calculatePointCloudSize(float x, float y){  //rosenbrock's banana function
+float DeltaKinematics::calculatePointCloudSize(float x, float y){
     
-    float z = 100*powf((y-powf(x, 2)), 2)+powf((1-x), 2); //rosenbrock's banana function
+//    float z = 100*powf((y-powf(x, 2)), 2)+powf((1-x), 2); //Rosenbrock's banana function
+    
+    float z = powf(powf(x, 2)+y-11, 2)+powf((x+powf(y, 2)-7), 2); //Himmelblau's function
     
 //    cout << "Fitness function for ("<<x<<","<<y<<") gives "<<z<<"\n";
     
