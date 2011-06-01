@@ -6,7 +6,6 @@
 
 #include "deltaKinematics.h"
 #include "geneticAlgorithm.h"
-#include "ofxSimpleSerial.h"
 
 class testApp : public ofBaseApp{
 	

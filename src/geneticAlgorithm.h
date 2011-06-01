@@ -29,16 +29,26 @@ class GeneticAlgorithm {
         int age;
     };
     
+    
+    struct compareFitness{
+        bool operator()(const specimen& lhs , const specimen& rhs) const{
+            return lhs.fitness < rhs.fitness; //bool should be equivalent to the statement "lhs is fitter than rhs"
+        }
+    };
+    
     specimen generateRandomSpecimen(parameters parms);
     
     bool compareSpecimenFitness(specimen a, specimen b);
     void sortPopulationByFitness();
+    void cullPopulation();
+    void breedPopulation();
     
     vector<specimen> population;
     
 public:
     
-    
+    int populationSize;
+    float breedingPopulation; //percentage of population size (must be less than 66.66). This size also defines the randoms added each cull
     
     GeneticAlgorithm(); //constructor
     

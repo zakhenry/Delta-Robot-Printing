@@ -33,7 +33,7 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
     
-    cout << "Serial output: "<<serial.readByte()<< "\n";
+//    cout << "Serial output: "<<serial.readByte()<< "\n";
 
 }
 
@@ -157,8 +157,6 @@ void testApp::keyPressed  (int key){
             
         case 'm':
             break;
-            
-            //HOW IS THE COMMIT GOING?
             
 			
 		default:
