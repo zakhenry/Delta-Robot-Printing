@@ -10,9 +10,11 @@ GeneticAlgorithm ga;
 
 ofSerial serial;
 
+bool drawRobot = true;
+
 //--------------------------------------------------------------
 void testApp::setup(){	
-	ofBackground(255,255,255);
+	ofBackground(222,222,222);
 		
 //	ofSetVerticalSync(true);
 
@@ -39,15 +41,21 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	
+    
 	glTranslatef(ofGetWidth()/2,ofGetHeight()/2,0);
 	//tumble according to mouse
 	glRotatef(-mouseY,1,0,0);
 	glRotatef(-mouseX,0,1,0);
 	glTranslatef(-ofGetWidth()/2,0,0);
 	
-	
-	
+    /*
+    ofSetColor(255, 0, 0);
+	glBegin(GL_LINE);
+        glVertex3f(-100, 0, 0);
+        glVertex3f(100, 0, 0);
+    glEnd();
+    */
+    
 	 //fake back wall
     ofSetColor(20, 20, 20);
     glBegin(GL_QUADS);
@@ -66,15 +74,21 @@ void testApp::draw(){
         glVertex3f(0, -ofGetHeight()/2, -600);
     glEnd();
     
-    deltaRobot.setCoordinatesToRobot();
-    
-    deltaRobot.drawRobot();
-    
-    if (deltaRobot.workingPointCloud.size()>0&&showWorkPointCloud){
-        deltaRobot.drawWorkingPointCloud();
+    if (drawRobot){
+        deltaRobot.setCoordinatesToRobot();
+        deltaRobot.drawRobot();
+        
+        if (deltaRobot.workingPointCloud.size()>0&&showWorkPointCloud){
+            deltaRobot.drawWorkingPointCloud();
+        }
+        
+        deltaRobot.releaseCoordinatesFromRobot();
+            
+    }else{
+        ga.drawSearchSpace();
     }
     
-    deltaRobot.releaseCoordinatesFromRobot();
+    
     
     ofSetColor(100, 100, 100);
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
@@ -154,6 +168,14 @@ void testApp::keyPressed  (int key){
         case 'o':
             ga.run();
             ga.reset();
+            break;
+            
+        case 'l':
+            ga.calculateSearchSpace();
+            break;
+            
+        case 'k':
+            drawRobot = !drawRobot;
             break;
             
         case 'm':

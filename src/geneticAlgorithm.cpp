@@ -11,10 +11,10 @@
 
 GeneticAlgorithm::GeneticAlgorithm() : deltaRobot(1){ //constructor ( after the : it constructs the deltaRobot)
     
-    parms.maxX = 4;
-    parms.minX = -4;
-    parms.maxY = 4;
-    parms.minY = -4;
+    parms.maxX = 5;
+    parms.minX = -5;
+    parms.maxY = 5;
+    parms.minY = -5;
     
     
     populationSize = 10000;
@@ -204,5 +204,136 @@ bool GeneticAlgorithm::specimensAreEqual(specimen a, specimen b){
         }
     }
     return false;
+}
+
+vector<GeneticAlgorithm::specimen>GeneticAlgorithm::bruteForceSearchSpace(parameters parms){
+    
+    searchIncrement = 0.1;
+    vector<specimen>specimens;
+    
+    int idNum = 0;
+    
+    for (float xVal = parms.minX; xVal<parms.maxX; xVal+=searchIncrement) {
+        for (float yVal = parms.minY; yVal<parms.maxY; yVal+=searchIncrement) {
+            specimen newSpecimen;
+            newSpecimen.x = xVal;
+            newSpecimen.y = yVal;
+            
+            newSpecimen.fitness = deltaRobot.calculatePointCloudSize(newSpecimen.x, newSpecimen.y); //this is likely going to be the choke point (not actually running point cloud algo yet)
+            newSpecimen.age = 0; //any member of population created randomly will have an age of 0
+            newSpecimen.generation = 0;
+            newSpecimen.children = 0;
+            newSpecimen.idNum = idNum++;
+            
+            specimens.push_back(newSpecimen);
+        }
+    }
+    
+    return specimens;
+    
+}
+
+void GeneticAlgorithm::calculateSearchSpace(){
+    if (allSpecimens.size()>0){
+        allSpecimens.clear();
+    }
+        
+    allSpecimens = bruteForceSearchSpace(parms);
+    
+    cout <<"Search space brute forced\n";
+    
+    for (int i=0; i<allSpecimens.size(); i++){
+//        cout << "Brute forced specimen ["<<allSpecimens[i].idNum<<"]("<<allSpecimens[i].x<<", "<<allSpecimens[i].y<<" aged "<<allSpecimens[i].age<<" with "<<allSpecimens[i].children<<" children) has fitness "<<allSpecimens[i].fitness << "\n";
+        
+        
+    }
+}
+
+void GeneticAlgorithm::drawSearchSpace(){
+    
+    glPushMatrix();
+    
+    
+    glTranslatef(ofGetWidth()/2,ofGetHeight()/2-400,0); //moves coordinates to centre (ish) of scene
+    
+    if (allSpecimens.size()>0){
+        
+        glPointSize(2.0);
+        glBegin(GL_POINTS);
+//        ofSetColor(255, 255, 255);
+        
+        for (int i=0; i<allSpecimens.size(); i++){
+            
+            ofColor color = HSVToRGB(allSpecimens[i].fitness/200, 0, 0);
+            
+            ofSetColor(color.r, color.g, color.b);
+            
+            
+            
+            glVertex3f(allSpecimens[i].x*100, allSpecimens[i].fitness/2, allSpecimens[i].y*100);
+        }
+        
+        glEnd();
+    }
+    
+    glPopMatrix();
+}
+
+
+ofColor GeneticAlgorithm::HSVToRGB(float h, float s, float v){ // (0-1, 0-1, 0-1)
+    
+    h = h*360;
+    
+	float Min;
+	float Chroma;
+	float Hdash;
+	float X;
+	ofColor RGB;
+    
+	Chroma = h * v;
+	Hdash = h / 60.0;
+    int iHdash = Hdash;
+//	X = Chroma * (1.0 - abs((iHdash%2) - 1.0));
+    X = Chroma * (1.0 - abs((Hdash - 2.0 * floor(Hdash/2.0)) - 1.0));
+
+    
+	if(Hdash < 1.0)
+	{
+		RGB.r = Chroma;
+		RGB.g = X;
+	}
+	else if(Hdash < 2.0)
+	{
+		RGB.r = X;
+		RGB.g = Chroma;
+	}
+	else if(Hdash < 3.0)
+	{
+		RGB.g = Chroma;
+		RGB.b = X;
+	}
+	else if(Hdash < 4.0)
+	{
+		RGB.g= X;
+		RGB.b = Chroma;
+	}
+	else if(Hdash < 5.0)
+	{
+		RGB.r = X;
+		RGB.b = Chroma;
+	}
+	else if(Hdash < 6.0)
+	{
+		RGB.r = Chroma;
+		RGB.b = X;
+	}
+    
+	Min = v - Chroma;
+    
+	RGB.r += Min;
+	RGB.g += Min;
+	RGB.b += Min;
+    
+	return RGB;
 }
 

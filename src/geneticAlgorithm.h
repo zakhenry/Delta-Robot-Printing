@@ -22,7 +22,7 @@ class GeneticAlgorithm {
     DeltaKinematics deltaRobot;
     
     struct parameters {
-        float minX, maxX, minY, maxY, increment;
+        float minX, maxX, minY, maxY;
     } parms;
     
     struct specimen {
@@ -61,10 +61,17 @@ class GeneticAlgorithm {
     void padPopulationWithRandomSpecimens();
     
     specimen createChild(specimen a, specimen b);
-    
-    
-    
     vector<specimen> population;
+    
+    /*Drawing functions*/
+    
+    vector<specimen>bruteForceSearchSpace(parameters parms);
+    float searchIncrement;
+    vector<specimen>allSpecimens;
+    
+    
+    
+    ofColor HSVToRGB(float h, float s, float v);
     
 public:
     
@@ -76,6 +83,9 @@ public:
     
     void run();
     void reset();
+
+    void calculateSearchSpace();
+    void drawSearchSpace();
     
     
     
