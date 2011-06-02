@@ -247,6 +247,7 @@ void GeneticAlgorithm::calculateSearchSpace(){
         
         
     }
+
 }
 
 void GeneticAlgorithm::drawSearchSpace(){
@@ -262,11 +263,17 @@ void GeneticAlgorithm::drawSearchSpace(){
         glBegin(GL_POINTS);
 //        ofSetColor(255, 255, 255);
         
+        ofColor color;
+        color.r = 255;
+        color.g = 0;
+        color.b = 255;
+        
         for (int i=0; i<allSpecimens.size(); i++){
             
-            ofColor color = HSVToRGB(allSpecimens[i].fitness/200, 0, 0);
             
-            ofSetColor(color.r, color.g, color.b);
+            ofColor newColor = HSVToRGB(allSpecimens[i].fitness/500, 0.5, 1, color);
+            
+            ofSetColor(newColor.r, newColor.g, newColor.b);
             
             
             
@@ -279,10 +286,12 @@ void GeneticAlgorithm::drawSearchSpace(){
     glPopMatrix();
 }
 
-
+/*
 ofColor GeneticAlgorithm::HSVToRGB(float h, float s, float v){ // (0-1, 0-1, 0-1)
     
     h = h*360;
+//    s = s*100;
+//    v = v*100;
     
 	float Min;
 	float Chroma;
@@ -296,6 +305,7 @@ ofColor GeneticAlgorithm::HSVToRGB(float h, float s, float v){ // (0-1, 0-1, 0-1
 //	X = Chroma * (1.0 - abs((iHdash%2) - 1.0));
     X = Chroma * (1.0 - abs((Hdash - 2.0 * floor(Hdash/2.0)) - 1.0));
 
+    cout << "X: "<<X<<"\n";
     
 	if(Hdash < 1.0)
 	{
@@ -336,4 +346,24 @@ ofColor GeneticAlgorithm::HSVToRGB(float h, float s, float v){ // (0-1, 0-1, 0-1
     
 	return RGB;
 }
+*/
 
+ofColor GeneticAlgorithm::HSVToRGB(float H, float S, float V, ofColor &in){ // (0-1, 0-1, 0-1)
+/*Color TransformHSV(
+                   const Color &in,  // color to transform
+                   float H,          // hue shift (in degrees)
+                   float S,          // saturation multiplier (scalar)
+                   float V           // value multiplier (scalar)
+                   )
+{*/
+    H = H*360;
+    
+    float VSU = V*S*cos(H*M_PI/180);
+    float VSW = V*S*sin(H*M_PI/180);
+    
+    ofColor ret;
+    ret.r = (.299*V+.701*VSU+.168*VSW)*in.r + (.587*V-.587*VSU+.330*VSW)*in.g + (.114*V-.114*VSU-.497*VSW)*in.b;
+    ret.g = (.299*V-.299*VSU-.328*VSW)*in.r + (.587*V+.413*VSU+.035*VSW)*in.g + (.114*V-.114*VSU+.292*VSW)*in.b;
+    ret.b = (.299*V-.3*VSU+1.25*VSW)*in.r + (.587*V-.588*VSU-1.05*VSW)*in.g + (.114*V+.886*VSU-.203*VSW)*in.b;
+    return ret;
+}

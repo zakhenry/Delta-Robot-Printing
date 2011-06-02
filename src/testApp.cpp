@@ -14,7 +14,7 @@ bool drawRobot = true;
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	ofBackground(222,222,222);
+	ofBackground(0,0,0);
 		
 //	ofSetVerticalSync(true);
 
@@ -56,8 +56,12 @@ void testApp::draw(){
     glEnd();
     */
     
+    ofSetColor(100, 100, 100);
+    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 200, -200);
+    
+/*    
 	 //fake back wall
-    ofSetColor(20, 20, 20);
+    ofSetColor(50, 50, 50);
     glBegin(GL_QUADS);
         glVertex3f(0.0, -ofGetHeight()/2, -600);
         glVertex3f(ofGetWidth(), -ofGetHeight()/2, -600);
@@ -66,14 +70,14 @@ void testApp::draw(){
     glEnd();
 
     //fake wall
-    ofSetColor(50, 50, 50);
+    ofSetColor(20, 20, 20);
     glBegin(GL_QUADS);
         glVertex3f(0.0, -ofGetHeight()/2, 0);
         glVertex3f(ofGetWidth(), -ofGetHeight()/2, 0);
         glVertex3f(ofGetWidth(), -ofGetHeight()/2, -600);
         glVertex3f(0, -ofGetHeight()/2, -600);
     glEnd();
-    
+*/    
     if (drawRobot){
         deltaRobot.setCoordinatesToRobot();
         deltaRobot.drawRobot();
@@ -90,8 +94,7 @@ void testApp::draw(){
     
     
     
-    ofSetColor(100, 100, 100);
-    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
+    
 
 }
 

@@ -320,6 +320,7 @@ float DeltaKinematics::calculatePointCloudSize(float x, float y){
     
     float z = powf(powf(x, 2)+y-11, 2)+powf((x+powf(y, 2)-7), 2); //Himmelblau's function
     
+    
 //    cout << "Fitness function for ("<<x<<","<<y<<") gives "<<z<<"\n";
     
     return z;

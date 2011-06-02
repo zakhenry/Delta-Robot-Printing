@@ -71,7 +71,7 @@ class GeneticAlgorithm {
     
     
     
-    ofColor HSVToRGB(float h, float s, float v);
+    ofColor HSVToRGB(float h, float s, float v, ofColor &in);
     
 public:
     
