@@ -325,7 +325,7 @@ float DeltaKinematics::calculateCartesianPointCloudSize(float x, float y, float&
     
     clock_t tStart = clock();
     
-    if (workingCartesianPointCloud.size()<=0){
+    if (cartesianPointCloud.size()<=0){
         calculateCartesianPointCloud();
     }
     
@@ -347,15 +347,20 @@ float DeltaKinematics::calculateCartesianPointCloudSize(float x, float y, float&
 }
 
 void DeltaKinematics::drawCartesianPointCloud(){
-    ofSetColor(0, 0, 255);
+    ofSetColor(0, 255, 0);
     glPointSize(1.5);
     glBegin(GL_POINTS);
     
-    for (int i=0; i<workingCartesianPointCloud.size(); i++){
-        glVertex3f(workingCartesianPointCloud[i].x, workingCartesianPointCloud[i].z, workingCartesianPointCloud[i].y);
-        //        cout << "Point drawn in position ("<<workingCartesianPointCloud[i].x<<","<<workingCartesianPointCloud[i].y<<","<<workingPointCloud[i].z<<")\n";
+    for (int i=0; i<workingPointCloud.size(); i++){
+        glVertex3f(workingPointCloud[i].x, workingPointCloud[i].z, workingPointCloud[i].y);
+        //        cout << "Point drawn in position ("<<workingPointCloud[i].x<<","<<workingPointCloud[i].y<<","<<workingPointCloud[i].z<<")\n";
     }
-    
+    /*
+    for (int i=0; i<cartesianPointCloud.size(); i++){
+        glVertex3f(cartesianPointCloud[i].x, cartesianPointCloud[i].z, cartesianPointCloud[i].y);
+        //        cout << "Point drawn in position ("<<cartesianPointCloud[i].x<<","<<cartesianPointCloud[i].y<<","<<cartesianPointCloud[i].z<<")\n";
+    }
+    */
     glEnd();
     
 }

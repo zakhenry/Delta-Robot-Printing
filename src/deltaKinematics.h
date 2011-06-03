@@ -60,7 +60,7 @@ public:
     void calculateWorkingPointCloud();
     void drawWorkingPointCloud();
     
-    vector<workingPoint>workingCartesianPointCloud;
+    vector<workingPoint>cartesianPointCloud;
     void calculateCartesianPointCloud();
     void drawCartesianPointCloud();
     

@@ -3,6 +3,7 @@
 float effectorSideLength =  115.0; //every dimension is based off this master length
 
 bool showWorkPointCloud = false;
+bool showCartesianPointCloud = false;
 
 DeltaKinematics deltaRobot(effectorSideLength);
 
@@ -86,6 +87,10 @@ void testApp::draw(){
             deltaRobot.drawWorkingPointCloud();
         }
         
+        if (deltaRobot.workingPointCloud.size()>0&&showCartesianPointCloud){
+            deltaRobot.drawCartesianPointCloud();
+        }
+        
         deltaRobot.releaseCoordinatesFromRobot();
             
     }else{
@@ -144,12 +149,7 @@ void testApp::keyPressed  (int key){
 		case 'j':
             deltaRobot.setAngles(deltaRobot.theta0, deltaRobot.theta1, deltaRobot.theta2+=5);
 			break;
-        case 'p':
-            if (!(deltaRobot.workingPointCloud.size()>0)){
-                deltaRobot.calculateWorkingPointCloud();
-            }
-            showWorkPointCloud = !showWorkPointCloud;
-			break;
+        
         case 'z':
             deltaRobot.changeProportions(deltaRobot.baseSideMultiplier+=0.1, deltaRobot.upperArmMultiplier, deltaRobot.lowerArmMultiplier);
 			break;
@@ -167,6 +167,22 @@ void testApp::keyPressed  (int key){
 			break;
         case 'n':
             deltaRobot.changeProportions(deltaRobot.baseSideMultiplier, deltaRobot.upperArmMultiplier, deltaRobot.lowerArmMultiplier-=0.1);
+			break;
+            
+        case 'p':
+            if (!(deltaRobot.workingPointCloud.size()>0)){
+                deltaRobot.calculateWorkingPointCloud();
+            }
+            showWorkPointCloud = !showWorkPointCloud;
+            showCartesianPointCloud = false;
+			break;
+            
+        case '[':
+            if (!(deltaRobot.cartesianPointCloud.size()>0)){
+                deltaRobot.calculateCartesianPointCloud();
+            }
+            showCartesianPointCloud = !showCartesianPointCloud;
+            showWorkPointCloud = false;
 			break;
             
         case 'o':
