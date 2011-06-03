@@ -276,10 +276,6 @@ void DeltaKinematics::calculateWorkingPointCloud(){ //could be really nice if th
         }
     }
     
-    cout << "Finished point positioning, finding magnitudes \n";
-    
-    
-    
     
     cout << "Finished point cloud calculation, "<<workingPointCloud.size()<<" points added\n";
 }
@@ -308,42 +304,68 @@ void DeltaKinematics::changeProportions(float ibaseSideMultiplier, float iupperA
 	upperArmLength = effectorSideLength*upperArmMultiplier;
 	lowerArmLength = effectorSideLength*lowerArmMultiplier;
     
-    calculateWorkingPointCloud(); //need to recalculate the point cloud because conditions have changed
-    
-    cout << "New proportions ("<<baseSideMultiplier<<","<<upperArmMultiplier<<","<<lowerArmMultiplier<<") \n";
+//    cout << "New proportions ("<<baseSideMultiplier<<","<<upperArmMultiplier<<","<<lowerArmMultiplier<<") \n";
 }
 
-void DeltaKinematics::calculateCartesianPointCloud(){
+void DeltaKinematics::calculateCartesianPointCloud(){ //calculates and
+    
+    cartesianPointCloud.clear();
     
     int minX, minY, minZ, maxX, maxY, maxZ;
     
+    int increment = 10;
     
+    maxZ = 0; //no point can be above the base
+    minZ = -(upperArmLength+lowerArmLength);
+    
+    maxX = upperArmLength+lowerArmLength; //it is in reality slightly less
+    maxY = maxX;
+    
+    minY = minX = -(maxX);
+    
+    cout << "minX: "<<minX<<", minY: "<<minY<<", minZ: "<<minZ<<", maxX: "<<maxX<<", maxY: "<<maxY<<", maxZ: "<<maxZ<<"\n";
+    
+    for (int xInc = minX; xInc<maxX; xInc+=increment) {
+        for (int yInc = minY; yInc<maxY; yInc+=increment) {
+            for (int zInc = minZ; zInc<maxZ; zInc+=increment) {
+                
+                float null;
+                if (positionIsPossible(xInc, yInc, zInc, null, null, null)){
+                    workingPoint newPoint;
+                    newPoint.x = xInc;
+                    newPoint.y = yInc;
+                    newPoint.z = zInc;
+                    cartesianPointCloud.push_back(newPoint);
+                }
+                
+                
+            }
+        }
+    }
+    
+    cout << "Finished point cloud calculation, "<<cartesianPointCloud.size()<<" points added\n";
     
 }
 
-float DeltaKinematics::calculateCartesianPointCloudSize(float x, float y, float&elapsedTime){
+float DeltaKinematics::calculateCartesianPointCloudSize(float baseSideMultiplier, float upperArmMultiplier, float lowerArmMultiplier, float&elapsedTime){ //main fitness function for GA
     
     clock_t tStart = clock();
     
-    if (cartesianPointCloud.size()<=0){
+    changeProportions(baseSideMultiplier, upperArmMultiplier, lowerArmMultiplier);
+    
+    if (cartesianPointCloud.size()<=0){ //it may have been calculated in when the dimensions were updated
         calculateCartesianPointCloud();
     }
     
-//    float z = 100*powf((y-powf(x, 2)), 2)+powf((1-x), 2); //Rosenbrock's banana function
+//    float fitness = 100*powf((y-powf(x, 2)), 2)+powf((1-x), 2); //Rosenbrock's banana function
     
-    float z = 200.0-(powf(powf(x, 2)+y-11, 2)+powf((x+powf(y, 2)-7), 2)); //Himmelblau's function modified to give maximums at 200
+    float fitness = 200.0-(powf(powf(baseSideMultiplier, 2)+upperArmMultiplier-11, 2)+powf((baseSideMultiplier+powf(upperArmMultiplier, 2)-7), 2)); //Himmelblau's function modified to give maximums at 200
     
-    if (z<10){ //demonstrating how an impossible configuration would be handled
-        z = -1; //ret value if failure
-    }
-    
+//    float fitness = cartesianPointCloud.size(); //shouldn't really be a float
     
     elapsedTime = (double)(clock() - tStart)/CLOCKS_PER_SEC;
-//    cout <<elapsedTime<<"\n";
     
-//    cout << "Fitness function for ("<<x<<","<<y<<") gives "<<z<<"\n";
-    
-    return z;
+    return fitness;
 }
 
 void DeltaKinematics::drawCartesianPointCloud(){
@@ -351,16 +373,12 @@ void DeltaKinematics::drawCartesianPointCloud(){
     glPointSize(1.5);
     glBegin(GL_POINTS);
     
-    for (int i=0; i<workingPointCloud.size(); i++){
-        glVertex3f(workingPointCloud[i].x, workingPointCloud[i].z, workingPointCloud[i].y);
-        //        cout << "Point drawn in position ("<<workingPointCloud[i].x<<","<<workingPointCloud[i].y<<","<<workingPointCloud[i].z<<")\n";
-    }
-    /*
+
     for (int i=0; i<cartesianPointCloud.size(); i++){
         glVertex3f(cartesianPointCloud[i].x, cartesianPointCloud[i].z, cartesianPointCloud[i].y);
         //        cout << "Point drawn in position ("<<cartesianPointCloud[i].x<<","<<cartesianPointCloud[i].y<<","<<cartesianPointCloud[i].z<<")\n";
     }
-    */
+    
     glEnd();
     
 }

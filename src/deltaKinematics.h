@@ -64,7 +64,7 @@ public:
     void calculateCartesianPointCloud();
     void drawCartesianPointCloud();
     
-    float calculateCartesianPointCloudSize(float, float, float &elapsedTime); //this is the fitness function that the ga runs
+    float calculateCartesianPointCloudSize(float, float, float, float &elapsedTime); //this is the fitness function that the ga runs
 };
 
 

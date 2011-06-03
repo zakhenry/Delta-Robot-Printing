@@ -87,7 +87,7 @@ void testApp::draw(){
             deltaRobot.drawWorkingPointCloud();
         }
         
-        if (deltaRobot.workingPointCloud.size()>0&&showCartesianPointCloud){
+        if (deltaRobot.cartesianPointCloud.size()>0&&showCartesianPointCloud){
             deltaRobot.drawCartesianPointCloud();
         }
         

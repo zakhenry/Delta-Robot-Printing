@@ -16,10 +16,12 @@ GeneticAlgorithm::GeneticAlgorithm() : deltaRobot(1){ //constructor ( after the 
     parms.minX = -5;
     parms.maxY = 5;
     parms.minY = -5;
+    parms.maxZ = 5;
+    parms.minZ = -5;
     parms.mutationFactor = 0.2; //percentage each phenotype of parent is mutated by
     
     
-    populationSize = 10000;
+    populationSize = 100;
     breedingPopulationSize = 0.666;
     generations = 0;
     currentIdNumber = 0;
@@ -105,8 +107,9 @@ GeneticAlgorithm::specimen GeneticAlgorithm::generateRandomSpecimen(parameters p
     
     newSpecimen.x = ofRandom(parms.minX, parms.maxX);
     newSpecimen.y = ofRandom(parms.minY, parms.maxY);
+    newSpecimen.z = ofRandom(parms.minZ, parms.maxZ);
     
-    newSpecimen.fitness = deltaRobot.calculateCartesianPointCloudSize(newSpecimen.x, newSpecimen.y, newSpecimen.fitnessTimeCalc); //this is likely going to be the choke point (not actually running point cloud algo yet)
+    newSpecimen.fitness = deltaRobot.calculateCartesianPointCloudSize(newSpecimen.x, newSpecimen.y, newSpecimen.z, newSpecimen.fitnessTimeCalc); //this is likely going to be the choke point (not actually running point cloud algo yet)
     
 //    cout << "new specimen fitness is: ()" <<newSpecimen.fitness<<"\n";
     } while (newSpecimen.fitness==-1);
@@ -257,6 +260,8 @@ GeneticAlgorithm::specimen GeneticAlgorithm::createChild(specimen parentA, speci
     child.x = parentA.x;
     child.y = parentB.y;
     
+    child.z = 0;
+    
     //mutation
     child.x *= ofRandom(1-parms.mutationFactor, 1+parms.mutationFactor);
     child.y *= ofRandom(1-parms.mutationFactor, 1+parms.mutationFactor);
@@ -268,7 +273,7 @@ GeneticAlgorithm::specimen GeneticAlgorithm::createChild(specimen parentA, speci
 */    
     //fitness test
     
-    child.fitness = deltaRobot.calculateCartesianPointCloudSize(child.x, child.y, child.fitnessTimeCalc);
+    child.fitness = deltaRobot.calculateCartesianPointCloudSize(child.x, child.y, child.z, child.fitnessTimeCalc);
     
     //assign basic parms
     
@@ -315,8 +320,9 @@ vector<GeneticAlgorithm::specimen>GeneticAlgorithm::bruteForceSearchSpace(parame
             specimen newSpecimen;
             newSpecimen.x = xVal;
             newSpecimen.y = yVal;
+            newSpecimen.z = 0;
             
-            newSpecimen.fitness = deltaRobot.calculateCartesianPointCloudSize(newSpecimen.x, newSpecimen.y, newSpecimen.fitnessTimeCalc); //this is likely going to be the choke point (not actually running point cloud algo yet)
+            newSpecimen.fitness = deltaRobot.calculateCartesianPointCloudSize(newSpecimen.x, newSpecimen.y, newSpecimen.z, newSpecimen.fitnessTimeCalc); //this is likely going to be the choke point (not actually running point cloud algo yet)
             newSpecimen.age = 0; //any member of population created randomly will have an age of 0
             newSpecimen.generation = 0;
             newSpecimen.children = 0;

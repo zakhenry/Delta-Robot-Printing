@@ -22,11 +22,11 @@ class GeneticAlgorithm {
     DeltaKinematics deltaRobot;
     
     struct parameters {
-        float minX, maxX, minY, maxY, mutationFactor;
+        float minX, maxX, minY, maxY, minZ, maxZ, mutationFactor;
     } parms;
     
     struct specimen {
-        float x, y, fitness, fitnessTimeCalc;
+        float x, y, z, fitness, fitnessTimeCalc;
         unsigned int age, generation, children, idNum;
     };
     
