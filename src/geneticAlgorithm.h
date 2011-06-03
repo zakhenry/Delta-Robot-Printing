@@ -22,11 +22,11 @@ class GeneticAlgorithm {
     DeltaKinematics deltaRobot;
     
     struct parameters {
-        float minX, maxX, minY, maxY;
+        float minX, maxX, minY, maxY, mutationFactor;
     } parms;
     
     struct specimen {
-        float x, y, fitness;
+        float x, y, fitness, fitnessTimeCalc;
         unsigned int age, generation, children, idNum;
     };
     
@@ -36,7 +36,7 @@ class GeneticAlgorithm {
     
     struct compareFitness{
         bool operator()(const specimen& lhs , const specimen& rhs) const{
-            return lhs.fitness < rhs.fitness; //bool should be equivalent to the statement "lhs is fitter than rhs"
+            return lhs.fitness > rhs.fitness; //bool should be equivalent to the statement "lhs is fitter than rhs"
         }
     };
     
@@ -51,17 +51,28 @@ class GeneticAlgorithm {
         }
     };
     
+    
+    
+    //ga fundamentals
+    void initiatePopulation();
+    void removeDuplicatesFromPopulation();
+    
+    specimen createChild(specimen a, specimen b);
     specimen generateRandomSpecimen(parameters parms);
     
-    bool specimensAreEqual(specimen a, specimen b);
+    vector<specimen> population;
+    
+    //old ga method:
     void sortPopulationByFitness();
     void cullPopulation();
-    void removeDuplicatesFromPopulation();
     void breedPopulation();
     void padPopulationWithRandomSpecimens();
     
-    specimen createChild(specimen a, specimen b);
-    vector<specimen> population;
+    //new ga method:
+    void rutAndBreedIndividuals(); //three individuals are chosen from population (at random for now) and weakest is killed then fittest two breed to produce one child to keep the population stable
+    
+    
+    
     
     /*Drawing functions*/
     
@@ -87,7 +98,7 @@ public:
     void calculateSearchSpace();
     void drawSearchSpace();
     
-    
+    void drawCurrentPopulation();
     
     
 };

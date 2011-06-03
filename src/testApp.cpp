@@ -90,6 +90,7 @@ void testApp::draw(){
             
     }else{
         ga.drawSearchSpace();
+        ga.drawCurrentPopulation();
     }
     
     

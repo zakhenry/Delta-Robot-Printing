@@ -26,7 +26,7 @@ class DeltaKinematics {
 	int calcAngleYZ(float, float, float, float&); // helper function
     
     struct workingPoint{
-        float x, y, z, magnitude;
+        float x, y, z;
     };
     
     
@@ -58,10 +58,13 @@ public:
 //    vector<workingPoint>calculateWorkingPointCloud();
     vector<workingPoint>workingPointCloud;
     void calculateWorkingPointCloud();
-    
     void drawWorkingPointCloud();
     
-    float calculatePointCloudSize(float, float); //this is the fitness function that the ga runs
+    vector<workingPoint>workingCartesianPointCloud;
+    void calculateCartesianPointCloud();
+    void drawCartesianPointCloud();
+    
+    float calculateCartesianPointCloudSize(float, float, float &elapsedTime); //this is the fitness function that the ga runs
 };
 
 

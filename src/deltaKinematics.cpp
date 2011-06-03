@@ -313,16 +313,50 @@ void DeltaKinematics::changeProportions(float ibaseSideMultiplier, float iupperA
     cout << "New proportions ("<<baseSideMultiplier<<","<<upperArmMultiplier<<","<<lowerArmMultiplier<<") \n";
 }
 
+void DeltaKinematics::calculateCartesianPointCloud(){
+    
+    int minX, minY, minZ, maxX, maxY, maxZ;
+    
+    
+    
+}
 
-float DeltaKinematics::calculatePointCloudSize(float x, float y){
+float DeltaKinematics::calculateCartesianPointCloudSize(float x, float y, float&elapsedTime){
+    
+    clock_t tStart = clock();
+    
+    if (workingCartesianPointCloud.size()<=0){
+        calculateCartesianPointCloud();
+    }
     
 //    float z = 100*powf((y-powf(x, 2)), 2)+powf((1-x), 2); //Rosenbrock's banana function
     
-    float z = powf(powf(x, 2)+y-11, 2)+powf((x+powf(y, 2)-7), 2); //Himmelblau's function
+    float z = 200.0-(powf(powf(x, 2)+y-11, 2)+powf((x+powf(y, 2)-7), 2)); //Himmelblau's function modified to give maximums at 200
     
+    if (z<10){ //demonstrating how an impossible configuration would be handled
+        z = -1; //ret value if failure
+    }
+    
+    
+    elapsedTime = (double)(clock() - tStart)/CLOCKS_PER_SEC;
+//    cout <<elapsedTime<<"\n";
     
 //    cout << "Fitness function for ("<<x<<","<<y<<") gives "<<z<<"\n";
     
     return z;
+}
+
+void DeltaKinematics::drawCartesianPointCloud(){
+    ofSetColor(0, 0, 255);
+    glPointSize(1.5);
+    glBegin(GL_POINTS);
+    
+    for (int i=0; i<workingCartesianPointCloud.size(); i++){
+        glVertex3f(workingCartesianPointCloud[i].x, workingCartesianPointCloud[i].z, workingCartesianPointCloud[i].y);
+        //        cout << "Point drawn in position ("<<workingCartesianPointCloud[i].x<<","<<workingCartesianPointCloud[i].y<<","<<workingPointCloud[i].z<<")\n";
+    }
+    
+    glEnd();
+    
 }
 
