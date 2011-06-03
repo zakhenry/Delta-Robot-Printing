@@ -96,7 +96,7 @@ public:
     void reset();
 
     void calculateSearchSpace();
-    void drawSearchSpace();
+    void drawSearchSpace(float fitnessThreshold);
     
     void drawCurrentPopulation();
     

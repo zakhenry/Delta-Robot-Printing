@@ -12,9 +12,19 @@ GeneticAlgorithm ga;
 ofSerial serial;
 
 bool drawRobot = true;
+float currentTouchScale = 0;
+float current3TouchHeight = 0;
+
+float fitnessThreshold = 100;
 
 //--------------------------------------------------------------
 void testApp::setup(){	
+    
+    // --- add the listeners
+    ofAddListener(pad.update, this, &testApp::padUpdates);
+    ofAddListener(pad.touchAdded, this, &testApp::newTouch);
+    ofAddListener(pad.touchRemoved, this, &testApp::removedTouch);
+    
 	ofBackground(0,0,0);
 		
 //	ofSetVerticalSync(true);
@@ -30,6 +40,8 @@ void testApp::setup(){
         printf("Serial setup failed!");
         
     }
+    
+    
 
 }
 
@@ -94,7 +106,7 @@ void testApp::draw(){
         deltaRobot.releaseCoordinatesFromRobot();
             
     }else{
-        ga.drawSearchSpace();
+        ga.drawSearchSpace(fitnessThreshold);
         ga.drawCurrentPopulation();
     }
     
@@ -230,3 +242,64 @@ void testApp::mousePressed(int x, int y, int button){
 void testApp::mouseReleased(int x, int y, int button){
 
 }
+
+void testApp::padUpdates(int & touchCount) {
+    //    cout << "pad updates & has "<<t<<" touches\n";
+    
+        
+        if (touchCount==2){ //scaling
+            MTouch t1,t2;
+            if (pad.getTouchAt(0,&t1) && pad.getTouchAt(1,&t2) ){
+                float newTouchScale = distanceBetweenTouches(t1, t2);
+                float alteration = 0;
+                if (newTouchScale>currentTouchScale){
+                    alteration ++;
+                }else{
+                    alteration --;
+                }                
+                currentTouchScale = distanceBetweenTouches(t1, t2);
+                //            cout << "Distance between two fingers is: "<<distanceBetweenTouches(t1, t2)<<"\n";
+            }
+        }else if (touchCount==3){
+            
+            MTouch t1, t2, t3;
+            
+            if (pad.getTouchAt(0,&t1) && pad.getTouchAt(1,&t2) && pad.getTouchAt(2,&t3)){
+                
+                float averageTouchHeight = ((t1.y)+(t2.y)+(t3.y))/3;
+                
+                //            cout << "The averageTouchHeight is: " << averageTouchHeight << "\n";
+                
+                if (abs(averageTouchHeight-current3TouchHeight)>0.05){
+                    float alteration;
+                    
+                    if (averageTouchHeight>current3TouchHeight){
+                        alteration++;
+                    }else{
+                        alteration--;
+                    }
+                    
+                    fitnessThreshold += alteration*10;
+                    
+                    current3TouchHeight = averageTouchHeight;
+                }
+            }
+        }
+    
+}
+
+void testApp::newTouch(int & n) {
+    //    cout << "++++++ a new touch"<<n<<"\n";
+}
+
+void testApp::removedTouch(int & r) {
+    //    cout << "------ a removed touch"<<r<<"\n";
+    currentTouchScale = 0;
+    
+}
+
+
+float testApp::distanceBetweenTouches(MTouch t1, MTouch t2){
+    return powf((pow(t1.x-t2.x, 2)+pow(t1.y-t2.y, 2)), 0.5);
+}
+

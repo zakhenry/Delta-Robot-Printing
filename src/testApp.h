@@ -3,6 +3,7 @@
 
 #include "ofMain.h"
 #include "ofx3DModelLoader.h"
+#include "ofxMultiTouchPad.h"
 
 #include "deltaKinematics.h"
 #include "geneticAlgorithm.h"
@@ -22,8 +23,20 @@ class testApp : public ofBaseApp{
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
+        
+        ofxMultiTouchPad pad;
+    
+        void padUpdates(int & t);
+        void newTouch(int & n);
+        void removedTouch(int & r);
+        
+        float distanceBetweenTouches(MTouch t1, MTouch t2);
 
 		ofx3DModelLoader squirrelModel;
+    
+        vector<MTouch> touches;
+    
+        
 		
 };
 

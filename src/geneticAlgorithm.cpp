@@ -10,8 +10,10 @@
 
 
 
-GeneticAlgorithm::GeneticAlgorithm() : deltaRobot(1){ //constructor ( after the : it constructs the deltaRobot)
+GeneticAlgorithm::GeneticAlgorithm() : deltaRobot(115.0){ //constructor ( after the : it constructs the deltaRobot) (the constructor is taking the set value 115.0 >> THIS NEEDS TO BE FIXED SO IT CAN BE ONE IN THE GA
     
+    //best for himmelblaus' modified function
+    /*
     parms.maxX = 5;
     parms.minX = -5;
     parms.maxY = 5;
@@ -19,6 +21,21 @@ GeneticAlgorithm::GeneticAlgorithm() : deltaRobot(1){ //constructor ( after the 
     parms.maxZ = 5;
     parms.minZ = -5;
     parms.mutationFactor = 0.2; //percentage each phenotype of parent is mutated by
+    */
+    //best for delta bot calcs - x = baseSideMultiplier, y = upperArmMultiplier, z = lowerArmMultiplier
+    ///*
+    
+    
+    
+    parms.maxX = 5;
+    parms.minX = 1;
+    parms.maxY = 5;
+    parms.minY = 0;
+    parms.maxZ = 5;
+    parms.minZ = 0;
+    parms.mutationFactor = 0.2; //percentage each phenotype of parent is mutated by
+     //*/
+    
     
     
     populationSize = 100;
@@ -310,30 +327,40 @@ int GeneticAlgorithm::nextIdNumber(){
 
 vector<GeneticAlgorithm::specimen>GeneticAlgorithm::bruteForceSearchSpace(parameters parms){
     
-    searchIncrement = 0.1;
+    searchIncrement = 0.5;
     vector<specimen>specimens;
     
     int idNum = 0;
     
     for (float xVal = parms.minX; xVal<parms.maxX; xVal+=searchIncrement) {
         for (float yVal = parms.minY; yVal<parms.maxY; yVal+=searchIncrement) {
-            specimen newSpecimen;
-            newSpecimen.x = xVal;
-            newSpecimen.y = yVal;
-            newSpecimen.z = 0;
-            
-            newSpecimen.fitness = deltaRobot.calculateCartesianPointCloudSize(newSpecimen.x, newSpecimen.y, newSpecimen.z, newSpecimen.fitnessTimeCalc); //this is likely going to be the choke point (not actually running point cloud algo yet)
-            newSpecimen.age = 0; //any member of population created randomly will have an age of 0
-            newSpecimen.generation = 0;
-            newSpecimen.children = 0;
-            newSpecimen.idNum = idNum++;
-            
-            if (newSpecimen.fitness!=-1){ //specimen is inside plausible search space
-                specimens.push_back(newSpecimen);
+                for (float zVal = parms.minZ; zVal<parms.maxZ; zVal+=searchIncrement) {
+                specimen newSpecimen;
+                    //i found shifting the vector in a random direction makes visualisation more comfortable as it removes moire artifacts
+                    
+                newSpecimen.x = xVal*ofRandom(0.6, 1.4);
+                newSpecimen.y = yVal*ofRandom(0.6, 1.4);
+                newSpecimen.z = zVal*ofRandom(0.6, 1.4);
+                
+                newSpecimen.fitness = deltaRobot.calculateCartesianPointCloudSize(newSpecimen.x, newSpecimen.y, newSpecimen.z, newSpecimen.fitnessTimeCalc); //this is likely going to be the choke point (not actually running point cloud algo yet)
+                newSpecimen.age = 0; //any member of population created randomly will have an age of 0
+                newSpecimen.generation = 0;
+                newSpecimen.children = 0;
+                newSpecimen.idNum = idNum++;
+                    
+                    cout << "newly created specimen has the fitness : "<<newSpecimen.fitness<<"\n";
+                
+                if (newSpecimen.fitness!=-1){ //specimen is inside plausible search space
+                    specimens.push_back(newSpecimen);
+                    cout << "Brute forced specimen ["<<newSpecimen.idNum<<"]({"<<newSpecimen.x<<", "<<newSpecimen.y<<", "<<newSpecimen.z<<"} aged "<<newSpecimen.age<<" with "<<newSpecimen.children<<" children) has fitness "<<newSpecimen.fitness <<" calculation took "<<newSpecimen.fitnessTimeCalc<<" seconds\n";
+                    
+                }
             }
             
         }
     }
+    
+    cout <<"there is "<<specimens.size()<<" specimens in search space \n";
     
     return specimens;
     
@@ -347,15 +374,10 @@ void GeneticAlgorithm::calculateSearchSpace(){
     allSpecimens = bruteForceSearchSpace(parms);
     
     cout <<"Search space brute forced\n";
-    
-    for (int i=0; i<allSpecimens.size(); i++){
-//        cout << "Brute forced specimen ["<<allSpecimens[i].idNum<<"]("<<allSpecimens[i].x<<", "<<allSpecimens[i].y<<" aged "<<allSpecimens[i].age<<" with "<<allSpecimens[i].children<<" children) has fitness "<<allSpecimens[i].fitness <<" calculation took "<<allSpecimens[i].fitnessTimeCalc<<" seconds\n";
-        
-    }
 
 }
 
-void GeneticAlgorithm::drawSearchSpace(){
+void GeneticAlgorithm::drawSearchSpace(float fitnessThreshold){
     
     glPushMatrix();
     
@@ -375,24 +397,19 @@ void GeneticAlgorithm::drawSearchSpace(){
         
         for (int i=0; i<allSpecimens.size(); i++){
             
-            ofColor newColor = HSVToRGB(allSpecimens[i].fitness/400, 0.5, 1, color);
+//            if (allSpecimens[i].fitness>fitnessThreshold){
+                
+                ofColor newColor = HSVToRGB(allSpecimens[i].fitness/400, 0.5, 1, color);
+                
+                ofSetColor(newColor.r, newColor.g, newColor.b);
+                
+                glVertex3f(allSpecimens[i].x*100, allSpecimens[i].z*100, allSpecimens[i].y*100);
+//            }
             
-            ofSetColor(newColor.r, newColor.g, newColor.b);
             
-            glVertex3f(allSpecimens[i].x*100, allSpecimens[i].fitness/2, allSpecimens[i].y*100);
         }
         
-//        cout << population.size() << "\n";
-        
-        for (int i=0; i<population.size(); i++){
-            
-            ofColor newColor = HSVToRGB(population[i].fitness/500, 1, 1, color);
-            
-            ofSetColor(newColor.r, newColor.g, newColor.b);
-            
-            glVertex3f(population[i].x*100, population[i].fitness/2, population[i].y*100);
-        }
-        
+//        cout << population.size() << "\n";       
         
         
         glEnd();
@@ -425,7 +442,7 @@ void GeneticAlgorithm::drawCurrentPopulation(){
             
             ofSetColor(newColor.r, newColor.g, newColor.b);
             
-            glVertex3f(population[i].x*100, population[i].fitness/2, population[i].y*100);
+            glVertex3f(population[i].x*100, population[i].fitness/2, population[i].y*100); 
         }
         
         

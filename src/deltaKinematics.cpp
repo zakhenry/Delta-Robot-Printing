@@ -304,10 +304,10 @@ void DeltaKinematics::changeProportions(float ibaseSideMultiplier, float iupperA
 	upperArmLength = effectorSideLength*upperArmMultiplier;
 	lowerArmLength = effectorSideLength*lowerArmMultiplier;
     
-//    cout << "New proportions ("<<baseSideMultiplier<<","<<upperArmMultiplier<<","<<lowerArmMultiplier<<") \n";
+    cout << "New proportions ("<<baseSideMultiplier<<","<<upperArmMultiplier<<","<<lowerArmMultiplier<<") \n";
 }
 
-void DeltaKinematics::calculateCartesianPointCloud(){ //calculates and
+void DeltaKinematics::calculateCartesianPointCloud(){ 
     
     cartesianPointCloud.clear();
     
@@ -351,17 +351,22 @@ float DeltaKinematics::calculateCartesianPointCloudSize(float baseSideMultiplier
     
     clock_t tStart = clock();
     
+    ///*
+    
     changeProportions(baseSideMultiplier, upperArmMultiplier, lowerArmMultiplier);
     
-    if (cartesianPointCloud.size()<=0){ //it may have been calculated in when the dimensions were updated
-        calculateCartesianPointCloud();
-    }
+    calculateCartesianPointCloud();
+    
+    float fitness = cartesianPointCloud.size(); //shouldn't really be a float
+    
+    //*/
     
 //    float fitness = 100*powf((y-powf(x, 2)), 2)+powf((1-x), 2); //Rosenbrock's banana function
     
-    float fitness = 200.0-(powf(powf(baseSideMultiplier, 2)+upperArmMultiplier-11, 2)+powf((baseSideMultiplier+powf(upperArmMultiplier, 2)-7), 2)); //Himmelblau's function modified to give maximums at 200
+//    float fitness = 200.0-(powf(powf(baseSideMultiplier, 2)+upperArmMultiplier-11, 2)+powf((baseSideMultiplier+powf(upperArmMultiplier, 2)-7), 2)); //Himmelblau's function modified to give maximums at 200
     
-//    float fitness = cartesianPointCloud.size(); //shouldn't really be a float
+    //float fitness = 200.0-(powf(powf(baseSideMultiplier, 2)+upperArmMultiplier-11, 2)+powf((baseSideMultiplier+powf(upperArmMultiplier, 2)-7), 2))-10*(powf(lowerArmMultiplier, 2)); //Himmelblau's modified function to give a 4d graph
+
     
     elapsedTime = (double)(clock() - tStart)/CLOCKS_PER_SEC;
     
