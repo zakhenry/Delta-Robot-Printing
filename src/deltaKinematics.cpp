@@ -351,7 +351,7 @@ float DeltaKinematics::calculateCartesianPointCloudSize(float baseSideMultiplier
     
     clock_t tStart = clock();
     
-    ///*
+    /*
     
     changeProportions(baseSideMultiplier, upperArmMultiplier, lowerArmMultiplier);
     
@@ -359,13 +359,13 @@ float DeltaKinematics::calculateCartesianPointCloudSize(float baseSideMultiplier
     
     float fitness = cartesianPointCloud.size(); //shouldn't really be a float
     
-    //*/
+    */
     
 //    float fitness = 100*powf((y-powf(x, 2)), 2)+powf((1-x), 2); //Rosenbrock's banana function
     
 //    float fitness = 200.0-(powf(powf(baseSideMultiplier, 2)+upperArmMultiplier-11, 2)+powf((baseSideMultiplier+powf(upperArmMultiplier, 2)-7), 2)); //Himmelblau's function modified to give maximums at 200
     
-    //float fitness = 200.0-(powf(powf(baseSideMultiplier, 2)+upperArmMultiplier-11, 2)+powf((baseSideMultiplier+powf(upperArmMultiplier, 2)-7), 2))-10*(powf(lowerArmMultiplier, 2)); //Himmelblau's modified function to give a 4d graph
+    float fitness = 200.0-(powf(powf(baseSideMultiplier, 2)+upperArmMultiplier-11, 2)+powf((baseSideMultiplier+powf(upperArmMultiplier, 2)-7), 2))-10*(powf(lowerArmMultiplier, 2)); //Himmelblau's modified function to give a 4d graph. 4 maximums give 200
 
     
     elapsedTime = (double)(clock() - tStart)/CLOCKS_PER_SEC;

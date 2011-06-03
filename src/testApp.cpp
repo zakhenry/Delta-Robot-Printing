@@ -15,7 +15,10 @@ bool drawRobot = true;
 float currentTouchScale = 0;
 float current3TouchHeight = 0;
 
-float fitnessThreshold = 100;
+bool tumble = false;
+
+float fitnessThreshold = 100; //mod himmelblau
+//float fitnessThreshold = 5000; //delta
 
 //--------------------------------------------------------------
 void testApp::setup(){	
@@ -57,8 +60,20 @@ void testApp::draw(){
     
 	glTranslatef(ofGetWidth()/2,ofGetHeight()/2,0);
 	//tumble according to mouse
-	glRotatef(-mouseY,1,0,0);
-	glRotatef(-mouseX,0,1,0);
+    if (!tumble){
+        glRotatef(-mouseY,1,0,0);
+        glRotatef(-mouseX,0,1,0);
+    }else{
+        glRotatef(ofGetElapsedTimef()*13,1,0,0);
+        glRotatef(ofGetElapsedTimef()*11,0,1,0);
+        glRotatef(ofGetElapsedTimef()*7,0,0,1);
+//        glRotatef(sin(ofGetElapsedTimef()/3)*100,1,0,0);
+//        glRotatef(sin(ofGetElapsedTimef()/3-(PI/3))*100,0,1,0);
+//        glRotatef(sin(ofGetElapsedTimef()/3+(PI/3))*100,0,0,1);
+    }
+	
+    
+    
 	glTranslatef(-ofGetWidth()/2,0,0);
 	
     /*
@@ -139,10 +154,7 @@ void testApp::keyPressed  (int key){
 		case 'w':
             deltaRobot.setCartesianPosition(deltaRobot.effectorX, deltaRobot.effectorY, deltaRobot.effectorZ-=5);
 			break;
-            
-		case 32:
-//            deltaRobot.directControl = !deltaRobot.directControl;
-			break;
+
 		case 't':
             deltaRobot.setAngles(deltaRobot.theta0-=5, deltaRobot.theta1, deltaRobot.theta2);
 			break;
@@ -209,7 +221,8 @@ void testApp::keyPressed  (int key){
             drawRobot = !drawRobot;
             break;
             
-        case 'm':
+        case ' ':
+            tumble = !tumble;
             break;
             
 			
@@ -279,7 +292,8 @@ void testApp::padUpdates(int & touchCount) {
                         alteration--;
                     }
                     
-                    fitnessThreshold += alteration*10;
+                    fitnessThreshold += alteration*10; //mod himmelblau
+//                    fitnessThreshold += alteration*50000; //delta
                     
                     current3TouchHeight = averageTouchHeight;
                 }

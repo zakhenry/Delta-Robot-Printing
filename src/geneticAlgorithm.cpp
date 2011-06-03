@@ -13,7 +13,7 @@
 GeneticAlgorithm::GeneticAlgorithm() : deltaRobot(115.0){ //constructor ( after the : it constructs the deltaRobot) (the constructor is taking the set value 115.0 >> THIS NEEDS TO BE FIXED SO IT CAN BE ONE IN THE GA
     
     //best for himmelblaus' modified function
-    /*
+    ///*
     parms.maxX = 5;
     parms.minX = -5;
     parms.maxY = 5;
@@ -21,9 +21,9 @@ GeneticAlgorithm::GeneticAlgorithm() : deltaRobot(115.0){ //constructor ( after 
     parms.maxZ = 5;
     parms.minZ = -5;
     parms.mutationFactor = 0.2; //percentage each phenotype of parent is mutated by
-    */
+    //*/
     //best for delta bot calcs - x = baseSideMultiplier, y = upperArmMultiplier, z = lowerArmMultiplier
-    ///*
+    /*
     
     
     
@@ -34,7 +34,7 @@ GeneticAlgorithm::GeneticAlgorithm() : deltaRobot(115.0){ //constructor ( after 
     parms.maxZ = 5;
     parms.minZ = 0;
     parms.mutationFactor = 0.2; //percentage each phenotype of parent is mutated by
-     //*/
+     */
     
     
     
@@ -75,7 +75,7 @@ void GeneticAlgorithm::run(){
         removeDuplicatesFromPopulation();
         
         
-        cout << "Generation:"<<generations<<" Best Specimen ["<<population[0].idNum<<"]("<<population[0].x<<", "<<population[0].y<<" aged "<<population[0].age<<" with "<<population[0].children<<" children) has fitness "<<population[0].fitness << "\n";
+        cout << "Generation:"<<generations<<" Best Specimen ["<<population[0].idNum<<"]("<<population[0].x<<", "<<population[0].y<<", "<<population[0].z<<" aged "<<population[0].age<<" with "<<population[0].children<<" children) has fitness "<<population[0].fitness << "\n";
 //        cout <<"population size: "<<population.size()<<"\n";
     }
  
@@ -276,12 +276,12 @@ GeneticAlgorithm::specimen GeneticAlgorithm::createChild(specimen parentA, speci
     //crossover
     child.x = parentA.x;
     child.y = parentB.y;
-    
-    child.z = 0;
+    child.z = parentA.z;
     
     //mutation
     child.x *= ofRandom(1-parms.mutationFactor, 1+parms.mutationFactor);
     child.y *= ofRandom(1-parms.mutationFactor, 1+parms.mutationFactor);
+    child.z *= ofRandom(1-parms.mutationFactor, 1+parms.mutationFactor);
 //*/    
     /*Average method (better at finding one maximum fast. Could possibly get more easily stuck on a local max if insufficient randomness of children and padding)*/
 /*    
@@ -397,14 +397,15 @@ void GeneticAlgorithm::drawSearchSpace(float fitnessThreshold){
         
         for (int i=0; i<allSpecimens.size(); i++){
             
-//            if (allSpecimens[i].fitness>fitnessThreshold){
+            if (allSpecimens[i].fitness>fitnessThreshold){
                 
+//                ofColor newColor = HSVToRGB(allSpecimens[i].fitness/40000, 0.5, 1, color);
                 ofColor newColor = HSVToRGB(allSpecimens[i].fitness/400, 0.5, 1, color);
                 
                 ofSetColor(newColor.r, newColor.g, newColor.b);
                 
                 glVertex3f(allSpecimens[i].x*100, allSpecimens[i].z*100, allSpecimens[i].y*100);
-//            }
+            }
             
             
         }
@@ -425,7 +426,7 @@ void GeneticAlgorithm::drawCurrentPopulation(){
     
     glTranslatef(ofGetWidth()/2,ofGetHeight()/2-400,0); //moves coordinates to centre (ish) of scene
     
-    if (allSpecimens.size()>0){
+    if (population.size()>0){
         
         glPointSize(5.0);
         glBegin(GL_POINTS);
@@ -442,7 +443,7 @@ void GeneticAlgorithm::drawCurrentPopulation(){
             
             ofSetColor(newColor.r, newColor.g, newColor.b);
             
-            glVertex3f(population[i].x*100, population[i].fitness/2, population[i].y*100); 
+            glVertex3f(population[i].x*100, population[i].z*100, population[i].y*100); 
         }
         
         
