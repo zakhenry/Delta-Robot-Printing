@@ -17,7 +17,7 @@ GeneticAlgorithm::GeneticAlgorithm() : deltaRobot(1){ //constructor ( after the 
     parms.minY = -5;
     
     
-    populationSize = 10000;
+    populationSize = 1000;
     breedingPopulationSize = 0.1;
     generations = 0;
     currentIdNumber = 0;
@@ -28,6 +28,7 @@ GeneticAlgorithm::GeneticAlgorithm() : deltaRobot(1){ //constructor ( after the 
 
 void GeneticAlgorithm::run(){
     
+    reset(); //reset just in case a rerun is attempted
     cout << "Genetic algorithm running...\n";
     
     int initialPopulation = populationSize;
@@ -43,7 +44,7 @@ void GeneticAlgorithm::run(){
     sortPopulationByFitness();
     cullPopulation();
     
-    while (generations<100) {
+    while (generations<5) {
         
         //"popularity function" possibly could have a period of 'socializing' for the population where each specimen is allowed to 'walk' toward the nearest fittest (could be more than one to avoid local optimum finding) individual 
         breedPopulation();
@@ -270,15 +271,25 @@ void GeneticAlgorithm::drawSearchSpace(){
         
         for (int i=0; i<allSpecimens.size(); i++){
             
-            
-            ofColor newColor = HSVToRGB(allSpecimens[i].fitness/500, 0.5, 1, color);
+            ofColor newColor = HSVToRGB(allSpecimens[i].fitness/400, 0.5, 1, color);
             
             ofSetColor(newColor.r, newColor.g, newColor.b);
             
-            
-            
             glVertex3f(allSpecimens[i].x*100, allSpecimens[i].fitness/2, allSpecimens[i].y*100);
         }
+        
+//        cout << population.size() << "\n";
+        
+        for (int i=0; i<population.size(); i++){
+            
+            ofColor newColor = HSVToRGB(population[i].fitness/500, 1, 1, color);
+            
+            ofSetColor(newColor.r, newColor.g, newColor.b);
+            
+            glVertex3f(population[i].x*100, population[i].fitness/2, population[i].y*100);
+        }
+        
+        
         
         glEnd();
     }
@@ -286,76 +297,9 @@ void GeneticAlgorithm::drawSearchSpace(){
     glPopMatrix();
 }
 
-/*
-ofColor GeneticAlgorithm::HSVToRGB(float h, float s, float v){ // (0-1, 0-1, 0-1)
-    
-    h = h*360;
-//    s = s*100;
-//    v = v*100;
-    
-	float Min;
-	float Chroma;
-	float Hdash;
-	float X;
-	ofColor RGB;
-    
-	Chroma = h * v;
-	Hdash = h / 60.0;
-    int iHdash = Hdash;
-//	X = Chroma * (1.0 - abs((iHdash%2) - 1.0));
-    X = Chroma * (1.0 - abs((Hdash - 2.0 * floor(Hdash/2.0)) - 1.0));
 
-    cout << "X: "<<X<<"\n";
-    
-	if(Hdash < 1.0)
-	{
-		RGB.r = Chroma;
-		RGB.g = X;
-	}
-	else if(Hdash < 2.0)
-	{
-		RGB.r = X;
-		RGB.g = Chroma;
-	}
-	else if(Hdash < 3.0)
-	{
-		RGB.g = Chroma;
-		RGB.b = X;
-	}
-	else if(Hdash < 4.0)
-	{
-		RGB.g= X;
-		RGB.b = Chroma;
-	}
-	else if(Hdash < 5.0)
-	{
-		RGB.r = X;
-		RGB.b = Chroma;
-	}
-	else if(Hdash < 6.0)
-	{
-		RGB.r = Chroma;
-		RGB.b = X;
-	}
-    
-	Min = v - Chroma;
-    
-	RGB.r += Min;
-	RGB.g += Min;
-	RGB.b += Min;
-    
-	return RGB;
-}
-*/
+ofColor GeneticAlgorithm::HSVToRGB(float H, float S, float V, ofColor &in){ // (0-1, 0-1, 0-1) //applies hsv transform to the ofColor &in
 
-ofColor GeneticAlgorithm::HSVToRGB(float H, float S, float V, ofColor &in){ // (0-1, 0-1, 0-1)
-/*Color TransformHSV(
-                   const Color &in,  // color to transform
-                   float H,          // hue shift (in degrees)
-                   float S,          // saturation multiplier (scalar)
-                   float V           // value multiplier (scalar)
-                   )
-{*/
     H = H*360;
     
     float VSU = V*S*cos(H*M_PI/180);
