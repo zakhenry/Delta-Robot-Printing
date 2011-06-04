@@ -367,6 +367,7 @@ float DeltaKinematics::calculateCartesianPointCloudSize(float baseSideMultiplier
     
     float fitness = 200.0-(powf(powf(baseSideMultiplier, 2)+upperArmMultiplier-11, 2)+powf((baseSideMultiplier+powf(upperArmMultiplier, 2)-7), 2))-10*(powf(lowerArmMultiplier, 2)); //Himmelblau's modified function to give a 4d graph. 4 maximums give 200
 
+//    float fitness = 200-5*sin(baseSideMultiplier)-5*sin(upperArmMultiplier)-5*sin(lowerArmMultiplier);
     
     elapsedTime = (double)(clock() - tStart)/CLOCKS_PER_SEC;
     

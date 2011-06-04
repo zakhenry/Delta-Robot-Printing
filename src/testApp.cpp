@@ -13,11 +13,12 @@ ofSerial serial;
 
 bool drawRobot = true;
 float currentTouchScale = 0;
-float current3TouchHeight = 0;
+float current3TouchHeight, current2TouchHeight = 0;
 
 bool tumble = false;
 
 float fitnessThreshold = 100; //mod himmelblau
+float fitnessColorScale = 400;
 //float fitnessThreshold = 5000; //delta
 
 //--------------------------------------------------------------
@@ -52,6 +53,8 @@ void testApp::setup(){
 void testApp::update(){
     
 //    cout << "Serial output: "<<serial.readByte()<< "\n";
+    
+//    cout <<"current2TouchHeight: "<<current2TouchHeight<<"\n";
 
 }
 
@@ -121,7 +124,7 @@ void testApp::draw(){
         deltaRobot.releaseCoordinatesFromRobot();
             
     }else{
-        ga.drawSearchSpace(fitnessThreshold);
+        ga.drawSearchSpace(fitnessThreshold, fitnessColorScale);
         ga.drawCurrentPopulation();
     }
     
@@ -263,15 +266,26 @@ void testApp::padUpdates(int & touchCount) {
         if (touchCount==2){ //scaling
             MTouch t1,t2;
             if (pad.getTouchAt(0,&t1) && pad.getTouchAt(1,&t2) ){
-                float newTouchScale = distanceBetweenTouches(t1, t2);
-                float alteration = 0;
-                if (newTouchScale>currentTouchScale){
-                    alteration ++;
-                }else{
-                    alteration --;
-                }                
-                currentTouchScale = distanceBetweenTouches(t1, t2);
-                //            cout << "Distance between two fingers is: "<<distanceBetweenTouches(t1, t2)<<"\n";
+                float averageTouchHeight = ((t1.y)+(t2.y))/2;
+                
+                //            cout << "The averageTouchHeight is: " << averageTouchHeight << "\n";
+                
+                if (abs(averageTouchHeight-current2TouchHeight)>0.05){
+                    float alteration;
+                    
+                    if (averageTouchHeight>current2TouchHeight){
+                        alteration++;
+                    }else{
+                        alteration--;
+                    }
+                    
+                    fitnessColorScale += alteration*3;
+                    
+//                    cout << "fitness color scale:"<<fitnessColorScale<<"\n";
+                    
+                    current2TouchHeight = averageTouchHeight;
+                }
+
             }
         }else if (touchCount==3){
             

@@ -327,7 +327,7 @@ int GeneticAlgorithm::nextIdNumber(){
 
 vector<GeneticAlgorithm::specimen>GeneticAlgorithm::bruteForceSearchSpace(parameters parms){
     
-    searchIncrement = 0.5;
+    searchIncrement = 0.1;
     vector<specimen>specimens;
     
     int idNum = 0;
@@ -338,21 +338,22 @@ vector<GeneticAlgorithm::specimen>GeneticAlgorithm::bruteForceSearchSpace(parame
                 specimen newSpecimen;
                     //i found shifting the vector in a random direction makes visualisation more comfortable as it removes moire artifacts
                     
-                newSpecimen.x = xVal*ofRandom(0.6, 1.4);
-                newSpecimen.y = yVal*ofRandom(0.6, 1.4);
-                newSpecimen.z = zVal*ofRandom(0.6, 1.4);
+                newSpecimen.x = xVal+ofRandom(-1, 1);
+                newSpecimen.y = yVal+ofRandom(-1, 1);
+                newSpecimen.z = zVal+ofRandom(-1, 1);
                 
                 newSpecimen.fitness = deltaRobot.calculateCartesianPointCloudSize(newSpecimen.x, newSpecimen.y, newSpecimen.z, newSpecimen.fitnessTimeCalc); //this is likely going to be the choke point (not actually running point cloud algo yet)
+//                newSpecimen.fitness = 150;
                 newSpecimen.age = 0; //any member of population created randomly will have an age of 0
                 newSpecimen.generation = 0;
                 newSpecimen.children = 0;
                 newSpecimen.idNum = idNum++;
                     
-                    cout << "newly created specimen has the fitness : "<<newSpecimen.fitness<<"\n";
+//                    cout << "newly created specimen has the fitness : "<<newSpecimen.fitness<<"\n";
                 
                 if (newSpecimen.fitness!=-1){ //specimen is inside plausible search space
                     specimens.push_back(newSpecimen);
-                    cout << "Brute forced specimen ["<<newSpecimen.idNum<<"]({"<<newSpecimen.x<<", "<<newSpecimen.y<<", "<<newSpecimen.z<<"} aged "<<newSpecimen.age<<" with "<<newSpecimen.children<<" children) has fitness "<<newSpecimen.fitness <<" calculation took "<<newSpecimen.fitnessTimeCalc<<" seconds\n";
+//                    cout << "Brute forced specimen ["<<newSpecimen.idNum<<"]({"<<newSpecimen.x<<", "<<newSpecimen.y<<", "<<newSpecimen.z<<"} aged "<<newSpecimen.age<<" with "<<newSpecimen.children<<" children) has fitness "<<newSpecimen.fitness <<" calculation took "<<newSpecimen.fitnessTimeCalc<<" seconds\n";
                     
                 }
             }
@@ -377,7 +378,7 @@ void GeneticAlgorithm::calculateSearchSpace(){
 
 }
 
-void GeneticAlgorithm::drawSearchSpace(float fitnessThreshold){
+void GeneticAlgorithm::drawSearchSpace(float fitnessThreshold, float fitnessColorScale){
     
     glPushMatrix();
     
@@ -386,7 +387,7 @@ void GeneticAlgorithm::drawSearchSpace(float fitnessThreshold){
     
     if (allSpecimens.size()>0){
         
-        glPointSize(2.0);
+        glPointSize(1.0);
         glBegin(GL_POINTS);
 //        ofSetColor(255, 255, 255);
         
@@ -400,7 +401,7 @@ void GeneticAlgorithm::drawSearchSpace(float fitnessThreshold){
             if (allSpecimens[i].fitness>fitnessThreshold){
                 
 //                ofColor newColor = HSVToRGB(allSpecimens[i].fitness/40000, 0.5, 1, color);
-                ofColor newColor = HSVToRGB(allSpecimens[i].fitness/400, 0.5, 1, color);
+                ofColor newColor = HSVToRGB(allSpecimens[i].fitness/fitnessColorScale, 0.5, 1, color);
                 
                 ofSetColor(newColor.r, newColor.g, newColor.b);
                 
