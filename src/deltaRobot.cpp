@@ -48,6 +48,10 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength) /*: stepperControl()*/{ //cons
 	cout << "Delta Robot class instantiated \n";
 }
 
+void DeltaRobot::update(){
+    stepperControl.update();
+}
+
 int DeltaRobot::calcAngleYZ(float x0, float y0, float z0, float &theta) { //returns 0 if ok, -1 if not
 	float y1 = -0.5 * tan30 * baseSideLength; // f/2 * tan 30
 //    cout << y1 << "\n";

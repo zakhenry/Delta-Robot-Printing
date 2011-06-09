@@ -56,7 +56,7 @@ void testApp::update(){
     
 //    cout << "Serial output: "<<serial.readByte()<< "\n";
     
-    
+    deltaRobot.update();
     
 //    cout <<"current2TouchHeight: "<<current2TouchHeight<<"\n";
 

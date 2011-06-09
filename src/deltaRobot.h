@@ -59,6 +59,7 @@ public: //temporarily here so I can test functions out
     void releaseCoordinatesFromRobot();
     
     void drawRobot();
+    void update();
     
 //    vector<workingPoint>calculateWorkingPointCloud();
     vector<workingPoint>workingPointCloud;

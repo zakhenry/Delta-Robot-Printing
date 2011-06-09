@@ -11,21 +11,27 @@
 
 #include "ofMain.h"
 
-
 class StepperControl {
     
+    vector<char>buffer;
+    
 public:
+    
+    bool stepper0Ready, stepper1Ready, stepper2Ready;
     
     StepperControl(); //constructor
     
     ofSerial serial0, serial1, serial2;
     
-    bool println(string line, int stepper);
+    bool println(int stepper, string line);
+    
+    void setStepper(int stepper, float angle, float speed);
+    
+    void update();
+    
+    bool readUntil(int stepper, string& rResult, char cUntil);
     
 };
-
-
-
 
 
 #endif 
