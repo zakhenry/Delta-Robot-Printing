@@ -22,6 +22,7 @@ StepperControl::StepperControl(){ //constructor
         printf("Serial setup failed!\n");
     }else{
         stepper0Connected = true;
+        serial0.flush();
     }
     
     if(!serial1.setup(/*"tty.usbserial-A9007Mbm"*/7, 9600)){
@@ -82,23 +83,26 @@ bool StepperControl::println(int stepper, string line){
 void StepperControl::setStepper(int stepper, float angle, float speed){
     
     char buffer [50];
-    sprintf (buffer, "d%f-s%de", angle, (int)speed); //note speed is cast to int for now, will be float eventually
+//    sprintf (buffer, "d%f-s%de", angle, (int)speed); //note speed is cast to int for now, will be float eventually
+    sprintf (buffer, "$"); //note speed is cast to int for now, will be float eventually
     println (stepper, buffer);
     
 }
 
 void StepperControl::update(){
 //    cout << "stepper control updated\n";
-    if (!stepper0Ready&&stepper0Connected){
+    if (!stepper0Ready&&stepper0Connected&&serial0.available()>0){
         string message;
-        readUntil(0, message, '\n');
-        cout <<"message recieved was\n";
+        cout << "there is "<<serial0.available()<<" bytes available \n";
+        readBytes(0, message, '\n');
+        serial0.flush();
+        cout <<"message recieved was "<<message<<"\n";
         if (message == "complete"){
             stepper0Ready = true;
         }
     }
     
-    if (!stepper1Ready&&stepper1Connected){
+    if (!stepper1Ready&&stepper1Connected&&serial0.available()>0){
         string message;
         readUntil(1, message, '\n');
         cout <<"message recieved was\n";
@@ -107,7 +111,7 @@ void StepperControl::update(){
         }
     }
     
-    if (!stepper2Ready&&stepper2Connected){
+    if (!stepper2Ready&&stepper2Connected&&serial0.available()>0){
         string message;
         readUntil(2, message, '\n');
         cout <<"message recieved was\n";
@@ -119,8 +123,9 @@ void StepperControl::update(){
 }
 
 bool StepperControl::readUntil(int stepper, string& rResult, char cUntil) {
-    cout <<"waiting for message\n";
-	char b[1];
+    cout <<"waiting for message from "<<stepper<<"\n";
+//	char b[1];
+    unsigned char * b = new unsigned char[1];
 	char buf[1];
 	int  i = 0;
     
@@ -129,7 +134,9 @@ bool StepperControl::readUntil(int stepper, string& rResult, char cUntil) {
 		
         switch (stepper) {
             case 0:
-                n = serial0.readByte();  // read a char at a time
+                n = serial0.readBytes(b, 1);  // read a char at a time
+                
+                
                 break;
                 
             case 1:
@@ -148,8 +155,17 @@ bool StepperControl::readUntil(int stepper, string& rResult, char cUntil) {
 			return false;
 		}
 		buffer.push_back(b[0]);
+        
 		i++;
+        
+        cout <<"Serial byte is "<<b[0]<<"\n";
 	} while( b[0] != cUntil );
+    
+    cout <<"Buffer is ";
+    for (int j=0; j<buffer.size(); j++){
+        cout <<buffer[j];
+    }
+    cout <<"\n";
 	
 	std::vector<char>::iterator it = buffer.begin();
 	while(it != buffer.end()) {
@@ -161,10 +177,43 @@ bool StepperControl::readUntil(int stepper, string& rResult, char cUntil) {
     
 }
 
+bool StepperControl::readBytes(int stepper, string& rResult, int bytesToRead) {
+    cout <<"waiting for message from "<<stepper<<"\n";
+    //	char b[1];
+    unsigned char * b = new unsigned char[bytesToRead];
+    
+    int n = -1;
+    
+        switch (stepper) {
+            case 0:
+                n = serial0.readBytes(b, bytesToRead);  // read a char at a time
+                
+                cout <<"buffer reads: "<<b<<"\n";
+                
+                if (n>0){
+                    return true;
+                }
+                return false;
+                
+                break;
+                
+            case 1:
+                n = serial1.readByte();  // read a char at a time
+                break;
+                
+            case 2:
+                n = serial2.readByte();  // read a char at a time
+                break;
+                
+            default:
+                break;
+        }
+}
+
 bool StepperControl::robotReadyForData(){
     
     
-    if (stepper0Connected && stepper1Connected && stepper2Connected && stepper0Ready && stepper1Ready && stepper2Ready){
+    if (stepper0Connected /*&& stepper1Connected && stepper2Connected*/ && stepper0Ready && stepper1Ready && stepper2Ready){
         return true;
     }
     

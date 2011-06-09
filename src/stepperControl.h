@@ -32,6 +32,8 @@ public:
     
     bool readUntil(int stepper, string& rResult, char cUntil);
     
+    bool readBytes(int stepper, string& rResult, int bytesToRead);
+    
     bool robotReadyForData();
     
 };
