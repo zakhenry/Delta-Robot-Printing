@@ -14,22 +14,26 @@ StepperControl::StepperControl(){ //constructor
 	cout << "Stepper control class instantiated \n";
     
     stepper0Ready = stepper1Ready = stepper2Ready = true;
+    stepper0Connected = stepper1Connected = stepper2Connected = false;
     
     serial0.enumerateDevices();
     
     if(!serial0.setup(/*"tty.usbserial-A9007Mbm"*/5, 9600)){
         printf("Serial setup failed!\n");
-        
     }else{
-        setStepper(0, 1800, 100);
+        stepper0Connected = true;
     }
     
-    if(!serial1.setup(/*"tty.usbserial-A9007Mbm"*/6, 9600)){
+    if(!serial1.setup(/*"tty.usbserial-A9007Mbm"*/7, 9600)){
         printf("Serial setup failed!\n");
+    }else{
+        stepper1Connected = true;
     }
     
-    if(!serial2.setup(/*"tty.usbserial-A9007Mbm"*/7, 9600)){
+    if(!serial2.setup(/*"tty.usbserial-A9007Mbm"*/9, 9600)){
         printf("Serial setup failed!\n");
+    }else{
+        stepper2Connected = true;
     }
 
 }
@@ -42,19 +46,32 @@ bool StepperControl::println(int stepper, string line){
     
     switch (stepper) {
         case 0:
-            stepper0Ready = false;
-            serial0.writeBytes(charLine,line.size());
-            cout <<"output to serial0: "<<charLine<<"\n";
+        {
+            if (stepper0Connected){
+                stepper0Ready = false;
+                serial0.writeBytes(charLine,line.size());
+                cout <<"output to serial0: "<<charLine<<"\n";
+            }
+            
+        }
         break;
             
         case 1:
-            stepper1Ready = false;
-            serial1.writeBytes(charLine,line.size());
+        {
+            if (stepper1Connected){
+                stepper1Ready = false;
+                serial1.writeBytes(charLine,line.size());
+            }
+        }
         break;
             
         case 2:
-            stepper1Ready = false;
-            serial2.writeBytes(charLine,line.size());
+        {
+            if (stepper2Connected){
+                stepper2Ready = false;
+                serial2.writeBytes(charLine,line.size());
+            }
+        }
         break;
             
         default:
@@ -72,12 +89,30 @@ void StepperControl::setStepper(int stepper, float angle, float speed){
 
 void StepperControl::update(){
 //    cout << "stepper control updated\n";
-    if (!stepper0Ready){
+    if (!stepper0Ready&&stepper0Connected){
         string message;
         readUntil(0, message, '\n');
-        cout <<"message recieved was\n";ç
+        cout <<"message recieved was\n";
         if (message == "complete"){
             stepper0Ready = true;
+        }
+    }
+    
+    if (!stepper1Ready&&stepper1Connected){
+        string message;
+        readUntil(1, message, '\n');
+        cout <<"message recieved was\n";
+        if (message == "complete"){
+            stepper1Ready = true;
+        }
+    }
+    
+    if (!stepper2Ready&&stepper2Connected){
+        string message;
+        readUntil(2, message, '\n');
+        cout <<"message recieved was\n";
+        if (message == "complete"){
+            stepper2Ready = true;
         }
     }
 
@@ -123,5 +158,16 @@ bool StepperControl::readUntil(int stepper, string& rResult, char cUntil) {
 	}
 	buffer.clear();
 	return true;
+    
+}
+
+bool StepperControl::robotReadyForData(){
+    
+    
+    if (stepper0Connected && stepper1Connected && stepper2Connected && stepper0Ready && stepper1Ready && stepper2Ready){
+        return true;
+    }
+    
+    return false;
     
 }

@@ -15,9 +15,10 @@ class StepperControl {
     
     vector<char>buffer;
     
-public:
-    
     bool stepper0Ready, stepper1Ready, stepper2Ready;
+    bool stepper0Connected, stepper1Connected, stepper2Connected;
+    
+public:
     
     StepperControl(); //constructor
     
@@ -30,6 +31,8 @@ public:
     void update();
     
     bool readUntil(int stepper, string& rResult, char cUntil);
+    
+    bool robotReadyForData();
     
 };
 

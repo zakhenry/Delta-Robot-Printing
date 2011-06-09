@@ -50,6 +50,10 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength) /*: stepperControl()*/{ //cons
 
 void DeltaRobot::update(){
     stepperControl.update();
+    
+    if (queuedWaypoints.size()>0){
+        gotoNextWaypt();
+    }
 }
 
 int DeltaRobot::calcAngleYZ(float x0, float y0, float z0, float &theta) { //returns 0 if ok, -1 if not
@@ -460,15 +464,33 @@ void DeltaRobot::runPath(PathLoader::pathFile file){
     
     if (currentPathFileIsPossible(file)){
         
-        for (int i = 0; i< file.points.size(); i++){
-            setCartesianPosition(file.points[i].x, file.points[i].y, file.points[i].z);
-            cout << "effector position should be at ("<<file.points[i].x<<","<<file.points[i].y<<","<<file.points[i].z<<"). It is at ("<<effectorX<<","<<effectorY<<","<<effectorZ<<")\n";
-        }
+        queuedWaypoints = file.points;
         
     }else{
         cout << "Path cannot be run by robot in current configuration \n";
     }
     
+    
+}
+
+void DeltaRobot::gotoNextWaypt(){
+    
+    if (stepperControl.robotReadyForData()){
+        
+        ofPoint nextWaypt = queuedWaypoints[queuedWaypoints.size()-1];
+        
+        setCartesianPosition(nextWaypt.x, nextWaypt.y, nextWaypt.z);
+        
+        stepperControl.setStepper(0, theta0, 100);
+        stepperControl.setStepper(1, theta1, 100);
+        stepperControl.setStepper(2, theta2, 100);
+        
+        queuedWaypoints.erase(queuedWaypoints.end()-1); //bump waypt off the end
+        
+        
+        cout << "effector position should be at ("<<nextWaypt.x<<","<<nextWaypt.y<<","<<nextWaypt.z<<"). It is at ("<<effectorX<<","<<effectorY<<","<<effectorZ<<")\n";
+        
+    }
     
 }
 

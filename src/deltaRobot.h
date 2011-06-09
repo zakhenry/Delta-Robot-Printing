@@ -34,6 +34,9 @@ public: //temporarily here so I can test functions out
     
     StepperControl stepperControl;
     
+    vector<ofPoint>queuedWaypoints;
+    void gotoNextWaypt();
+    
     
 	
 //public:
