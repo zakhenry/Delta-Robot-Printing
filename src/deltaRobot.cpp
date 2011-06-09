@@ -63,14 +63,24 @@ int DeltaRobot::calcAngleYZ(float x0, float y0, float z0, float &theta) { //retu
 }
 
 int DeltaRobot::calcInverse(float x0, float y0, float z0, float &theta0, float &theta1, float &theta2) {
-	theta0 = theta1 = theta2 = 0;
-	int status = calcAngleYZ(x0, y0, z0, theta0);
+    float t0, t1, t2;
+	int status = calcAngleYZ(x0, y0, z0, t0);
 	if (status == 0){
-		status = calcAngleYZ(x0*cos120 + y0*sin120, y0*cos120-x0*sin120, z0, theta1);  // rotate coords to +120 deg
+		status = calcAngleYZ(x0*cos120 + y0*sin120, y0*cos120-x0*sin120, z0, t1);  // rotate coords to +120 deg
 	}
 	if (status == 0){
-		status = calcAngleYZ(x0*cos120 - y0*sin120, y0*cos120+x0*sin120, z0, theta2);  // rotate coords to -120 deg
+		status = calcAngleYZ(x0*cos120 - y0*sin120, y0*cos120+x0*sin120, z0, t2);  // rotate coords to -120 deg
 	}
+    
+    if ((t0>-90)&&(t0<90)&&(t1>-90)&&(t1<90)&&(t2>-90)&&(t2<90)){
+        theta0 = t0;
+        theta1 = t0;
+        theta2 = t0;
+    }else{
+        status = -1;
+//        cout <<"position impossible (theta0 tried to be "<<t0<<", theta1 tried to be "<<t1<<", theta2 tried to be "<<t2<<")\n";
+    }
+    
 	return status;
 }
 
@@ -131,8 +141,16 @@ int DeltaRobot::setCartesianPosition(float x, float y, float z){
     int result = calcInverse(x, y, z, theta0, theta1, theta2);
     
     if (result != 0){
-        cout << "Position is not possible";
+        cout << "Position is not possible\n";
+    }else{
+        effectorX = x;
+        effectorY = y;
+        effectorZ = z;
     }
+    cout << "input value is ("<<x<<","<<y<<","<<z<<")\n";
+    cout << "theta 0 has the angle "<<theta0<<"\n";
+    cout << "theta 1 has the angle "<<theta1<<"\n";
+    cout << "theta 2 has the angle "<<theta2<<"\n";
     
     return result;
 }
@@ -141,17 +159,14 @@ int DeltaRobot::setAngles(float theta0, float theta1, float theta2){
     int result = calcForward(theta0, theta1, theta2, effectorX, effectorY, effectorZ);
     
     if (result != 0){
-        cout << "Position is not possible";
+        cout << "Position is not possible\n";
     }
     
     return result;
 }
 
-bool DeltaRobot::positionIsPossible(float x0, float y0, float z0, float d0, float d1, float d2){
+bool DeltaRobot::positionIsPossible(float x0, float y0, float z0){
 	float a, b, c;
-	a = d0;
-	b = d1;
-	c = d2;
 	//cout << "a: " << a << " b: " << b << " c: " << c << "|| x0: " << x0 << " y0: " << y0 << " z0: " << z0 << "\n""\n";
 	//cout << "calc inverse  = " << calcInverse(x0, y0, x0, a, b, c) <<"\n";
 	if (calcInverse(x0, y0, z0, a, b, c)==0){
@@ -171,7 +186,7 @@ void DeltaRobot::setCoordinatesToRobot(){
     glPushMatrix();
     
     
-    glTranslatef(ofGetWidth()/2,ofGetHeight()/2-600,50); //moves robot to coordinates to centre (ish) of scene
+    glTranslatef(ofGetWidth()/2,ofGetHeight()/2-200,50); //moves robot to coordinates to centre (ish) of scene
 }
 void DeltaRobot::releaseCoordinatesFromRobot(){
     glPopMatrix();
@@ -202,51 +217,59 @@ void DeltaRobot::drawRobot(){
         glPushMatrix();
         float baseDistanceFromAxis = tan(ofDegToRad(30))*baseSideLength/2;
         float effectorDistanceFromAxis = tan(ofDegToRad(30))*effectorSideLength/2;
+    
+        glBegin(GL_LINES); //theta0 marker
+        glVertex3f(0, 0, -baseDistanceFromAxis);
+        glVertex3f(0, 30, -baseDistanceFromAxis);
+        glEnd();
+    
         glBegin(GL_LINES); //theta0 upper arm
-        glVertex3f(0, 0, baseDistanceFromAxis);
-        glVertex3f(0, sin(ofDegToRad(theta0))*upperArmLength, (cos(ofDegToRad(theta0))*upperArmLength)+baseDistanceFromAxis);
+        glVertex3f(0, 0, -baseDistanceFromAxis);
+        glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, -(cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
         glEnd();
         
         ofSetColor(0, 255, 255);
         glBegin(GL_LINES); //theta0 forearm
-        glVertex3f(0, sin(ofDegToRad(theta0))*upperArmLength, (cos(ofDegToRad(theta0))*upperArmLength)+baseDistanceFromAxis);
-        glVertex3f(effectorX, -effectorZ, effectorY+effectorDistanceFromAxis);
-        glEnd();	
-        glRotatef(-120, 0, 1, 0);
+        glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, -(cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
+        glVertex3f(effectorX, effectorZ, effectorY-effectorDistanceFromAxis);
+        glEnd();
+    /*
+        glRotatef(120, 0, 1, 0);
         
         ofSetColor(255, 0, 255);
         glBegin(GL_LINES); //theta1 upper arm
-        glVertex3f(0, 0, tan(ofDegToRad(30))*baseSideLength/2);
-        glVertex3f(0, sin(ofDegToRad(theta0))*upperArmLength, (cos(ofDegToRad(theta0))*upperArmLength)+baseDistanceFromAxis);
+        glVertex3f(0, 0, -tan(ofDegToRad(30))*baseSideLength/2);
+        glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, -(cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis); //im suspicious of this line
         glEnd();
         
         ofSetColor(0, 255, 255);
         glBegin(GL_LINES); //theta1 forearm
-        glVertex3f(0, sin(ofDegToRad(theta0))*upperArmLength, (cos(ofDegToRad(theta0))*upperArmLength)+baseDistanceFromAxis);
+        glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, -(cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
         float rotEffectX, rotEffectY;
-        rotateCoordAboutOrigin(120, effectorX, effectorY, rotEffectX, rotEffectY);
-        glVertex3f(rotEffectX, -effectorZ, rotEffectY+effectorDistanceFromAxis); //ignore middle one, that is the height
+        rotateCoordAboutOrigin(-120, effectorX, effectorY, rotEffectX, rotEffectY);
+        glVertex3f(rotEffectX, effectorZ, rotEffectY-effectorDistanceFromAxis); //ignore middle one, that is the height
         glEnd();
         
-        glRotatef(-120, 0, 1, 0);
+        glRotatef(-240, 0, 1, 0);
+    
         ofSetColor(255, 0, 255);
         glBegin(GL_LINES); //theta2 upper arm
-        glVertex3f(0, 0, tan(ofDegToRad(30))*baseSideLength/2);
-        glVertex3f(0, sin(ofDegToRad(theta1))*upperArmLength, (cos(ofDegToRad(theta1))*upperArmLength)+baseDistanceFromAxis);
+        glVertex3f(0, 0, -tan(ofDegToRad(30))*baseSideLength/2);
+        glVertex3f(0, -sin(ofDegToRad(theta1))*upperArmLength, -(cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis);
         glEnd();
         
         ofSetColor(0, 255, 255);
         glBegin(GL_LINES); //theta2 forearm //there is something seriously wrong with the forearms - they change in length for some reason
-        glVertex3f(0, sin(ofDegToRad(theta1))*upperArmLength, (cos(ofDegToRad(theta1))*upperArmLength)+baseDistanceFromAxis);
+        glVertex3f(0, -sin(ofDegToRad(theta1))*upperArmLength, -(cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis);
         rotateCoordAboutOrigin(-120, effectorX, effectorY, rotEffectX, rotEffectY);
-        glVertex3f(rotEffectX, -effectorZ, rotEffectY+effectorDistanceFromAxis); //ignore middle one, that is the height
+        glVertex3f(rotEffectX, effectorZ, rotEffectY-effectorDistanceFromAxis); //ignore middle one, that is the height
         glEnd();
-        
+   */     
         glPopMatrix();
         
         
         glPushMatrix();
-        glTranslatef(effectorX, -effectorZ, effectorY); // y and z swapped
+        glTranslatef(effectorX, effectorZ, effectorY); // y and z swapped
         
     //    cout<< "z:"<<effectorZ<<"\n";
         
@@ -306,7 +329,7 @@ void DeltaRobot::drawWorkingPointCloud(){
     glBegin(GL_POINTS);
     
     for (int i=0; i<workingPointCloud.size(); i++){
-        glVertex3f(workingPointCloud[i].x, -workingPointCloud[i].z, workingPointCloud[i].y);
+        glVertex3f(workingPointCloud[i].x, workingPointCloud[i].z, workingPointCloud[i].y);
 //        cout << "Point drawn in position ("<<workingPointCloud[i].x<<","<<workingPointCloud[i].y<<","<<workingPointCloud[i].z<<")\n";
     }
     
@@ -354,8 +377,7 @@ void DeltaRobot::calculateCartesianPointCloud(){
         for (int yInc = minY; yInc<maxY; yInc+=increment) {
             for (int zInc = minZ; zInc<maxZ; zInc+=increment) {
                 
-                float null;
-                if (positionIsPossible(xInc, yInc, zInc, null, null, null)){
+                if (positionIsPossible(xInc, yInc, zInc)){
                     workingPoint newPoint;
                     newPoint.x = xInc+ofRandom(-5, 5);
                     newPoint.y = yInc+ofRandom(-5, 5);
@@ -405,11 +427,43 @@ void DeltaRobot::drawCartesianPointCloud(){
     glBegin(GL_POINTS);
 
     for (int i=0; i<cartesianPointCloud.size(); i++){
-        glVertex3f(cartesianPointCloud[i].x, -cartesianPointCloud[i].z, cartesianPointCloud[i].y);
+        glVertex3f(cartesianPointCloud[i].x, cartesianPointCloud[i].z, cartesianPointCloud[i].y);
         //        cout << "Point drawn in position ("<<cartesianPointCloud[i].x<<","<<cartesianPointCloud[i].y<<","<<cartesianPointCloud[i].z<<")\n";
     }
     
     glEnd();
+    
+}
+
+bool DeltaRobot::currentPathFileIsPossible(PathLoader::pathFile file){
+    
+    
+    cout << file.parameters.speed <<" -> speed in xml file \n";
+    
+    for (int i = 0; i< file.points.size(); i++){
+        if (!positionIsPossible(file.points[i].x, file.points[i].y, file.points[i].z)){
+            return false; 
+        }
+    }
+    
+     return true;
+    
+}
+
+void DeltaRobot::runPath(PathLoader::pathFile file){
+    
+    if (currentPathFileIsPossible(file)){
+        
+        for (int i = 0; i< file.points.size(); i++){
+            setCartesianPosition(file.points[i].x, file.points[i].y, file.points[i].z);
+            cout << "effector position should be at ("<<file.points[i].x<<","<<file.points[i].y<<","<<file.points[i].z<<"). It is at ("<<effectorX<<","<<effectorY<<","<<effectorZ<<")\n";
+        }
+        
+    }else{
+        cout << "Path cannot be run by robot in current configuration \n";
+    }
+    
+    
     
 }
 

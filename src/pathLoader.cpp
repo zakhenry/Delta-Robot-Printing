@@ -110,7 +110,7 @@ void PathLoader::drawCurrentPath(bool showPaths){
         ofSetColor(255, 255, 0);
         
         for (int i=0; i<currentPathFile.points.size(); i++){
-            glVertex3f(currentPathFile.points[i].x, currentPathFile.points[i].z, currentPathFile.points[i].y); 
+            glVertex3f(currentPathFile.points[i].x, currentPathFile.points[i].z, currentPathFile.points[i].y);
         }
         
         glEnd();

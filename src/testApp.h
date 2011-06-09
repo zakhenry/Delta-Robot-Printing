@@ -5,7 +5,7 @@
 #include "ofx3DModelLoader.h"
 #include "ofxMultiTouchPad.h"
 
-#include "deltaKinematics.h"
+#include "deltaRobot.h"
 #include "geneticAlgorithm.h"
 #include "pathLoader.h"
 

@@ -12,6 +12,7 @@
 // than once which would confuse the compiler
 
 #include "ofMain.h"
+#include "pathLoader.h"
 
 
 class DeltaRobot {
@@ -47,7 +48,7 @@ public: //temporarily here so I can test functions out
     int setCartesianPosition(float x, float y, float z); // inverse kinematics
     int setAngles(float theta0, float theta1, float theta2); //forward kinematics
 	
-	bool positionIsPossible(float, float, float, float, float, float);
+	bool positionIsPossible(float, float, float);
 	void rotateCoordAboutOrigin(float angle, float, float, float&, float&);
     
     void setCoordinatesToRobot();
@@ -65,9 +66,10 @@ public: //temporarily here so I can test functions out
     void drawCartesianPointCloud();
     
     float calculateCartesianPointCloudSize(float, float, float, float &elapsedTime); //this is the fitness function that the ga runs
+    
+    bool currentPathFileIsPossible(PathLoader::pathFile);
+    void runPath(PathLoader::pathFile);
 };
-
-
 
 
 

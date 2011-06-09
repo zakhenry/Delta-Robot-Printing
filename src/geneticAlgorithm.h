@@ -11,7 +11,7 @@
 // than once which would confuse the compiler
 
 #include "ofMain.h"
-#include "deltaKinematics.h"
+#include "deltaRobot.h"
 
 
 class DeltaKinematics;

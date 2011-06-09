@@ -62,6 +62,8 @@ void testApp::update(){
     
 //    cout << "Serial output: "<<serial.readByte()<< "\n";
     
+    
+    
 //    cout <<"current2TouchHeight: "<<current2TouchHeight<<"\n";
 
 }
@@ -240,8 +242,13 @@ void testApp::keyPressed  (int key){
             tumble = !tumble;
             break;
             
+        case 'r':
+            deltaRobot.runPath(pathLoader.currentPathFile);
+            break;
+            
 			
 		default:
+            cout <<"Key ("<<key<<") pressed\n";
 			break;
 	}
 	
