@@ -7,6 +7,7 @@
 
 #include "deltaKinematics.h"
 #include "geneticAlgorithm.h"
+#include "pathLoader.h"
 
 class testApp : public ofBaseApp{
 	
@@ -32,9 +33,14 @@ class testApp : public ofBaseApp{
         
         float distanceBetweenTouches(MTouch t1, MTouch t2);
 
-		ofx3DModelLoader squirrelModel;
+//		ofx3DModelLoader squirrelModel;
     
         vector<MTouch> touches;
+        
+        //added class instances
+    
+        PathLoader pathLoader;
+        ofSerial serial;
     
         
 		

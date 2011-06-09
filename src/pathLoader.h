@@ -11,13 +11,20 @@
 // than once which would confuse the compiler
 
 #include "ofMain.h"
+#include "ofxXmlSettings.h"
 
 
 class PathLoader {
     
+    ofxXmlSettings xml;
+    vector<string>availablePaths;
+    
     public:
     
     PathLoader(); //constructor
+    
+    bool loadPath(string pathToFile);
+    bool listPathFiles(string dir, vector<string> &pathFiles);
     
 };
 

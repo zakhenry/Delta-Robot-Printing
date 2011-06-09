@@ -9,8 +9,6 @@ DeltaKinematics deltaRobot(effectorSideLength);
 
 GeneticAlgorithm ga;
 
-ofSerial serial;
-
 bool drawRobot = true;
 float currentTouchScale = 0;
 float current3TouchHeight, current2TouchHeight = 0;
