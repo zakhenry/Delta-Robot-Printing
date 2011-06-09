@@ -21,14 +21,25 @@ class PathLoader {
     
     public:
     
+    struct parms {
+        string units;
+        float speed;
+    };
+    
+    struct pathFile {
+        parms parameters;
+        vector<ofPoint>points;
+    };
+    
+    pathFile currentPathFile;
+    
     PathLoader(); //constructor
     
-    bool loadPath(string pathToFile);
+    bool changePathFile(string filename);
     bool listPathFiles(string dir, vector<string> &pathFiles);
+    void drawCurrentPath(bool showPaths);
     
 };
-
-
 
 
 

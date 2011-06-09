@@ -5,7 +5,7 @@ float effectorSideLength =  115.0; //every dimension is based off this master le
 bool showWorkPointCloud = false;
 bool showCartesianPointCloud = false;
 
-DeltaKinematics deltaRobot(effectorSideLength);
+DeltaRobot deltaRobot(effectorSideLength);
 
 GeneticAlgorithm ga;
 
@@ -127,6 +127,10 @@ void testApp::draw(){
         
         if (deltaRobot.cartesianPointCloud.size()>0&&showCartesianPointCloud){
             deltaRobot.drawCartesianPointCloud();
+        }
+        
+        if (pathLoader.currentPathFile.points.size()>0){
+            pathLoader.drawCurrentPath(true);
         }
         
         deltaRobot.releaseCoordinatesFromRobot();

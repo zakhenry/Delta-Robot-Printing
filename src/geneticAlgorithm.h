@@ -19,7 +19,7 @@ class DeltaKinematics;
 class GeneticAlgorithm {
     
     
-    DeltaKinematics deltaRobot;
+    DeltaRobot deltaRobot;
     
     struct parameters {
         float minX, maxX, minY, maxY, minZ, maxZ, mutationFactor;

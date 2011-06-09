@@ -20,6 +20,8 @@ PathLoader::PathLoader(){ //constructor
         cout << availablePaths[i]<<", ";
     }
     cout << ")\n";
+    
+    changePathFile("test");
 }
 
 bool PathLoader::listPathFiles(string dir, vector<string> &pathFiles){ //returns paths of point paths
@@ -45,4 +47,76 @@ bool PathLoader::listPathFiles(string dir, vector<string> &pathFiles){ //returns
         }
     }
     return 0;
+}
+
+bool PathLoader::changePathFile(string filename){
+    
+    pathFile newPathFile;
+    
+    
+    xml.clear();
+    if (!xml.loadFile(filename+".drp")){
+        cout << "The level \""<<filename<<".drp\" could not be found\n";
+        return false;
+    }else{
+        
+        string xmlDump;
+        xml.copyXmlToString(xmlDump);
+        
+        cout <<"loaded string gives: "<<xmlDump<<"\n";
+        
+        xml.pushTag("parameters");
+            newPathFile.parameters.units = xml.getValue("units", 0);
+            newPathFile.parameters.speed = xml.getValue("speed", 0);
+        xml.popTag();
+        
+        xml.pushTag("points");
+        for (int i=0; i<xml.getNumTags("point"); i++){
+            xml.pushTag("point", i);
+                ofPoint newPoint;
+                newPoint.x = xml.getValue("x", 0);
+                newPoint.y = xml.getValue("y", 0);
+                newPoint.z = xml.getValue("z", 0);
+                newPathFile.points.push_back(newPoint);
+            xml.popTag();
+        }
+        xml.popTag();
+        
+        currentPathFile = newPathFile; //should overwrite the current path file
+    }
+    
+}
+
+void PathLoader::drawCurrentPath(bool showPaths){
+
+    
+    if (currentPathFile.points.size()>0){
+        
+        if (showPaths){
+            glBegin(GL_LINE_STRIP);
+            
+            ofSetColor(255, 255, 200);
+            
+            for (int i=0; i<currentPathFile.points.size(); i++){
+                glVertex3f(currentPathFile.points[i].x, currentPathFile.points[i].z, currentPathFile.points[i].y); 
+            }
+            
+            glEnd();
+        }
+        
+        glPointSize(5.0);
+        glBegin(GL_POINTS);
+        
+        ofSetColor(255, 255, 0);
+        
+        for (int i=0; i<currentPathFile.points.size(); i++){
+            glVertex3f(currentPathFile.points[i].x, currentPathFile.points[i].z, currentPathFile.points[i].y); 
+        }
+        
+        glEnd();
+    }
+    
+    
+
+    
 }
