@@ -41,9 +41,19 @@ void testApp::setup(){
     
     if(!serial.setup(/*"tty.usbserial-A9007Mbm"*/5, 9600)){
         
-        printf("Serial setup failed!");
+        printf("Serial setup failed!\n");
         
     }
+    
+    float x0 = 0;
+    float y0 = 0;
+    float z0 = -200;
+    float theta;
+    deltaRobot.calcAngleYZ(x0, y0, z0, theta);
+    
+    cout << "Deltarobot test function calcAngleYZ(float "<<x0<<", float "<<y0<<", float "<<z0<<", float &"<<theta<<")\n";
+    
+    
     
     
 

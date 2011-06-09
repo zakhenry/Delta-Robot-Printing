@@ -327,7 +327,7 @@ int GeneticAlgorithm::nextIdNumber(){
 
 vector<GeneticAlgorithm::specimen>GeneticAlgorithm::bruteForceSearchSpace(parameters parms){
     
-    searchIncrement = 0.1;
+    searchIncrement = 0.5;
     vector<specimen>specimens;
     
     int idNum = 0;
@@ -387,7 +387,7 @@ void GeneticAlgorithm::drawSearchSpace(float fitnessThreshold, float fitnessColo
     
     if (allSpecimens.size()>0){
         
-        glPointSize(1.0);
+        glPointSize(2.0);
         glBegin(GL_POINTS);
 //        ofSetColor(255, 255, 255);
         

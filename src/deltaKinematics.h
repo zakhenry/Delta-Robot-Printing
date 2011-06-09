@@ -16,7 +16,7 @@
 
 class DeltaKinematics {
 	
-	
+public: //temporarily here so I can test functions out	
 //	float /*e, f, re, rf*/;
     float effectorSideLength, baseSideLength, upperArmLength, lowerArmLength;
     
@@ -31,7 +31,7 @@ class DeltaKinematics {
     
     
 	
-public:
+//public:
     
     float baseSideMultiplier, upperArmMultiplier, lowerArmMultiplier; //these multipliers define the ratio of the proportions of the robot (to be worked out by genetic search function, and made static)
 	void changeProportions(float baseSideMultiplier, float upperArmMultiplier, float lowerArmMultiplier);

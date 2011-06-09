@@ -11,9 +11,9 @@
 
 DeltaKinematics::DeltaKinematics(float ieffectorSideLength){ //constructor
     
-    baseSideMultiplier = 2;
-    upperArmMultiplier = 1.5;
-    lowerArmMultiplier = 0.9;
+    baseSideMultiplier = 2; //2
+    upperArmMultiplier = 1.5; //1.5
+    lowerArmMultiplier = 1.5; //0.9
     
 	effectorSideLength = ieffectorSideLength;
 	baseSideLength = effectorSideLength*baseSideMultiplier;
@@ -22,13 +22,21 @@ DeltaKinematics::DeltaKinematics(float ieffectorSideLength){ //constructor
     
     //some constants (helps keep calcs fast)
     
-	sqrt3 = sqrt(3.0);
-	pi = 3.141592653;    // PI
-	sin120 = sqrt3/2.0;   
+	/*sqrt3 = sqrt(3.0);
+	pi = PI;    // PI
+	sin120 = sqrt3/2.0;
 	cos120 = -0.5;        
 	tan60 = sqrt3;
 	sin30 = 0.5;
-	tan30 = 1/sqrt3;
+	tan30 = 1/sqrt3;*/
+    
+     sqrt3 = sqrt(3.0);
+     pi = PI;    // PI
+     sin120 = sin(ofDegToRad(120));
+     cos120 = cos(ofDegToRad(120));     
+     tan60 = tan(ofDegToRad(60));
+     sin30 = sin(ofDegToRad(30));
+     tan30 = tan(ofDegToRad(30));
     
 //    directControl = false; //start in cartesian control mode
     setAngles(0, 0, 0); //set arms to home position
@@ -39,8 +47,9 @@ DeltaKinematics::DeltaKinematics(float ieffectorSideLength){ //constructor
 }
 
 int DeltaKinematics::calcAngleYZ(float x0, float y0, float z0, float &theta) { //returns 0 if ok, -1 if not
-	float y1 = -0.5 * 0.57735 * baseSideLength; // f/2 * tg 30
-	y0 -= 0.5 * 0.57735 * effectorSideLength;    // shift center to edge
+	float y1 = -0.5 * tan30 * baseSideLength; // f/2 * tan 30
+//    cout << y1 << "\n";
+	y0 -= 0.5 * tan30 * effectorSideLength;    // shift center to edge
 	// z = a + b*y
 	float a = (x0*x0 + y0*y0 + z0*z0 +lowerArmLength*lowerArmLength - upperArmLength*upperArmLength - y1*y1)/(2*z0);
 	float b = (y1-y0)/z0;
@@ -108,6 +117,10 @@ int DeltaKinematics::calcForward(float theta0, float theta1, float theta2, float
 	if (d < 0) return -1; // non-existing point
 	
 	z0 = -(float)0.5*(b+sqrt(d))/a;
+    if (z0>0){
+        return -1;
+    }
+    
 	x0 = (a1*z0 + b1)/dnm;
 	y0 = (a2*z0 + b2)/dnm;
 	return 0;
@@ -157,7 +170,7 @@ void DeltaKinematics::setCoordinatesToRobot(){
     glPushMatrix();
     
     
-    glTranslatef(ofGetWidth()/2,ofGetHeight()/2-200,50); //moves robot to coordinates to centre (ish) of scene
+    glTranslatef(ofGetWidth()/2,ofGetHeight()/2-600,50); //moves robot to coordinates to centre (ish) of scene
 }
 void DeltaKinematics::releaseCoordinatesFromRobot(){
     glPopMatrix();
@@ -184,77 +197,83 @@ void DeltaKinematics::drawRobot(){
     glEnd();
     
 	ofSetColor(255, 0, 255);
-    
-    glPushMatrix();
-    float baseDistanceFromAxis = tan(ofDegToRad(30))*baseSideLength/2;
-    float effectorDistanceFromAxis = tan(ofDegToRad(30))*effectorSideLength/2;
-    glBegin(GL_LINES); //theta0 upper arm
-    glVertex3f(0, 0, -baseDistanceFromAxis);
-    glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, (-cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
-    glEnd();
-    
-    glBegin(GL_LINES); //theta0 forearm
-    glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, (-cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
-    glVertex3f(effectorX, effectorZ, effectorY-effectorDistanceFromAxis);
-    glEnd();	
-    glRotatef(-120, 0, 1, 0);
-    
-    glBegin(GL_LINES); //theta1 upper arm
-    glVertex3f(0, 0, -tan(ofDegToRad(30))*baseSideLength/2);
-    glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, (-cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
-    glEnd();
-    glBegin(GL_LINES); //theta1 forearm
-    glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, (-cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
-	float rotEffectX, rotEffectY;
-    rotateCoordAboutOrigin(120, effectorX, effectorY, rotEffectX, rotEffectY);
-    glVertex3f(rotEffectX, effectorZ, rotEffectY-effectorDistanceFromAxis); //ignore middle one, that is the height
-    glEnd();
-	
-    glRotatef(-120, 0, 1, 0);
-	
-    glBegin(GL_LINES); //theta2 upper arm
-    glVertex3f(0, 0, -tan(ofDegToRad(30))*baseSideLength/2);
-    glVertex3f(0, -sin(ofDegToRad(theta1))*upperArmLength, (-cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis);
-    glEnd();
-    
-    glBegin(GL_LINES); //theta2 forearm //there is something seriously wrong with the forearms - they change in length for some reason
-    glVertex3f(0, -sin(ofDegToRad(theta1))*upperArmLength, (-cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis);
-	rotateCoordAboutOrigin(-120, effectorX, effectorY, rotEffectX, rotEffectY);
-    glVertex3f(rotEffectX, effectorZ, rotEffectY-effectorDistanceFromAxis); //ignore middle one, that is the height
-    glEnd();
-	
-	glPopMatrix();
-	
-	
-	glPushMatrix();
-	glTranslatef(effectorX, effectorZ, effectorY); // y and z swapped
-	
-	ofSetColor(255, 0, 0);
-	glBegin(GL_TRIANGLES); //effector triangle
-	glVertex3f(-effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
-	glVertex3f(effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
-	glVertex3f(0, 0, (sin(ofDegToRad(60))*effectorSideLength)-(tan(ofDegToRad(30))*effectorSideLength/2));
-	glEnd();
-	glPopMatrix();
-	
-	ofSetColor(0, 255, 0);
-    glBegin(GL_TRIANGLES); //base triangle (placed down here so tranparency works)
-    glVertex3f(-baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
-    glVertex3f(baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
-    glVertex3f(0, 0, (sin(ofDegToRad(60))*baseSideLength)-(tan(ofDegToRad(30))*baseSideLength/2));
-    glEnd();
+        
+        glPushMatrix();
+        float baseDistanceFromAxis = tan(ofDegToRad(30))*baseSideLength/2;
+        float effectorDistanceFromAxis = tan(ofDegToRad(30))*effectorSideLength/2;
+        glBegin(GL_LINES); //theta0 upper arm
+        glVertex3f(0, 0, baseDistanceFromAxis);
+        glVertex3f(0, sin(ofDegToRad(theta0))*upperArmLength, (cos(ofDegToRad(theta0))*upperArmLength)+baseDistanceFromAxis);
+        glEnd();
+        
+        ofSetColor(0, 255, 255);
+        glBegin(GL_LINES); //theta0 forearm
+        glVertex3f(0, sin(ofDegToRad(theta0))*upperArmLength, (cos(ofDegToRad(theta0))*upperArmLength)+baseDistanceFromAxis);
+        glVertex3f(effectorX, -effectorZ, effectorY+effectorDistanceFromAxis);
+        glEnd();	
+        glRotatef(-120, 0, 1, 0);
+        
+        ofSetColor(255, 0, 255);
+        glBegin(GL_LINES); //theta1 upper arm
+        glVertex3f(0, 0, tan(ofDegToRad(30))*baseSideLength/2);
+        glVertex3f(0, sin(ofDegToRad(theta0))*upperArmLength, (cos(ofDegToRad(theta0))*upperArmLength)+baseDistanceFromAxis);
+        glEnd();
+        
+        ofSetColor(0, 255, 255);
+        glBegin(GL_LINES); //theta1 forearm
+        glVertex3f(0, sin(ofDegToRad(theta0))*upperArmLength, (cos(ofDegToRad(theta0))*upperArmLength)+baseDistanceFromAxis);
+        float rotEffectX, rotEffectY;
+        rotateCoordAboutOrigin(120, effectorX, effectorY, rotEffectX, rotEffectY);
+        glVertex3f(rotEffectX, -effectorZ, rotEffectY+effectorDistanceFromAxis); //ignore middle one, that is the height
+        glEnd();
+        
+        glRotatef(-120, 0, 1, 0);
+        ofSetColor(255, 0, 255);
+        glBegin(GL_LINES); //theta2 upper arm
+        glVertex3f(0, 0, tan(ofDegToRad(30))*baseSideLength/2);
+        glVertex3f(0, sin(ofDegToRad(theta1))*upperArmLength, (cos(ofDegToRad(theta1))*upperArmLength)+baseDistanceFromAxis);
+        glEnd();
+        
+        ofSetColor(0, 255, 255);
+        glBegin(GL_LINES); //theta2 forearm //there is something seriously wrong with the forearms - they change in length for some reason
+        glVertex3f(0, sin(ofDegToRad(theta1))*upperArmLength, (cos(ofDegToRad(theta1))*upperArmLength)+baseDistanceFromAxis);
+        rotateCoordAboutOrigin(-120, effectorX, effectorY, rotEffectX, rotEffectY);
+        glVertex3f(rotEffectX, -effectorZ, rotEffectY+effectorDistanceFromAxis); //ignore middle one, that is the height
+        glEnd();
+        
+        glPopMatrix();
+        
+        
+        glPushMatrix();
+        glTranslatef(effectorX, -effectorZ, effectorY); // y and z swapped
+        
+    //    cout<< "z:"<<effectorZ<<"\n";
+        
+        ofSetColor(255, 0, 0);
+        glBegin(GL_TRIANGLES); //effector triangle
+        glVertex3f(-effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
+        glVertex3f(effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
+        glVertex3f(0, 0, (sin(ofDegToRad(60))*effectorSideLength)-(tan(ofDegToRad(30))*effectorSideLength/2));
+        glEnd();
+        glPopMatrix();
+        
+        ofSetColor(0, 255, 0);
+        glBegin(GL_TRIANGLES); //base triangle (placed down here so tranparency works)
+        glVertex3f(-baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
+        glVertex3f(baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
+        glVertex3f(0, 0, (sin(ofDegToRad(60))*baseSideLength)-(tan(ofDegToRad(30))*baseSideLength/2));
+        glEnd();
+        
 }
 
 
 /*Workspace calculations*/
 
-
-//vector<DeltaKinematics::workingPoint> DeltaKinematics::calculateWorkingPointCloud(){
 void DeltaKinematics::calculateWorkingPointCloud(){ //could be really nice if this was threaded separately to main program ?
     
-    cout << "Calculating working space point cloud, please wait...\n";
+//    cout << "Calculating working space point cloud, please wait...\n";
     
-    workingPointCloud.erase(workingPointCloud.begin(), workingPointCloud.begin()+workingPointCloud.size()); //wipe existing point cloud if present
+    workingPointCloud.clear(); //wipe existing point cloud if present
 
     int degreesToCheck = 180;
     int topValue = degreesToCheck/2;
@@ -277,7 +296,7 @@ void DeltaKinematics::calculateWorkingPointCloud(){ //could be really nice if th
     }
     
     
-    cout << "Finished point cloud calculation, "<<workingPointCloud.size()<<" points added\n";
+    cout << "Finished working point cloud calculation, "<<workingPointCloud.size()<<" points added\n";
 }
 
 void DeltaKinematics::drawWorkingPointCloud(){
@@ -304,7 +323,12 @@ void DeltaKinematics::changeProportions(float ibaseSideMultiplier, float iupperA
 	upperArmLength = effectorSideLength*upperArmMultiplier;
 	lowerArmLength = effectorSideLength*lowerArmMultiplier;
     
-    cout << "New proportions ("<<baseSideMultiplier<<","<<upperArmMultiplier<<","<<lowerArmMultiplier<<") \n";
+    
+    setCartesianPosition(effectorX, effectorY, effectorZ);
+    calculateCartesianPointCloud();
+    calculateWorkingPointCloud();
+    
+    cout << "New proportions ("<<baseSideMultiplier<<","<<upperArmMultiplier<<","<<lowerArmMultiplier<<") \n\n";
 }
 
 void DeltaKinematics::calculateCartesianPointCloud(){ 
@@ -323,7 +347,7 @@ void DeltaKinematics::calculateCartesianPointCloud(){
     
     minY = minX = -(maxX);
     
-    cout << "minX: "<<minX<<", minY: "<<minY<<", minZ: "<<minZ<<", maxX: "<<maxX<<", maxY: "<<maxY<<", maxZ: "<<maxZ<<"\n";
+//    cout << "minX: "<<minX<<", minY: "<<minY<<", minZ: "<<minZ<<", maxX: "<<maxX<<", maxY: "<<maxY<<", maxZ: "<<maxZ<<"\n";
     
     for (int xInc = minX; xInc<maxX; xInc+=increment) {
         for (int yInc = minY; yInc<maxY; yInc+=increment) {
@@ -332,9 +356,9 @@ void DeltaKinematics::calculateCartesianPointCloud(){
                 float null;
                 if (positionIsPossible(xInc, yInc, zInc, null, null, null)){
                     workingPoint newPoint;
-                    newPoint.x = xInc;
-                    newPoint.y = yInc;
-                    newPoint.z = zInc;
+                    newPoint.x = xInc+ofRandom(-5, 5);
+                    newPoint.y = yInc+ofRandom(-5, 5);
+                    newPoint.z = zInc+ofRandom(-5, 5);
                     cartesianPointCloud.push_back(newPoint);
                 }
                 
@@ -343,7 +367,7 @@ void DeltaKinematics::calculateCartesianPointCloud(){
         }
     }
     
-    cout << "Finished point cloud calculation, "<<cartesianPointCloud.size()<<" points added\n";
+    cout << "Finished cartesian point cloud calculation, "<<cartesianPointCloud.size()<<" points added\n";
     
 }
 
