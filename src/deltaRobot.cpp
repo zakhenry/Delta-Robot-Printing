@@ -477,7 +477,7 @@ void DeltaRobot::gotoNextWaypt(){
     
     if (stepperControl.robotReadyForData()){
         
-        ofPoint nextWaypt = queuedWaypoints[queuedWaypoints.size()-1];
+        ofPoint nextWaypt = queuedWaypoints[0];
         
         setCartesianPosition(nextWaypt.x, nextWaypt.y, nextWaypt.z);
         
@@ -485,8 +485,7 @@ void DeltaRobot::gotoNextWaypt(){
         stepperControl.setStepper(1, theta1, 100);
         stepperControl.setStepper(2, theta2, 100);
         
-        queuedWaypoints.erase(queuedWaypoints.end()-1); //bump waypt off the end
-        
+        queuedWaypoints.erase(queuedWaypoints.begin()); //pop waypt off the front        
         
         cout << "effector position should be at ("<<nextWaypt.x<<","<<nextWaypt.y<<","<<nextWaypt.z<<"). It is at ("<<effectorX<<","<<effectorY<<","<<effectorZ<<")\n";
         
