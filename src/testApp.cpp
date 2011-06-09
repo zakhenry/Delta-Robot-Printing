@@ -35,13 +35,7 @@ void testApp::setup(){
     glEnable (GL_DEPTH_TEST);
     glShadeModel (GL_SMOOTH);
     
-    serial.enumerateDevices();
     
-    if(!serial.setup(/*"tty.usbserial-A9007Mbm"*/5, 9600)){
-        
-        printf("Serial setup failed!\n");
-        
-    }
     
     float x0 = 0;
     float y0 = 0;

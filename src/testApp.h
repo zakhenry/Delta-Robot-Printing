@@ -40,7 +40,7 @@ class testApp : public ofBaseApp{
         //added class instances
     
         PathLoader pathLoader;
-        ofSerial serial;
+        
     
         
 		

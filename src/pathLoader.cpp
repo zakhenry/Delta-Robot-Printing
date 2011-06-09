@@ -63,7 +63,7 @@ bool PathLoader::changePathFile(string filename){
         string xmlDump;
         xml.copyXmlToString(xmlDump);
         
-        cout <<"loaded string gives: "<<xmlDump<<"\n";
+//        cout <<"loaded string gives: "<<xmlDump<<"\n";
         
         xml.pushTag("parameters");
             newPathFile.parameters.units = xml.getValue("units", 0);

@@ -14,7 +14,7 @@
 #include "deltaRobot.h"
 
 
-class DeltaKinematics;
+class DeltaRobot;
 
 class GeneticAlgorithm {
     

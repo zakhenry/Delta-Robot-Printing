@@ -9,7 +9,7 @@
 
 #include "deltaRobot.h"
 
-DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
+DeltaRobot::DeltaRobot(float ieffectorSideLength) /*: stepperControl()*/{ //constructor
     
     baseSideMultiplier = 2; //2
     upperArmMultiplier = 1.5; //1.5
@@ -39,11 +39,13 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
      tan30 = tan(ofDegToRad(30));
     
 //    directControl = false; //start in cartesian control mode
-    setAngles(0, 0, 0); //set arms to home position
+//    setAngles(0, 0, 0); //set arms to home position
+    
+    setCartesianPosition(0, 0, -100);
     
     //calculateWorkingPointCloud(); //calculate point cloud straight away
 	
-	cout << "Delta Kinematics calculator instantiated \n";
+	cout << "Delta Robot class instantiated \n";
 }
 
 int DeltaRobot::calcAngleYZ(float x0, float y0, float z0, float &theta) { //returns 0 if ok, -1 if not
@@ -462,7 +464,6 @@ void DeltaRobot::runPath(PathLoader::pathFile file){
     }else{
         cout << "Path cannot be run by robot in current configuration \n";
     }
-    
     
     
 }

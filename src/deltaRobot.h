@@ -13,7 +13,9 @@
 
 #include "ofMain.h"
 #include "pathLoader.h"
+#include "stepperControl.h"
 
+class StepperControl; //forward declaration allows access to methods
 
 class DeltaRobot {
 	
@@ -29,6 +31,8 @@ public: //temporarily here so I can test functions out
     struct workingPoint{
         float x, y, z;
     };
+    
+    StepperControl stepperControl;
     
     
 	

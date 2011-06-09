@@ -18,6 +18,10 @@ public:
     
     StepperControl(); //constructor
     
+    ofSerial serial0, serial1, serial2;
+    
+    bool println(string line, int stepper);
+    
 };
 
 
