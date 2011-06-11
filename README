@@ -1,3 +1,7 @@
+Added files required for compiling.  You'll still need to add ofx3DmodelLoader and ofxMultiTouchPad addons for compilation.
+
+===================================================================================================
+
 Current controls:
 
 w,s -> Move actuator up/down
