@@ -327,7 +327,7 @@ int GeneticAlgorithm::nextIdNumber(){
 
 vector<GeneticAlgorithm::specimen>GeneticAlgorithm::bruteForceSearchSpace(parameters parms){
     
-    searchIncrement = 0.5;
+    searchIncrement = 0.3;
     vector<specimen>specimens;
     
     int idNum = 0;
@@ -420,7 +420,7 @@ void GeneticAlgorithm::drawSearchSpace(float fitnessThreshold, float fitnessColo
     glPopMatrix();
 }
 
-void GeneticAlgorithm::drawCurrentPopulation(){
+void GeneticAlgorithm::drawCurrentPopulation(float fitnessThreshold, float fitnessColorScale){
     
     glPushMatrix();
     
@@ -440,19 +440,27 @@ void GeneticAlgorithm::drawCurrentPopulation(){
         
         for (int i=0; i<population.size(); i++){
             
-            ofColor newColor = HSVToRGB(population[i].fitness/500, 1, 1, color);
+            if (population[i].fitness>fitnessThreshold){
+                
+                //                ofColor newColor = HSVToRGB(allSpecimens[i].fitness/40000, 0.5, 1, color);
+                ofColor newColor = HSVToRGB(population[i].fitness/fitnessColorScale, 0.5, 1, color);
+                
+                ofSetColor(newColor.r, newColor.g, newColor.b);
+                
+                glVertex3f(population[i].x*100, population[i].z*100, population[i].y*100);
+            }
             
-            ofSetColor(newColor.r, newColor.g, newColor.b);
             
-            glVertex3f(population[i].x*100, population[i].z*100, population[i].y*100); 
         }
         
+        //        cout << population.size() << "\n";       
         
         
         glEnd();
     }
     
     glPopMatrix();
+    
 }
 
 

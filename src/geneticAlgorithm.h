@@ -98,7 +98,7 @@ public:
     void calculateSearchSpace();
     void drawSearchSpace(float fitnessThreshold, float fitnessColorScale);
     
-    void drawCurrentPopulation();
+    void drawCurrentPopulation(float fitnessThreshold, float fitnessColorScale);
     
     
 };

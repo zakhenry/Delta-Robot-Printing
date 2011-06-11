@@ -62,6 +62,7 @@ bool StepperControl::println(int stepper, string line){
             if (stepper1Connected){
                 stepper1Ready = false;
                 serial1.writeBytes(charLine,line.size());
+                cout <<"output to serial1: "<<charLine<<"\n";
             }
         }
         break;
@@ -71,6 +72,7 @@ bool StepperControl::println(int stepper, string line){
             if (stepper2Connected){
                 stepper2Ready = false;
                 serial2.writeBytes(charLine,line.size());
+                cout <<"output to serial2: "<<charLine<<"\n";
             }
         }
         break;
@@ -83,41 +85,50 @@ bool StepperControl::println(int stepper, string line){
 void StepperControl::setStepper(int stepper, float angle, float speed){
     
     char buffer [50];
-//    sprintf (buffer, "d%f-s%de", angle, (int)speed); //note speed is cast to int for now, will be float eventually
-    sprintf (buffer, "$"); //note speed is cast to int for now, will be float eventually
+    sprintf (buffer, "d%f-s%de", angle, (int)speed); //note speed is cast to int for now, will be float eventually
+//    sprintf (buffer, "$"); //note speed is cast to int for now, will be float eventually
     println (stepper, buffer);
     
 }
 
 void StepperControl::update(){
+    
+//    serial0.flush();
+//    serial1.flush();
+//    serial2.flush();
 //    cout << "stepper control updated\n";
     if (!stepper0Ready&&stepper0Connected&&serial0.available()>0){
-        string message;
-        cout << "there is "<<serial0.available()<<" bytes available \n";
-        readBytes(0, message, '\n');
+//        string message;
+//        cout << "there is "<<serial0.available()<<" bytes available \n";
+//        readBytes(0, message, 17);
+//        cout << "preflush there is "<<serial0.available()<<" bytes available \n";
         serial0.flush();
-        cout <<"message recieved was "<<message<<"\n";
-        if (message == "complete"){
+//        cout << "postflush there is "<<serial0.available()<<" bytes available \n";
+
+//        cout <<"message recieved was "<<message<<"\n";
+//        if (message == "complete"){
             stepper0Ready = true;
-        }
+//        }
     }
     
     if (!stepper1Ready&&stepper1Connected&&serial0.available()>0){
-        string message;
-        readUntil(1, message, '\n');
-        cout <<"message recieved was\n";
-        if (message == "complete"){
+//        string message;
+//        readUntil(1, message, '\n');
+//        cout <<"message recieved was\n";
+//        if (message == "complete"){
+        serial1.flush();
             stepper1Ready = true;
-        }
+//        }
     }
     
     if (!stepper2Ready&&stepper2Connected&&serial0.available()>0){
-        string message;
-        readUntil(2, message, '\n');
-        cout <<"message recieved was\n";
-        if (message == "complete"){
+//        string message;
+//        readUntil(2, message, '\n');
+//        cout <<"message recieved was\n";
+//        if (message == "complete"){
+        serial2.flush();
             stepper2Ready = true;
-        }
+//        }
     }
 
 }
@@ -208,12 +219,16 @@ bool StepperControl::readBytes(int stepper, string& rResult, int bytesToRead) {
             default:
                 break;
         }
+    
+    
+    memcpy(b,rResult.c_str(),bytesToRead);
+    
 }
 
 bool StepperControl::robotReadyForData(){
     
     
-    if (stepper0Connected /*&& stepper1Connected && stepper2Connected*/ && stepper0Ready && stepper1Ready && stepper2Ready){
+    if (stepper0Connected && stepper1Connected && stepper2Connected && stepper0Ready && stepper1Ready && stepper2Ready){
         return true;
     }
     

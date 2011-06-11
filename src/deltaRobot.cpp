@@ -15,10 +15,16 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength) /*: stepperControl()*/{ //cons
     upperArmMultiplier = 1.5; //1.5
     lowerArmMultiplier = 1.5; //0.9
     
+//    baseSideMultiplier = 24; //2
+//    upperArmMultiplier = 9; //1.5
+//    lowerArmMultiplier = 7; //0.9
+    
 	effectorSideLength = ieffectorSideLength;
 	baseSideLength = effectorSideLength*baseSideMultiplier;
 	upperArmLength = effectorSideLength*upperArmMultiplier;
 	lowerArmLength = effectorSideLength*lowerArmMultiplier;
+    
+    hackCount = 0; //massive hack
     
     //some constants (helps keep calcs fast)
     
@@ -84,8 +90,8 @@ int DeltaRobot::calcInverse(float x0, float y0, float z0, float &theta0, float &
     
     if ((t0>-90)&&(t0<90)&&(t1>-90)&&(t1<90)&&(t2>-90)&&(t2<90)){
         theta0 = t0;
-        theta1 = t0;
-        theta2 = t0;
+        theta1 = t1;
+        theta2 = t2;
     }else{
         status = -1;
 //        cout <<"position impossible (theta0 tried to be "<<t0<<", theta1 tried to be "<<t1<<", theta2 tried to be "<<t2<<")\n";
@@ -151,16 +157,16 @@ int DeltaRobot::setCartesianPosition(float x, float y, float z){
     int result = calcInverse(x, y, z, theta0, theta1, theta2);
     
     if (result != 0){
-        cout << "Position is not possible\n";
+//        cout << "Position is not possible\n";
     }else{
         effectorX = x;
         effectorY = y;
         effectorZ = z;
     }
-    cout << "input value is ("<<x<<","<<y<<","<<z<<")\n";
-    cout << "theta 0 has the angle "<<theta0<<"\n";
-    cout << "theta 1 has the angle "<<theta1<<"\n";
-    cout << "theta 2 has the angle "<<theta2<<"\n";
+//    cout << "input value is ("<<x<<","<<y<<","<<z<<")\n";
+//    cout << "theta 0 has the angle "<<theta0<<"\n";
+//    cout << "theta 1 has the angle "<<theta1<<"\n";
+//    cout << "theta 2 has the angle "<<theta2<<"\n";
     
     return result;
 }
@@ -243,18 +249,18 @@ void DeltaRobot::drawRobot(){
         glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, -(cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
         glVertex3f(effectorX, effectorZ, effectorY-effectorDistanceFromAxis);
         glEnd();
-    /*
+    
         glRotatef(120, 0, 1, 0);
         
         ofSetColor(255, 0, 255);
         glBegin(GL_LINES); //theta1 upper arm
         glVertex3f(0, 0, -tan(ofDegToRad(30))*baseSideLength/2);
-        glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, -(cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis); //im suspicious of this line
+        glVertex3f(0, -sin(ofDegToRad(theta1))*upperArmLength, -(cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis); //im suspicious of this line
         glEnd();
         
         ofSetColor(0, 255, 255);
         glBegin(GL_LINES); //theta1 forearm
-        glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, -(cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
+        glVertex3f(0, -sin(ofDegToRad(theta1))*upperArmLength, -(cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis);
         float rotEffectX, rotEffectY;
         rotateCoordAboutOrigin(-120, effectorX, effectorY, rotEffectX, rotEffectY);
         glVertex3f(rotEffectX, effectorZ, rotEffectY-effectorDistanceFromAxis); //ignore middle one, that is the height
@@ -265,16 +271,16 @@ void DeltaRobot::drawRobot(){
         ofSetColor(255, 0, 255);
         glBegin(GL_LINES); //theta2 upper arm
         glVertex3f(0, 0, -tan(ofDegToRad(30))*baseSideLength/2);
-        glVertex3f(0, -sin(ofDegToRad(theta1))*upperArmLength, -(cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis);
+        glVertex3f(0, -sin(ofDegToRad(theta2))*upperArmLength, -(cos(ofDegToRad(theta2))*upperArmLength)-baseDistanceFromAxis);
         glEnd();
         
-        ofSetColor(0, 255, 255);
+        ofSetColor(100, 100, 255);
         glBegin(GL_LINES); //theta2 forearm //there is something seriously wrong with the forearms - they change in length for some reason
-        glVertex3f(0, -sin(ofDegToRad(theta1))*upperArmLength, -(cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis);
-        rotateCoordAboutOrigin(-120, effectorX, effectorY, rotEffectX, rotEffectY);
+        glVertex3f(0, -sin(ofDegToRad(theta2))*upperArmLength, -(cos(ofDegToRad(theta2))*upperArmLength)-baseDistanceFromAxis);
+        rotateCoordAboutOrigin(-240, effectorX, effectorY, rotEffectX, rotEffectY);
         glVertex3f(rotEffectX, effectorZ, rotEffectY-effectorDistanceFromAxis); //ignore middle one, that is the height
         glEnd();
-   */     
+        
         glPopMatrix();
         
         
@@ -330,7 +336,7 @@ void DeltaRobot::calculateWorkingPointCloud(){ //could be really nice if this wa
     }
     
     
-    cout << "Finished working point cloud calculation, "<<workingPointCloud.size()<<" points added\n";
+//    cout << "Finished working point cloud calculation, "<<workingPointCloud.size()<<" points added\n";
 }
 
 void DeltaRobot::drawWorkingPointCloud(){
@@ -362,7 +368,7 @@ void DeltaRobot::changeProportions(float ibaseSideMultiplier, float iupperArmMul
     calculateCartesianPointCloud();
     calculateWorkingPointCloud();
     
-    cout << "New proportions ("<<baseSideMultiplier<<","<<upperArmMultiplier<<","<<lowerArmMultiplier<<") \n\n";
+//    cout << "New proportions ("<<baseSideMultiplier<<","<<upperArmMultiplier<<","<<lowerArmMultiplier<<") \n\n";
 }
 
 void DeltaRobot::calculateCartesianPointCloud(){ 
@@ -371,12 +377,14 @@ void DeltaRobot::calculateCartesianPointCloud(){
     
     int minX, minY, minZ, maxX, maxY, maxZ;
     
-    int increment = 10;
+    int increment = 20;
     
     maxZ = 0; //no point can be above the base
-    minZ = -(upperArmLength+lowerArmLength);
+//    minZ = -(upperArmLength+lowerArmLength);
+    minZ = -500;
     
-    maxX = upperArmLength+lowerArmLength; //it is in reality slightly less
+//    maxX = upperArmLength+lowerArmLength; //it is in reality slightly less
+    maxX = 500; //it is in reality slightly less
     maxY = maxX;
     
     minY = minX = -(maxX);
@@ -400,7 +408,7 @@ void DeltaRobot::calculateCartesianPointCloud(){
         }
     }
     
-    cout << "Finished cartesian point cloud calculation, "<<cartesianPointCloud.size()<<" points added\n";
+//    cout << "Finished cartesian point cloud calculation, "<<cartesianPointCloud.size()<<" points added\n";
     
 }
 
@@ -408,15 +416,19 @@ float DeltaRobot::calculateCartesianPointCloudSize(float baseSideMultiplier, flo
     
     clock_t tStart = clock();
     
-    /*
     
-    changeProportions(baseSideMultiplier, upperArmMultiplier, lowerArmMultiplier);
     
-    calculateCartesianPointCloud();
+//    changeProportions(baseSideMultiplier, upperArmMultiplier, lowerArmMultiplier);
     
-    float fitness = cartesianPointCloud.size(); //shouldn't really be a float
+//    calculateCartesianPointCloud();
+//    float fitness = -1;
+
+    /*if (workingPointCloud.size()>0&&cartesianPointCloud.size()>0){
+        fitness = (float)cartesianPointCloud.size()/((float)workingPointCloud.size());
+        cout << "workingPointCloud.size(): "<<(float)workingPointCloud.size()<<" cartesianPointCloud.size(): "<<(float)cartesianPointCloud.size()<<" calculated fitness to be: "<<fitness<<" \n";
+    }*/
+        
     
-    */
     
 //    float fitness = 100*powf((y-powf(x, 2)), 2)+powf((1-x), 2); //Rosenbrock's banana function
     
@@ -475,7 +487,11 @@ void DeltaRobot::runPath(PathLoader::pathFile file){
 
 void DeltaRobot::gotoNextWaypt(){
     
+    
+    
     if (stepperControl.robotReadyForData()){
+        
+        
         
         ofPoint nextWaypt = queuedWaypoints[0];
         
@@ -485,9 +501,22 @@ void DeltaRobot::gotoNextWaypt(){
         stepperControl.setStepper(1, theta1, 100);
         stepperControl.setStepper(2, theta2, 100);
         
-        queuedWaypoints.erase(queuedWaypoints.begin()); //pop waypt off the front        
+        cout <<"set steppers to (t0:"<<theta0<<", t1:"<<theta1<<", t2:"<<theta2<<")\n";
+        
+        
+        cout <<"Waypoints to go: "<<queuedWaypoints.size()<<"\n";
+        if (hackCount==1){
+            queuedWaypoints.erase(queuedWaypoints.begin()); //pop waypt off the front
+        }else{
+            hackCount = 0;
+        }
+        
+        
+        cout <<"Waypoints to go: "<<queuedWaypoints.size()<<"\n";
         
         cout << "effector position should be at ("<<nextWaypt.x<<","<<nextWaypt.y<<","<<nextWaypt.z<<"). It is at ("<<effectorX<<","<<effectorY<<","<<effectorZ<<")\n";
+        
+        hackCount ++;
         
     }
     

@@ -37,7 +37,7 @@ public: //temporarily here so I can test functions out
     vector<ofPoint>queuedWaypoints;
     void gotoNextWaypt();
     
-    
+    int hackCount;
 	
 //public:
     

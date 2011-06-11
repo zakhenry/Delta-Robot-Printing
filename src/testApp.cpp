@@ -133,7 +133,7 @@ void testApp::draw(){
             
     }else{
         ga.drawSearchSpace(fitnessThreshold, fitnessColorScale);
-        ga.drawCurrentPopulation();
+        ga.drawCurrentPopulation(fitnessThreshold, fitnessColorScale);
     }
     
     
