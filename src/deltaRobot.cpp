@@ -9,7 +9,7 @@
 
 #include "deltaRobot.h"
 
-DeltaRobot::DeltaRobot(float ieffectorSideLength) /*: stepperControl()*/{ //constructor
+DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
     
     baseSideMultiplier = 2; //2
     upperArmMultiplier = 1.5; //1.5
@@ -23,8 +23,6 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength) /*: stepperControl()*/{ //cons
 	baseSideLength = effectorSideLength*baseSideMultiplier;
 	upperArmLength = effectorSideLength*upperArmMultiplier;
 	lowerArmLength = effectorSideLength*lowerArmMultiplier;
-    
-    hackCount = 0; //massive hack
     
     //some constants (helps keep calcs fast)
     
@@ -51,6 +49,8 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength) /*: stepperControl()*/{ //cons
     
     //calculateWorkingPointCloud(); //calculate point cloud straight away
 	
+    stepperControl.setupDevices();
+    
 	cout << "Delta Robot class instantiated \n";
 }
 
@@ -491,8 +491,6 @@ void DeltaRobot::gotoNextWaypt(){
     
     if (stepperControl.robotReadyForData()){
         
-        
-        
         ofPoint nextWaypt = queuedWaypoints[0];
         
         setCartesianPosition(nextWaypt.x, nextWaypt.y, nextWaypt.z);
@@ -505,18 +503,12 @@ void DeltaRobot::gotoNextWaypt(){
         
         
         cout <<"Waypoints to go: "<<queuedWaypoints.size()<<"\n";
-        if (hackCount==1){
-            queuedWaypoints.erase(queuedWaypoints.begin()); //pop waypt off the front
-        }else{
-            hackCount = 0;
-        }
+        queuedWaypoints.erase(queuedWaypoints.begin()); //pop waypt off the front
         
         
         cout <<"Waypoints to go: "<<queuedWaypoints.size()<<"\n";
         
         cout << "effector position should be at ("<<nextWaypt.x<<","<<nextWaypt.y<<","<<nextWaypt.z<<"). It is at ("<<effectorX<<","<<effectorY<<","<<effectorZ<<")\n";
-        
-        hackCount ++;
         
     }
     

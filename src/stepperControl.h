@@ -21,6 +21,7 @@ class StepperControl {
 public:
     
     StepperControl(); //constructor
+    void setupDevices();
     
     ofSerial serial0, serial1, serial2;
     

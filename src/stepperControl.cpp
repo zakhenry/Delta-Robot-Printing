@@ -15,14 +15,19 @@ StepperControl::StepperControl(){ //constructor
     
     stepper0Ready = stepper1Ready = stepper2Ready = true;
     stepper0Connected = stepper1Connected = stepper2Connected = false;
+
+
+}
+
+void StepperControl::setupDevices(){
     
     serial0.enumerateDevices();
+    printf("enumerated serial0 devices\n");
     
     if(!serial0.setup(/*"tty.usbserial-A9007Mbm"*/5, 9600)){
         printf("Serial setup failed!\n");
     }else{
         stepper0Connected = true;
-        serial0.flush();
     }
     
     if(!serial1.setup(/*"tty.usbserial-A9007Mbm"*/7, 9600)){
@@ -36,7 +41,6 @@ StepperControl::StepperControl(){ //constructor
     }else{
         stepper2Connected = true;
     }
-
 }
 
 bool StepperControl::println(int stepper, string line){
