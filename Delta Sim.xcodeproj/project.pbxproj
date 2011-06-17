@@ -11,8 +11,6 @@
 		6C5803D91384CE2B00484F76 /* geneticAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C5803D71384CE2B00484F76 /* geneticAlgorithm.cpp */; };
 		6C6DB2F21398EF17000B5916 /* MultitouchSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C6DB2F11398EF17000B5916 /* MultitouchSupport.framework */; };
 		6C6DB2F81398EF51000B5916 /* ofxMultiTouchPad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C6DB2F61398EF51000B5916 /* ofxMultiTouchPad.cpp */; };
-		6C73B7DD13AAFD8F0099D70D /* pathLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C73B7D913AAFD8F0099D70D /* pathLoader.cpp */; };
-		6C73B7DE13AAFD8F0099D70D /* stepperControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C73B7DB13AAFD8F0099D70D /* stepperControl.cpp */; };
 		6C94DDA113A06657001BA52F /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C94DD9A13A06657001BA52F /* tinyxml.cpp */; };
 		6C94DDA213A06657001BA52F /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C94DD9C13A06657001BA52F /* tinyxmlerror.cpp */; };
 		6C94DDA313A06657001BA52F /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C94DD9D13A06657001BA52F /* tinyxmlparser.cpp */; };
@@ -99,10 +97,6 @@
 		6C6DB2F51398EF51000B5916 /* MTTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTTypes.h; sourceTree = "<group>"; };
 		6C6DB2F61398EF51000B5916 /* ofxMultiTouchPad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMultiTouchPad.cpp; sourceTree = "<group>"; };
 		6C6DB2F71398EF51000B5916 /* ofxMultiTouchPad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouchPad.h; sourceTree = "<group>"; };
-		6C73B7D913AAFD8F0099D70D /* pathLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pathLoader.cpp; sourceTree = "<group>"; };
-		6C73B7DA13AAFD8F0099D70D /* pathLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pathLoader.h; sourceTree = "<group>"; };
-		6C73B7DB13AAFD8F0099D70D /* stepperControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stepperControl.cpp; sourceTree = "<group>"; };
-		6C73B7DC13AAFD8F0099D70D /* stepperControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stepperControl.h; sourceTree = "<group>"; };
 		6C94DD9813A06657001BA52F /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
 		6C94DD9A13A06657001BA52F /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml.cpp; sourceTree = "<group>"; };
 		6C94DD9B13A06657001BA52F /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
@@ -490,10 +484,6 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				6C73B7D913AAFD8F0099D70D /* pathLoader.cpp */,
-				6C73B7DA13AAFD8F0099D70D /* pathLoader.h */,
-				6C73B7DB13AAFD8F0099D70D /* stepperControl.cpp */,
-				6C73B7DC13AAFD8F0099D70D /* stepperControl.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
@@ -673,8 +663,6 @@
 				6C94DDA213A06657001BA52F /* tinyxmlerror.cpp in Sources */,
 				6C94DDA313A06657001BA52F /* tinyxmlparser.cpp in Sources */,
 				6C94DDA413A06657001BA52F /* ofxXmlSettings.cpp in Sources */,
-				6C73B7DD13AAFD8F0099D70D /* pathLoader.cpp in Sources */,
-				6C73B7DE13AAFD8F0099D70D /* stepperControl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

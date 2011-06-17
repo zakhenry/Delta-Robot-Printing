@@ -49,17 +49,11 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
     
     //calculateWorkingPointCloud(); //calculate point cloud straight away
 	
-    stepperControl.setupDevices();
     
 	cout << "Delta Robot class instantiated \n";
 }
 
 void DeltaRobot::update(){
-    stepperControl.update();
-    
-    if (queuedWaypoints.size()>0){
-        gotoNextWaypt();
-    }
 }
 
 int DeltaRobot::calcAngleYZ(float x0, float y0, float z0, float &theta) { //returns 0 if ok, -1 if not
@@ -457,60 +451,4 @@ void DeltaRobot::drawCartesianPointCloud(){
     
 }
 
-bool DeltaRobot::currentPathFileIsPossible(PathLoader::pathFile file){
-    
-    
-    cout << file.parameters.speed <<" -> speed in xml file \n";
-    
-    for (int i = 0; i< file.points.size(); i++){
-        if (!positionIsPossible(file.points[i].x, file.points[i].y, file.points[i].z)){
-            return false; 
-        }
-    }
-    
-     return true;
-    
-}
-
-void DeltaRobot::runPath(PathLoader::pathFile file){
-    
-    if (currentPathFileIsPossible(file)){
-        
-        queuedWaypoints = file.points;
-        
-    }else{
-        cout << "Path cannot be run by robot in current configuration \n";
-    }
-    
-    
-}
-
-void DeltaRobot::gotoNextWaypt(){
-    
-    
-    
-    if (stepperControl.robotReadyForData()){
-        
-        ofPoint nextWaypt = queuedWaypoints[0];
-        
-        setCartesianPosition(nextWaypt.x, nextWaypt.y, nextWaypt.z);
-        
-        stepperControl.setStepper(0, theta0, 100);
-        stepperControl.setStepper(1, theta1, 100);
-        stepperControl.setStepper(2, theta2, 100);
-        
-        cout <<"set steppers to (t0:"<<theta0<<", t1:"<<theta1<<", t2:"<<theta2<<")\n";
-        
-        
-        cout <<"Waypoints to go: "<<queuedWaypoints.size()<<"\n";
-        queuedWaypoints.erase(queuedWaypoints.begin()); //pop waypt off the front
-        
-        
-        cout <<"Waypoints to go: "<<queuedWaypoints.size()<<"\n";
-        
-        cout << "effector position should be at ("<<nextWaypt.x<<","<<nextWaypt.y<<","<<nextWaypt.z<<"). It is at ("<<effectorX<<","<<effectorY<<","<<effectorZ<<")\n";
-        
-    }
-    
-}
 

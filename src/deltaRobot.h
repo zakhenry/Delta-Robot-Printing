@@ -12,8 +12,6 @@
 // than once which would confuse the compiler
 
 #include "ofMain.h"
-#include "pathLoader.h"
-#include "stepperControl.h"
 
 class StepperControl; //forward declaration allows access to methods
 
@@ -31,8 +29,6 @@ public: //temporarily here so I can test functions out
     struct workingPoint{
         float x, y, z;
     };
-    
-    StepperControl stepperControl;
     
     vector<ofPoint>queuedWaypoints;
     void gotoNextWaypt();
@@ -74,9 +70,7 @@ public: //temporarily here so I can test functions out
     void drawCartesianPointCloud();
     
     float calculateCartesianPointCloudSize(float, float, float, float &elapsedTime); //this is the fitness function that the ga runs
-    
-    bool currentPathFileIsPossible(PathLoader::pathFile);
-    void runPath(PathLoader::pathFile);
+
 };
 
 

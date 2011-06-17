@@ -7,7 +7,6 @@
 
 #include "deltaRobot.h"
 #include "geneticAlgorithm.h"
-#include "pathLoader.h"
 
 class testApp : public ofBaseApp{
 	
@@ -39,7 +38,6 @@ class testApp : public ofBaseApp{
         
         //added class instances
     
-        PathLoader pathLoader;
         
     
         
