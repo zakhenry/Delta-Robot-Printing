@@ -7,9 +7,6 @@ bool showCartesianPointCloud = false;
 
 DeltaRobot deltaRobot(effectorSideLength);
 
-//GeneticAlgorithm ga; //comment out if using serial devices
-
-bool drawRobot = true;
 float currentTouchScale = 0;
 float current3TouchHeight, current2TouchHeight = 0;
 
@@ -113,7 +110,6 @@ void testApp::draw(){
         glVertex3f(0, -ofGetHeight()/2, -600);
     glEnd();
 */    
-    if (drawRobot){
         deltaRobot.setCoordinatesToRobot();
         deltaRobot.drawRobot();
         
@@ -131,10 +127,6 @@ void testApp::draw(){
         
         deltaRobot.releaseCoordinatesFromRobot();
             
-    }else{
-//        ga.drawSearchSpace(fitnessThreshold, fitnessColorScale);
-//        ga.drawCurrentPopulation(fitnessThreshold, fitnessColorScale);
-    }
     
     
     
@@ -219,18 +211,7 @@ void testApp::keyPressed  (int key){
             showCartesianPointCloud = !showCartesianPointCloud;
             showWorkPointCloud = false;
 			break;
-            
-        case 'o':
-//            ga.run();
-            break;
-            
-        case 'l':
-//            ga.calculateSearchSpace();
-            break;
-            
-        case 'k':
-            drawRobot = !drawRobot;
-            break;
+
             
         case ' ':
             tumble = !tumble;
