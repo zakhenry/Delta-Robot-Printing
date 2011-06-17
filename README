@@ -1,4 +1,4 @@
-Added files required for compiling.  You'll still need to add ofx3DmodelLoader and ofxMultiTouchPad addons for compilation.
+This branch is for development of the genetic algorithm as development of the serial communication is starting to cause issues
 
 ===================================================================================================
 
