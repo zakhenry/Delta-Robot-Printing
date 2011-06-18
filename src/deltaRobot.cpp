@@ -12,7 +12,7 @@
 DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
     
     baseSideMultiplier = 2; //2
-    upperArmMultiplier = 1.5; //1.5
+    upperArmMultiplier = 1.6; //1.5
     lowerArmMultiplier = 1.0; //0.9
     
 //    baseSideMultiplier = 24; //2
@@ -45,7 +45,7 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
 //    directControl = false; //start in cartesian control mode
 //    setAngles(0, 0, 0); //set arms to home position
     
-    setCartesianPosition(0, 0, -100);
+    setCartesianPosition(0, 0, -100, true);
     
     //calculateWorkingPointCloud(); //calculate point cloud straight away
 	
@@ -152,21 +152,43 @@ int DeltaRobot::calcForward(float theta0, float theta1, float theta2, float &x0,
 	return 0;
 }
 
-int DeltaRobot::setCartesianPosition(float x, float y, float z){
+int DeltaRobot::setCartesianPosition(float x, float y, float z, bool setSteppers){
     
-    int result = calcInverse(x, y, z, theta0, theta1, theta2);
+    float newTheta0, newTheta1, newTheta2;
+    
+    int result = calcInverse(x, y, z, newTheta0, newTheta1, newTheta2);
     
     if (result != 0){
-//        cout << "Position is not possible\n";
+        cout << "Position is not possible\n";
     }else{
+        
+        
+        
+        if (setSteppers){
+            if (stepperControl.robotReadyForData()){
+                stepperControl.setStepper(0, theta0, 1000);
+                stepperControl.setStepper(1, theta1, 1000);
+                stepperControl.setStepper(2, theta2, 1000);
+            }else{
+                return -1; //dont move as steppers are not ready
+            }
+        }
+        
+        theta0 = newTheta0;
+        theta1 = newTheta1;
+        theta2 = newTheta2;
+        
         effectorX = x;
         effectorY = y;
         effectorZ = z;
+        
     }
-//    cout << "input value is ("<<x<<","<<y<<","<<z<<")\n";
-//    cout << "theta 0 has the angle "<<theta0<<"\n";
-//    cout << "theta 1 has the angle "<<theta1<<"\n";
-//    cout << "theta 2 has the angle "<<theta2<<"\n";
+    cout << "input value is ("<<x<<","<<y<<","<<z<<")\n";
+    cout << "theta 0 has the angle "<<theta0<<"\n";
+    cout << "theta 1 has the angle "<<theta1<<"\n";
+    cout << "theta 2 has the angle "<<theta2<<"\n";
+    
+    cout << "result is :"<<result<<"\n";
     
     return result;
 }
@@ -497,7 +519,7 @@ void DeltaRobot::gotoNextWaypt(){
         
         ofPoint nextWaypt = queuedWaypoints[0];
         
-        setCartesianPosition(nextWaypt.x, nextWaypt.y, nextWaypt.z);
+        setCartesianPosition(nextWaypt.x, nextWaypt.y, nextWaypt.z, false);
         
         stepperControl.setStepper(0, theta0, 800);
         stepperControl.setStepper(1, theta1, 800);
@@ -506,7 +528,7 @@ void DeltaRobot::gotoNextWaypt(){
         cout <<"set steppers to (t0:"<<theta0<<", t1:"<<theta1<<", t2:"<<theta2<<")\n";
         
         
-        cout <<"Waypoints to go: "<<queuedWaypoints.size()<<"\n";
+//        cout <<"Waypoints to go: "<<queuedWaypoints.size()<<"\n";
         queuedWaypoints.erase(queuedWaypoints.begin()); //pop waypt off the front
         
         
@@ -514,6 +536,8 @@ void DeltaRobot::gotoNextWaypt(){
         
         cout << "effector position should be at ("<<nextWaypt.x<<","<<nextWaypt.y<<","<<nextWaypt.z<<"). It is at ("<<effectorX<<","<<effectorY<<","<<effectorZ<<")\n";
         
+    }else {
+        cout <<"there is a waypoint (wayps left:"<<queuedWaypoints.size()<<") in queue, but robot is busy\n";
     }
     
 }

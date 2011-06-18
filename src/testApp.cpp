@@ -15,6 +15,9 @@ bool tumble = false;
 float fitnessThreshold = 100; //mod himmelblau
 float fitnessColorScale = 400;
 //float fitnessThreshold = 5000; //delta
+float effectorCursorX, effectorCursorY, effectorCursorZ = 0;
+bool cursorPositionPossible = false;
+bool runSteppersWithCursor = false;
 
 //--------------------------------------------------------------
 void testApp::setup(){	
@@ -121,6 +124,8 @@ void testApp::draw(){
     
         deltaRobot.setCoordinatesToRobot();
         
+    
+        
         if (pathLoader.currentPathFile.points.size()>0){
             pathLoader.drawCurrentPath(true);
         }
@@ -135,7 +140,17 @@ void testApp::draw(){
             deltaRobot.drawCartesianPointCloud();
         }
         
-        
+    /*Effector cursor*/
+    glPointSize(5.0);
+    glBegin(GL_POINTS);
+    if (cursorPositionPossible){
+        ofSetColor(0x000000);  
+    }else{
+        ofSetColor(0xff0000);
+    }
+    
+    glVertex3f(effectorCursorX, effectorCursorZ, effectorCursorY);
+    glEnd();
         
         deltaRobot.releaseCoordinatesFromRobot();
             
@@ -152,22 +167,27 @@ void testApp::keyPressed  (int key){
 	switch (key) {
 		case 'd':
 //			xMove +=5;
-            deltaRobot.setCartesianPosition(deltaRobot.effectorX+=5, deltaRobot.effectorY, deltaRobot.effectorZ);
+            cursorPositionPossible = (deltaRobot.setCartesianPosition(effectorCursorX+=5, effectorCursorY, effectorCursorZ, runSteppersWithCursor)==0);
 			break;
 		case 'a':
-            deltaRobot.setCartesianPosition(deltaRobot.effectorX-=5, deltaRobot.effectorY, deltaRobot.effectorZ);
+//            deltaRobot.setCartesianPosition(deltaRobot.effectorX-5, deltaRobot.effectorY, deltaRobot.effectorZ, true);
+            cursorPositionPossible = (deltaRobot.setCartesianPosition(effectorCursorX-=5, effectorCursorY, effectorCursorZ, runSteppersWithCursor)==0);
 			break;
 		case 'e':
-            deltaRobot.setCartesianPosition(deltaRobot.effectorX, deltaRobot.effectorY+=5, deltaRobot.effectorZ);
+//            deltaRobot.setCartesianPosition(deltaRobot.effectorX, deltaRobot.effectorY+5, deltaRobot.effectorZ, true);
+            cursorPositionPossible = (deltaRobot.setCartesianPosition(effectorCursorX, effectorCursorY+=5, effectorCursorZ, runSteppersWithCursor)==0);
 			break;
 		case 'q':
-            deltaRobot.setCartesianPosition(deltaRobot.effectorX, deltaRobot.effectorY-=5, deltaRobot.effectorZ);
+//            deltaRobot.setCartesianPosition(deltaRobot.effectorX, deltaRobot.effectorY-5, deltaRobot.effectorZ, true);
+            cursorPositionPossible = (deltaRobot.setCartesianPosition(effectorCursorX, effectorCursorY-=5, effectorCursorZ, runSteppersWithCursor)==0);
 			break;
 		case 's':
-            deltaRobot.setCartesianPosition(deltaRobot.effectorX, deltaRobot.effectorY, deltaRobot.effectorZ+=5);
+//            deltaRobot.setCartesianPosition(deltaRobot.effectorX, deltaRobot.effectorY, deltaRobot.effectorZ+5, true);
+            cursorPositionPossible = (deltaRobot.setCartesianPosition(effectorCursorX, effectorCursorY, effectorCursorZ+=5, runSteppersWithCursor)==0);
 			break;
 		case 'w':
-            deltaRobot.setCartesianPosition(deltaRobot.effectorX, deltaRobot.effectorY, deltaRobot.effectorZ-=5);
+//            deltaRobot.setCartesianPosition(deltaRobot.effectorX, deltaRobot.effectorY, deltaRobot.effectorZ-5, true);
+            cursorPositionPossible = (deltaRobot.setCartesianPosition(effectorCursorX, effectorCursorY, effectorCursorZ-=5, runSteppersWithCursor)==0);
 			break;
 
 		case 't':
@@ -231,6 +251,10 @@ void testApp::keyPressed  (int key){
             
         case 'r':
             deltaRobot.runPath(pathLoader.currentPathFile);
+            break;
+            
+        case 13:
+            runSteppersWithCursor = !runSteppersWithCursor;
             break;
             
 			

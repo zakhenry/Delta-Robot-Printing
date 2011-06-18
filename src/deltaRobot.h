@@ -52,7 +52,7 @@ public: //temporarily here so I can test functions out
 	int calcInverse(float, float, float, float&, float&, float&); // inverse kinematics
 	int calcForward(float, float, float, float&, float&, float&); //forward kinematics
     
-    int setCartesianPosition(float x, float y, float z); // inverse kinematics
+    int setCartesianPosition(float x, float y, float z, bool setSteppers); // inverse kinematics
     int setAngles(float theta0, float theta1, float theta2); //forward kinematics
 	
 	bool positionIsPossible(float, float, float);
