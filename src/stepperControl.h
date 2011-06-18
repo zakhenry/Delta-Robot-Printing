@@ -33,15 +33,11 @@ public:
     
     void update();
     
-    bool readUntil(int stepper, string& rResult, char cUntil);
-    
-    bool readBytes(int stepper, string& rResult, int bytesToRead);
-    
     bool robotReadyForData();
     
-    string message, messageBuffer;
-    unsigned char bytesReturned[1];
-    void read(ofSerial& serialPort, int portNum);
+    string message0, message1, message2, messageBuffer0, messageBuffer1, messageBuffer2;
+    unsigned char bytesReturned0[1], bytesReturned1[1], bytesReturned2[1];
+    void read(ofSerial& serialPort, int portNum, unsigned char * bytesReturned, string& messageBuffer, string& message);
     
 };
 

@@ -167,8 +167,11 @@ void testApp::draw(){
 void testApp::keyPressed  (int key){ 
 	
 	switch (key) {
+            
+            if (deltaRobot.stepperControl.robotReadyForData()){
+                
+            
 		case 'd':
-//			xMove +=5;
             cursorPositionPossible = (deltaRobot.setCartesianPosition(effectorCursorX+=5, effectorCursorY, effectorCursorZ, runSteppersWithCursor)==0);
 			break;
 		case 'a':
@@ -191,6 +194,8 @@ void testApp::keyPressed  (int key){
 //            deltaRobot.setCartesianPosition(deltaRobot.effectorX, deltaRobot.effectorY, deltaRobot.effectorZ-5, true);
             cursorPositionPossible = (deltaRobot.setCartesianPosition(effectorCursorX, effectorCursorY, effectorCursorZ-=5, runSteppersWithCursor)==0);
 			break;
+                
+                }
 
 		case 't':
             deltaRobot.setAngles(deltaRobot.theta0-=5, deltaRobot.theta1, deltaRobot.theta2);

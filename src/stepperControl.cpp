@@ -98,102 +98,13 @@ void StepperControl::setStepper(int stepper, float angle, float speed){
 
 void StepperControl::update(){
     
-    read(serial0, 0);
-    read(serial1, 1);
-//    read(serial2, 2);
-
-}
-
-bool StepperControl::readUntil(int stepper, string& rResult, char cUntil) {
-    cout <<"waiting for message from "<<stepper<<"\n";
-//	char b[1];
-    unsigned char * b = new unsigned char[1];
-	char buf[1];
-	int  i = 0;
-    
-	do {
-        int n = -1;
-		
-        switch (stepper) {
-            case 0:
-                n = serial0.readBytes(b, 1);  // read a char at a time
-//                serial0.flush();
-                
-                break;
-                
-            case 1:
-                n = serial1.readBytes(b, 1);  // read a char at a time
-                break;
-                
-            case 2:
-                n = serial2.readBytes(b, 1);  // read a char at a time
-                break;
-                
-            default:
-                break;
-        }
-		if( n == -1) return false;    // couldn't read
-		if(n == 0) {
-			return false;
-		}
-		buffer.push_back(b[0]);
-        
-		i++;
-        
-//        cout <<"Serial byte is "<<b[0]<<"\n";
-	} while( b[0] != cUntil );
-    
-    cout <<"Buffer is ";
-    for (int j=0; j<buffer.size(); j++){
-        cout <<buffer[j];
+    if (!robotReadyForData()){ //only read if a message has been sent to steppers
+        read(serial0, 0, bytesReturned0, messageBuffer0, message0);
+        read(serial1, 1, bytesReturned1, messageBuffer1, message1);
+        //    read(serial2, 2);
     }
-    cout <<"\n";
-	
-	std::vector<char>::iterator it = buffer.begin();
-	while(it != buffer.end()) {
-		rResult.push_back((*it));
-		++it;
-	}
-	buffer.clear();
-	return true;
     
-}
 
-bool StepperControl::readBytes(int stepper, string& rResult, int bytesToRead) {
-    cout <<"waiting for message from "<<stepper<<"\n";
-    //	char b[1];
-    unsigned char * b = new unsigned char[bytesToRead];
-    
-    int n = -1;
-    
-        switch (stepper) {
-            case 0:
-                n = serial0.readBytes(b, bytesToRead);  // read a char at a time
-                
-                cout <<"buffer reads: "<<b<<"\n";
-                
-                if (n>0){
-                    return true;
-                }
-                return false;
-                
-                break;
-                
-            case 1:
-                n = serial1.readByte();  // read a char at a time
-                break;
-                
-            case 2:
-                n = serial2.readByte();  // read a char at a time
-                break;
-                
-            default:
-                break;
-        }
-    
-    
-    memcpy(b,rResult.c_str(),bytesToRead);
-    
 }
 
 bool StepperControl::robotReadyForData(){
@@ -207,7 +118,7 @@ bool StepperControl::robotReadyForData(){
     
 }
 
-void StepperControl::read(ofSerial& serialPort, int stepperNum)
+void StepperControl::read(ofSerial& serialPort, int stepperNum, unsigned char * bytesReturned, string& messageBuffer, string& message)
 {
     
     // if we've got new bytes
@@ -230,7 +141,8 @@ void StepperControl::read(ofSerial& serialPort, int stepperNum)
                 messageBuffer = "";
                 
                 if (message == "done"){
-                    cout << "stepper"<<stepperNum<<" is done";
+                    message = "";
+                    cout << "stepper"<<stepperNum<<" is done\n";
                     switch (stepperNum) {
                         case 0:
                             stepper0Ready = true;
@@ -247,8 +159,9 @@ void StepperControl::read(ofSerial& serialPort, int stepperNum)
                         default:
                             break;
                     }
+                }else {
+                    cout <<"UNEXPECTED MESSAGE ("<<message<<")\n";
                 }
-                cout << "new message is: "<<message<<"\n";
                 
                 break;
             }
@@ -257,7 +170,7 @@ void StepperControl::read(ofSerial& serialPort, int stepperNum)
                 if(*bytesReturned != '\r')
                     messageBuffer += *bytesReturned;
             }
-            //cout << "  messageBuffer: " << messageBuffer << "\n";
+            cout << "  messageBuffer: (" << messageBuffer << ") steppernumber:"<<stepperNum<<"\n";
         }
         
         // clear the message buffer

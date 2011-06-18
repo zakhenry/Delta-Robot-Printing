@@ -502,7 +502,7 @@ void DeltaRobot::runPath(PathLoader::pathFile file){
     
     if (currentPathFileIsPossible(file)){
         
-        queuedWaypoints = file.points;
+        queuedWaypoints = file.points; //erases current queue. do I want this?
         
     }else{
         cout << "Path cannot be run by robot in current configuration \n";
@@ -533,7 +533,7 @@ void DeltaRobot::gotoNextWaypt(){
         cout << "effector position should be at ("<<nextWaypt.x<<","<<nextWaypt.y<<","<<nextWaypt.z<<"). It is at ("<<effectorX<<","<<effectorY<<","<<effectorZ<<")\n";
         
     }else {
-        cout <<"there is a waypoint (wayps left:"<<queuedWaypoints.size()<<") in queue, but robot is busy\n";
+//        cout <<"there is a waypoint (wayps left:"<<queuedWaypoints.size()<<") in queue, but robot is busy\n";
     }
     
 }
