@@ -244,7 +244,7 @@ void DeltaRobot::drawRobot(){
         glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, -(cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
         glEnd();
         
-        ofSetColor(0, 255, 255);
+        ofSetColor(0, 200, 200);
         glBegin(GL_LINES); //theta0 forearm
         glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, -(cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
         glVertex3f(effectorX, effectorZ, effectorY-effectorDistanceFromAxis);
@@ -495,9 +495,9 @@ void DeltaRobot::gotoNextWaypt(){
         
         setCartesianPosition(nextWaypt.x, nextWaypt.y, nextWaypt.z);
         
-        stepperControl.setStepper(0, theta0, 100);
-        stepperControl.setStepper(1, theta1, 100);
-        stepperControl.setStepper(2, theta2, 100);
+        stepperControl.setStepper(0, theta0, 800);
+        stepperControl.setStepper(1, theta1, 800);
+        stepperControl.setStepper(2, theta2, 800);
         
         cout <<"set steppers to (t0:"<<theta0<<", t1:"<<theta1<<", t2:"<<theta2<<")\n";
         

@@ -28,9 +28,15 @@ void testApp::setup(){
 		
 //	ofSetVerticalSync(true);
 
-    //some model / light stuff
-    glEnable (GL_DEPTH_TEST);
-    glShadeModel (GL_SMOOTH);
+    //some model / light stuffx
+    
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glClear (GL_COLOR_BUFFER_BIT);
+    glEnable (GL_BLEND);
+    glEnable (GL_POLYGON_SMOOTH);
+    glDisable (GL_DEPTH_TEST);
+    glLineWidth(4.0);
     
     
     

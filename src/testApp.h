@@ -6,7 +6,6 @@
 #include "ofxMultiTouchPad.h"
 
 #include "deltaRobot.h"
-#include "geneticAlgorithm.h"
 #include "pathLoader.h"
 
 class testApp : public ofBaseApp{
