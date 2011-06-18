@@ -95,7 +95,7 @@ void PathLoader::drawCurrentPath(bool showPaths){
         if (showPaths){
             glBegin(GL_LINE_STRIP);
             
-            ofSetColor(255, 255, 200);
+            ofSetColor(0xffffff);
             
             for (int i=0; i<currentPathFile.points.size(); i++){
                 glVertex3f(currentPathFile.points[i].x, currentPathFile.points[i].z, currentPathFile.points[i].y); 
@@ -107,7 +107,7 @@ void PathLoader::drawCurrentPath(bool showPaths){
         glPointSize(5.0);
         glBegin(GL_POINTS);
         
-        ofSetColor(255, 255, 0);
+        ofSetColor(0xeeeeee);
         
         for (int i=0; i<currentPathFile.points.size(); i++){
             glVertex3f(currentPathFile.points[i].x, currentPathFile.points[i].z, currentPathFile.points[i].y);

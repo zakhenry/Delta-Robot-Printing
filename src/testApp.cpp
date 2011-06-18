@@ -24,7 +24,7 @@ void testApp::setup(){
     ofAddListener(pad.touchAdded, this, &testApp::newTouch);
     ofAddListener(pad.touchRemoved, this, &testApp::removedTouch);
     
-	ofBackground(0,0,0);
+	ofBackground(250, 250, 250);
 		
 //	ofSetVerticalSync(true);
 
@@ -97,9 +97,9 @@ void testApp::draw(){
     ofSetColor(100, 100, 100);
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 200, -200);
     
-/*    
+    
 	 //fake back wall
-    ofSetColor(50, 50, 50);
+    ofSetColor(0xdddddd);
     glBegin(GL_QUADS);
         glVertex3f(0.0, -ofGetHeight()/2, -600);
         glVertex3f(ofGetWidth(), -ofGetHeight()/2, -600);
@@ -108,15 +108,23 @@ void testApp::draw(){
     glEnd();
 
     //fake wall
-    ofSetColor(20, 20, 20);
+    ofSetColor(0xeeeeee);
     glBegin(GL_QUADS);
         glVertex3f(0.0, -ofGetHeight()/2, 0);
         glVertex3f(ofGetWidth(), -ofGetHeight()/2, 0);
         glVertex3f(ofGetWidth(), -ofGetHeight()/2, -600);
         glVertex3f(0, -ofGetHeight()/2, -600);
     glEnd();
-*/    
+   
+    
+    
+    
         deltaRobot.setCoordinatesToRobot();
+        
+        if (pathLoader.currentPathFile.points.size()>0){
+            pathLoader.drawCurrentPath(true);
+        }
+    
         deltaRobot.drawRobot();
         
         if (deltaRobot.workingPointCloud.size()>0&&showWorkPointCloud){
@@ -127,9 +135,7 @@ void testApp::draw(){
             deltaRobot.drawCartesianPointCloud();
         }
         
-        if (pathLoader.currentPathFile.points.size()>0){
-            pathLoader.drawCurrentPath(true);
-        }
+        
         
         deltaRobot.releaseCoordinatesFromRobot();
             
@@ -233,7 +239,7 @@ void testApp::keyPressed  (int key){
 			break;
 	}
 	
-//	cout << "Theta 0: " << deltaRobot.theta0 << " Theta 1: " << deltaRobot.theta1 <<" Theta 2: " << deltaRobot.theta2 << "\n";
+	cout << "Theta 0: " << deltaRobot.theta0 << " Theta 1: " << deltaRobot.theta1 <<" Theta 2: " << deltaRobot.theta2 << "\n";
 //	cout << "EffectorX: " << deltaRobot.effectorX << " EffectorY: " << deltaRobot.effectorY << " EffectorZ: " << deltaRobot.effectorZ << "\n\n\n";
     
 }

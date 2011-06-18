@@ -13,7 +13,7 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
     
     baseSideMultiplier = 2; //2
     upperArmMultiplier = 1.5; //1.5
-    lowerArmMultiplier = 1.5; //0.9
+    lowerArmMultiplier = 1.0; //0.9
     
 //    baseSideMultiplier = 24; //2
 //    upperArmMultiplier = 9; //1.5
@@ -209,7 +209,7 @@ void DeltaRobot::releaseCoordinatesFromRobot(){
 }
 
 void DeltaRobot::drawRobot(){
-    
+    /*
     ofSetColor(255, 0, 0);
 	glBegin(GL_LINES); //x
     glVertex3f(0, 0, 0);
@@ -227,24 +227,26 @@ void DeltaRobot::drawRobot(){
     glVertex3f(0, 0, 0);
     glVertex3f(0, 500, 0);
     glEnd();
+    */
     
-	ofSetColor(255, 0, 255);
+    int upperArmColor = 0x999999;
+    int lowerArmColor = 0x666666;
+    int baseColor = 0xcccccc;
+    int effectorColor = 0x333333;
+    
+        
         
         glPushMatrix();
         float baseDistanceFromAxis = tan(ofDegToRad(30))*baseSideLength/2;
         float effectorDistanceFromAxis = tan(ofDegToRad(30))*effectorSideLength/2;
     
-        glBegin(GL_LINES); //theta0 marker
-        glVertex3f(0, 0, -baseDistanceFromAxis);
-        glVertex3f(0, 30, -baseDistanceFromAxis);
-        glEnd();
-    
+        ofSetColor(upperArmColor);
         glBegin(GL_LINES); //theta0 upper arm
         glVertex3f(0, 0, -baseDistanceFromAxis);
         glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, -(cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
         glEnd();
         
-        ofSetColor(0, 200, 200);
+        ofSetColor(lowerArmColor);
         glBegin(GL_LINES); //theta0 forearm
         glVertex3f(0, -sin(ofDegToRad(theta0))*upperArmLength, -(cos(ofDegToRad(theta0))*upperArmLength)-baseDistanceFromAxis);
         glVertex3f(effectorX, effectorZ, effectorY-effectorDistanceFromAxis);
@@ -252,15 +254,15 @@ void DeltaRobot::drawRobot(){
     
         glRotatef(120, 0, 1, 0);
         
-        ofSetColor(255, 0, 255);
+        ofSetColor(upperArmColor);
         glBegin(GL_LINES); //theta1 upper arm
         glVertex3f(0, 0, -tan(ofDegToRad(30))*baseSideLength/2);
-        glVertex3f(0, -sin(ofDegToRad(theta1))*upperArmLength, -(cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis); //im suspicious of this line
+        glVertex3f(0, -sin(ofDegToRad(theta2))*upperArmLength, -(cos(ofDegToRad(theta2))*upperArmLength)-baseDistanceFromAxis); //im suspicious of this line
         glEnd();
         
-        ofSetColor(0, 255, 255);
+        ofSetColor(lowerArmColor);
         glBegin(GL_LINES); //theta1 forearm
-        glVertex3f(0, -sin(ofDegToRad(theta1))*upperArmLength, -(cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis);
+        glVertex3f(0, -sin(ofDegToRad(theta2))*upperArmLength, -(cos(ofDegToRad(theta2))*upperArmLength)-baseDistanceFromAxis);
         float rotEffectX, rotEffectY;
         rotateCoordAboutOrigin(-120, effectorX, effectorY, rotEffectX, rotEffectY);
         glVertex3f(rotEffectX, effectorZ, rotEffectY-effectorDistanceFromAxis); //ignore middle one, that is the height
@@ -268,15 +270,16 @@ void DeltaRobot::drawRobot(){
         
         glRotatef(-240, 0, 1, 0);
     
-        ofSetColor(255, 0, 255);
+        
+        ofSetColor(upperArmColor);
         glBegin(GL_LINES); //theta2 upper arm
         glVertex3f(0, 0, -tan(ofDegToRad(30))*baseSideLength/2);
-        glVertex3f(0, -sin(ofDegToRad(theta2))*upperArmLength, -(cos(ofDegToRad(theta2))*upperArmLength)-baseDistanceFromAxis);
+        glVertex3f(0, -sin(ofDegToRad(theta1))*upperArmLength, -(cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis);
         glEnd();
         
-        ofSetColor(100, 100, 255);
+        ofSetColor(lowerArmColor);
         glBegin(GL_LINES); //theta2 forearm //there is something seriously wrong with the forearms - they change in length for some reason
-        glVertex3f(0, -sin(ofDegToRad(theta2))*upperArmLength, -(cos(ofDegToRad(theta2))*upperArmLength)-baseDistanceFromAxis);
+        glVertex3f(0, -sin(ofDegToRad(theta1))*upperArmLength, -(cos(ofDegToRad(theta1))*upperArmLength)-baseDistanceFromAxis);
         rotateCoordAboutOrigin(-240, effectorX, effectorY, rotEffectX, rotEffectY);
         glVertex3f(rotEffectX, effectorZ, rotEffectY-effectorDistanceFromAxis); //ignore middle one, that is the height
         glEnd();
@@ -289,7 +292,7 @@ void DeltaRobot::drawRobot(){
         
     //    cout<< "z:"<<effectorZ<<"\n";
         
-        ofSetColor(255, 0, 0);
+        ofSetColor(effectorColor);
         glBegin(GL_TRIANGLES); //effector triangle
         glVertex3f(-effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
         glVertex3f(effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
@@ -297,7 +300,7 @@ void DeltaRobot::drawRobot(){
         glEnd();
         glPopMatrix();
         
-        ofSetColor(0, 255, 0);
+        ofSetColor(baseColor);
         glBegin(GL_TRIANGLES); //base triangle (placed down here so tranparency works)
         glVertex3f(-baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
         glVertex3f(baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
@@ -364,7 +367,8 @@ void DeltaRobot::changeProportions(float ibaseSideMultiplier, float iupperArmMul
 	lowerArmLength = effectorSideLength*lowerArmMultiplier;
     
     
-    setCartesianPosition(effectorX, effectorY, effectorZ);
+//    setCartesianPosition(effectorX, effectorY, effectorZ);
+//    setAngles(-45, -45, 45);
     calculateCartesianPointCloud();
     calculateWorkingPointCloud();
     

@@ -487,15 +487,15 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				6C73B7D913AAFD8F0099D70D /* pathLoader.cpp */,
-				6C73B7DA13AAFD8F0099D70D /* pathLoader.h */,
-				6C73B7DB13AAFD8F0099D70D /* stepperControl.cpp */,
-				6C73B7DC13AAFD8F0099D70D /* stepperControl.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				6C563E8F134E8B3000311C79 /* deltaRobot.h */,
 				6C563EB8134E918100311C79 /* deltaRobot.cpp */,
+				6C73B7DA13AAFD8F0099D70D /* pathLoader.h */,
+				6C73B7D913AAFD8F0099D70D /* pathLoader.cpp */,
+				6C73B7DC13AAFD8F0099D70D /* stepperControl.h */,
+				6C73B7DB13AAFD8F0099D70D /* stepperControl.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
