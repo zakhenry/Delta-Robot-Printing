@@ -101,24 +101,24 @@ void testApp::draw(){
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 200, -200);
     
     
-	 //fake back wall
+    //fake back wall
     ofSetColor(0xdddddd);
     glBegin(GL_QUADS);
-        glVertex3f(0.0, -ofGetHeight()/2, -600);
-        glVertex3f(ofGetWidth(), -ofGetHeight()/2, -600);
-        glVertex3f(ofGetWidth(), ofGetHeight()/2, -600);
-        glVertex3f(0, ofGetHeight()/2, -600);
+    glVertex3f(0.0, -ofGetHeight()/2, -600);
+    glVertex3f(ofGetWidth(), -ofGetHeight()/2, -600);
+    glVertex3f(ofGetWidth(), ofGetHeight()/2, -600);
+    glVertex3f(0, ofGetHeight()/2, -600);
     glEnd();
-
+    
     //fake wall
     ofSetColor(0xeeeeee);
     glBegin(GL_QUADS);
-        glVertex3f(0.0, -ofGetHeight()/2, 0);
-        glVertex3f(ofGetWidth(), -ofGetHeight()/2, 0);
-        glVertex3f(ofGetWidth(), -ofGetHeight()/2, -600);
-        glVertex3f(0, -ofGetHeight()/2, -600);
+    glVertex3f(0.0, -ofGetHeight()/2, 0);
+    glVertex3f(ofGetWidth(), -ofGetHeight()/2, 0);
+    glVertex3f(ofGetWidth(), -ofGetHeight()/2, -600);
+    glVertex3f(0, -ofGetHeight()/2, -600);
     glEnd();
-   
+    
     
     
     
@@ -153,6 +153,8 @@ void testApp::draw(){
     glEnd();
         
         deltaRobot.releaseCoordinatesFromRobot();
+    
+     
             
     
     

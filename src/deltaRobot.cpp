@@ -183,12 +183,12 @@ int DeltaRobot::setCartesianPosition(float x, float y, float z, bool setSteppers
         effectorZ = z;
         
     }
-    cout << "input value is ("<<x<<","<<y<<","<<z<<")\n";
-    cout << "theta 0 has the angle "<<theta0<<"\n";
-    cout << "theta 1 has the angle "<<theta1<<"\n";
-    cout << "theta 2 has the angle "<<theta2<<"\n";
+//    cout << "input value is ("<<x<<","<<y<<","<<z<<")\n";
+//    cout << "theta 0 has the angle "<<theta0<<"\n";
+//    cout << "theta 1 has the angle "<<theta1<<"\n";
+//    cout << "theta 2 has the angle "<<theta2<<"\n";
     
-    cout << "result is :"<<result<<"\n";
+//    cout << "result is :"<<result<<"\n";
     
     return result;
 }
@@ -519,11 +519,7 @@ void DeltaRobot::gotoNextWaypt(){
         
         ofPoint nextWaypt = queuedWaypoints[0];
         
-        setCartesianPosition(nextWaypt.x, nextWaypt.y, nextWaypt.z, false);
-        
-        stepperControl.setStepper(0, theta0, 800);
-        stepperControl.setStepper(1, theta1, 800);
-        stepperControl.setStepper(2, theta2, 800);
+        setCartesianPosition(nextWaypt.x, nextWaypt.y, nextWaypt.z, true);
         
         cout <<"set steppers to (t0:"<<theta0<<", t1:"<<theta1<<", t2:"<<theta2<<")\n";
         

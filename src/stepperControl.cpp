@@ -55,6 +55,7 @@ bool StepperControl::println(int stepper, string line){
             if (stepper0Connected){
                 stepper0Ready = false;
                 serial0.writeBytes(charLine,line.size());
+//                serial0.flush();
                 cout <<"output to serial0: "<<charLine<<"\n";
             }
             
@@ -89,7 +90,7 @@ bool StepperControl::println(int stepper, string line){
 void StepperControl::setStepper(int stepper, float angle, float speed){
     
     char buffer [50];
-    sprintf (buffer, "d%f-s%de", angle, (int)speed); //note speed is cast to int for now, will be float eventually
+    sprintf (buffer, "d%f-s%de", angle+90, (int)speed); //note speed is cast to int for now, will be float eventually. angle has 90 added to it so it can be in the range 0-180
 //    sprintf (buffer, "$"); //note speed is cast to int for now, will be float eventually
     println (stepper, buffer);
     
@@ -97,43 +98,9 @@ void StepperControl::setStepper(int stepper, float angle, float speed){
 
 void StepperControl::update(){
     
-//    cout << "stepper control updated\n";
-    if (!stepper0Ready&&stepper0Connected&&serial0.available()>0){
-        string message;
-        cout << "there is "<<serial0.available()<<" bytes available \n";
-        readBytes(0, message, 17);
-//        cout << "preflush there is "<<serial0.available()<<" bytes available \n";
-        serial0.flush();
-//        cout << "postflush there is "<<serial0.available()<<" bytes available \n";
-
-        cout <<"message recieved was "<<message<<"\n";
-//        if (message == "complete"){
-            stepper0Ready = true;
-            cout << "stepper 0 is available again\n";
-//        }
-    }
-    
-    if (!stepper1Ready&&stepper1Connected&&serial0.available()>0){
-//        string message;
-//        readUntil(1, message, '\n');
-//        cout <<"message recieved was\n";
-//        if (message == "complete"){
-        serial1.flush();
-            stepper1Ready = true;
-        cout << "stepper 1 is available again\n";
-//        }
-    }
-    
-    if (!stepper2Ready&&stepper2Connected&&serial0.available()>0){
-//        string message;
-//        readUntil(2, message, '\n');
-//        cout <<"message recieved was\n";
-//        if (message == "complete"){
-        serial2.flush();
-            stepper2Ready = true;
-        cout << "stepper 2 is available again\n";
-//        }
-    }
+    read(serial0, 0);
+    read(serial1, 1);
+//    read(serial2, 2);
 
 }
 
@@ -150,16 +117,16 @@ bool StepperControl::readUntil(int stepper, string& rResult, char cUntil) {
         switch (stepper) {
             case 0:
                 n = serial0.readBytes(b, 1);  // read a char at a time
-                
+//                serial0.flush();
                 
                 break;
                 
             case 1:
-                n = serial1.readByte();  // read a char at a time
+                n = serial1.readBytes(b, 1);  // read a char at a time
                 break;
                 
             case 2:
-                n = serial2.readByte();  // read a char at a time
+                n = serial2.readBytes(b, 1);  // read a char at a time
                 break;
                 
             default:
@@ -173,7 +140,7 @@ bool StepperControl::readUntil(int stepper, string& rResult, char cUntil) {
         
 		i++;
         
-        cout <<"Serial byte is "<<b[0]<<"\n";
+//        cout <<"Serial byte is "<<b[0]<<"\n";
 	} while( b[0] != cUntil );
     
     cout <<"Buffer is ";
@@ -238,4 +205,62 @@ bool StepperControl::robotReadyForData(){
     
     return false;
     
+}
+
+void StepperControl::read(ofSerial& serialPort, int stepperNum)
+{
+    
+    // if we've got new bytes
+    if(serialPort.available() > 0)
+    {
+        // we wil keep reading until nothing is left
+        while (serialPort.available() > 0)
+        {
+            
+            // we'll put the incoming bytes into bytesReturned
+            serialPort.readBytes(bytesReturned, NUM_BYTES);
+            
+            // if we find the splitter we put all the buffered messages 
+            //   in the final message, stop listening for more data and 
+            //   notify a possible listener
+            // else we just keep filling the buffer with incoming bytes. 
+            if(*bytesReturned == '\n')
+            {
+                message = messageBuffer;
+                messageBuffer = "";
+                
+                if (message == "done"){
+                    cout << "stepper"<<stepperNum<<" is done";
+                    switch (stepperNum) {
+                        case 0:
+                            stepper0Ready = true;
+                            break;
+                            
+                        case 1:
+                            stepper1Ready = true;
+                            break;
+                            
+                        case 2:
+                            stepper2Ready = true;
+                            break;
+                            
+                        default:
+                            break;
+                    }
+                }
+                cout << "new message is: "<<message<<"\n";
+                
+                break;
+            }
+            else 
+            {
+                if(*bytesReturned != '\r')
+                    messageBuffer += *bytesReturned;
+            }
+            //cout << "  messageBuffer: " << messageBuffer << "\n";
+        }
+        
+        // clear the message buffer
+        memset(bytesReturned,0,NUM_BYTES);
+    }
 }

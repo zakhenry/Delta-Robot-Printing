@@ -11,6 +11,8 @@
 
 #include "ofMain.h"
 
+#define NUM_BYTES 1
+
 class StepperControl {
     
     vector<char>buffer;
@@ -36,6 +38,10 @@ public:
     bool readBytes(int stepper, string& rResult, int bytesToRead);
     
     bool robotReadyForData();
+    
+    string message, messageBuffer;
+    unsigned char bytesReturned[1];
+    void read(ofSerial& serialPort, int portNum);
     
 };
 
