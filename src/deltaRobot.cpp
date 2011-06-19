@@ -11,29 +11,17 @@
 
 DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
     
+    //next bit is redundant now?
+    
     baseSideMultiplier = 2; //2
     upperArmMultiplier = 1.5; //1.5
     lowerArmMultiplier = 1.5; //0.9
-    
-//    baseSideMultiplier = 24; //2
-//    upperArmMultiplier = 9; //1.5
-//    lowerArmMultiplier = 7; //0.9
     
 	effectorSideLength = ieffectorSideLength;
 	baseSideLength = effectorSideLength*baseSideMultiplier;
 	upperArmLength = effectorSideLength*upperArmMultiplier;
 	lowerArmLength = effectorSideLength*lowerArmMultiplier;
-    
-    //some constants (helps keep calcs fast)
-    
-	/*sqrt3 = sqrt(3.0);
-	pi = PI;    // PI
-	sin120 = sqrt3/2.0;
-	cos120 = -0.5;        
-	tan60 = sqrt3;
-	sin30 = 0.5;
-	tan30 = 1/sqrt3;*/
-    
+   
      sqrt3 = sqrt(3.0);
      pi = PI;    // PI
      sin120 = sin(ofDegToRad(120));
@@ -41,14 +29,6 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
      tan60 = tan(ofDegToRad(60));
      sin30 = sin(ofDegToRad(30));
      tan30 = tan(ofDegToRad(30));
-    
-//    directControl = false; //start in cartesian control mode
-//    setAngles(0, 0, 0); //set arms to home position
-    
-    setCartesianPosition(0, 0, -100);
-    
-    //calculateWorkingPointCloud(); //calculate point cloud straight away
-	
     
 	cout << "Delta Robot class instantiated \n";
 }
@@ -157,10 +137,6 @@ int DeltaRobot::setCartesianPosition(float x, float y, float z){
         effectorY = y;
         effectorZ = z;
     }
-//    cout << "input value is ("<<x<<","<<y<<","<<z<<")\n";
-//    cout << "theta 0 has the angle "<<theta0<<"\n";
-//    cout << "theta 1 has the angle "<<theta1<<"\n";
-//    cout << "theta 2 has the angle "<<theta2<<"\n";
     
     return result;
 }
