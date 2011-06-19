@@ -15,7 +15,7 @@ StepperControl::StepperControl(){ //constructor
     
     stepper0Ready = stepper1Ready = stepper2Ready = true;
     stepper0Connected = stepper1Connected = stepper2Connected = false;
-
+    cout <<"stepperControl constructor complete\n";
 
 }
 
@@ -41,6 +41,8 @@ void StepperControl::setupDevices(){
     }else{
         stepper2Connected = true;
     }
+    
+    cout <<"stepperControl setup complete\n";
 }
 
 bool StepperControl::println(int stepper, string line){
@@ -97,19 +99,29 @@ void StepperControl::setStepper(int stepper, float angle, float speed){
 
 void StepperControl::update(){
     
-    if (!robotReadyForData()){ //only read if a message has been sent to steppers
+    if (!robotReadyForData()&&steppersConnected()){ //only read if a message has been sent to steppers, and all are connected
         read(serial0, 0, bytesReturned0, messageBuffer0, message0);
         read(serial1, 1, bytesReturned1, messageBuffer1, message1);
-        //    read(serial2, 2);
+        read(serial2, 2, bytesReturned2, messageBuffer2, message2);
+    }
+
+}
+
+bool StepperControl::steppersConnected(){
+    
+    
+    if (stepper0Connected && stepper1Connected && stepper2Connected){
+        return true;
     }
     
-
+    return false;
+    
 }
 
 bool StepperControl::robotReadyForData(){
     
     
-    if (stepper0Connected && stepper1Connected && /*stepper2Connected &&*/ stepper0Ready && stepper1Ready /*&& stepper2Ready*/){
+    if (steppersConnected() && stepper0Ready && stepper1Ready && stepper2Ready){
         return true;
     }
     

@@ -236,25 +236,6 @@ void DeltaRobot::releaseCoordinatesFromRobot(){
 }
 
 void DeltaRobot::drawRobot(){
-    /*
-    ofSetColor(255, 0, 0);
-	glBegin(GL_LINES); //x
-    glVertex3f(0, 0, 0);
-    glVertex3f(500, 0, 0);
-    glEnd();
-    
-    ofSetColor(0, 255, 0);
-	glBegin(GL_LINES); //y
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 0, 500);
-    glEnd();
-    
-    ofSetColor(0, 0, 255);
-	glBegin(GL_LINES); //z
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 500, 0);
-    glEnd();
-    */
     
     int upperArmColor = 0x999999;
     int lowerArmColor = 0x666666;
@@ -320,8 +301,8 @@ void DeltaRobot::drawRobot(){
     //    cout<< "z:"<<effectorZ<<"\n";
         
         ofSetColor(effectorColor);
-        glBegin(GL_TRIANGLES); //effector triangle
-//        glBegin(GL_LINE_LOOP); //effector triangle
+//        glBegin(GL_TRIANGLES); //effector triangle
+        glBegin(GL_LINE_LOOP); //effector triangle
         glVertex3f(-effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
         glVertex3f(effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
         glVertex3f(0, 0, (sin(ofDegToRad(60))*effectorSideLength)-(tan(ofDegToRad(30))*effectorSideLength/2));
@@ -329,8 +310,8 @@ void DeltaRobot::drawRobot(){
         glPopMatrix();
         
         ofSetColor(baseColor);
-        glBegin(GL_TRIANGLES); //base triangle (placed down here so tranparency works)
-//        glBegin(GL_LINE_LOOP); //base triangle (placed down here so tranparency works)
+//        glBegin(GL_TRIANGLES); //base triangle (placed down here so tranparency works)
+        glBegin(GL_LINE_LOOP); //base triangle (placed down here so tranparency works)
         glVertex3f(-baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
         glVertex3f(baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
         glVertex3f(0, 0, (sin(ofDegToRad(60))*baseSideLength)-(tan(ofDegToRad(30))*baseSideLength/2));

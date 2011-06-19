@@ -33,6 +33,7 @@ public:
     
     void update();
     
+    bool steppersConnected();
     bool robotReadyForData();
     
     string message0, message1, message2, messageBuffer0, messageBuffer1, messageBuffer2;

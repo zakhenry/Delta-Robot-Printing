@@ -12,9 +12,6 @@ float current3TouchHeight, current2TouchHeight = 0;
 
 bool tumble = false;
 
-float fitnessThreshold = 100; //mod himmelblau
-float fitnessColorScale = 400;
-//float fitnessThreshold = 5000; //delta
 float effectorCursorX, effectorCursorY, effectorCursorZ = 0;
 bool cursorPositionPossible = false;
 bool runSteppersWithCursor = false;
@@ -29,23 +26,36 @@ void testApp::setup(){
     ofAddListener(pad.touchAdded, this, &testApp::newTouch);
     ofAddListener(pad.touchRemoved, this, &testApp::removedTouch);
     
-	ofBackground(250, 250, 250);
-    
+//	ofBackground(250, 250, 250);
+	ofBackground(255, 255, 255);
     ofSetCircleResolution(50);
-		
+
 //	ofSetVerticalSync(true);
 
     //some model / light stuffx
-    
+
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glClear (GL_COLOR_BUFFER_BIT);
     glEnable (GL_BLEND);
     glEnable (GL_POLYGON_SMOOTH);
 //    glDisable (GL_DEPTH_TEST);
-    glLineWidth(4.0);  
+    glLineWidth(4.0);
+    
+    
+    //fog
+    GLfloat fogColor[4] = {1,1,1, 1.0};
+    glFogi(GL_FOG_MODE, GL_LINEAR);
+    glFogfv(GL_FOG_COLOR, fogColor);
+    glFogf(GL_FOG_DENSITY, 0.2);
+    glHint(GL_FOG_HINT, GL_DONT_CARE);
+    glFogf(GL_FOG_START, 500);
+    glFogf(GL_FOG_END, 4000);
+    glEnable(GL_FOG);
     
     franklinBook.loadFont("frabk.ttf", 32);
+    
+    cout <<"testApp setup complete\n";
 
 }
 
@@ -58,6 +68,22 @@ void testApp::update(){
     
 //    cout <<"current2TouchHeight: "<<current2TouchHeight<<"\n";
 
+}
+
+void drawGrid(int spacing, int lines, int zDepth){
+    for (int i=-(lines/2); i<(lines/2); i++){
+        glBegin(GL_LINES);
+        glVertex3f(i*spacing, zDepth, -(spacing*lines)/2);
+        glVertex3f(i*spacing, zDepth, spacing*lines/2);
+        glEnd();
+    }
+    
+    for (int i=-(lines/2); i<(lines/2); i++){
+        glBegin(GL_LINES);
+        glVertex3f(-(spacing*lines)/2, zDepth, i*spacing);
+        glVertex3f(spacing*lines/2, zDepth, i*spacing);
+        glEnd();
+    }
 }
 
 //--------------------------------------------------------------
@@ -84,20 +110,14 @@ void testApp::draw(){
     
 	glTranslatef(-ofGetWidth()/2,0,0);
 	
-    /*
-    ofSetColor(255, 0, 0);
-	glBegin(GL_LINE);
-        glVertex3f(-100, 0, 0);
-        glVertex3f(100, 0, 0);
-    glEnd();
-    */
+    
     
     ofSetColor(100, 100, 100);
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 200, -200);
     
-    
+ /*   
     //fake back wall
-    ofSetColor(0xdddddd);
+    ofSetColor(0xededed);
     glBegin(GL_QUADS);
     glVertex3f(0.0, -ofGetHeight()/2, -600);
     glVertex3f(ofGetWidth(), -ofGetHeight()/2, -600);
@@ -114,11 +134,18 @@ void testApp::draw(){
     glVertex3f(0, -ofGetHeight()/2, -600);
     glEnd();
     
+    */
     
     
     
         deltaRobot.setCoordinatesToRobot();
         
+    /*ground plane*/
+    
+    ofSetColor(0xdddddd);
+    glLineWidth(1);
+    drawGrid(50, 150, -500);
+    glLineWidth(4);
     
         
         if (pathLoader.currentPathFile.points.size()>0){
@@ -154,6 +181,50 @@ void testApp::draw(){
     addDial(100, ofGetHeight()-100, deltaRobot.theta0, 1);
     addDial(250, ofGetHeight()-100, deltaRobot.theta1, 2);
     addDial(400, ofGetHeight()-100, deltaRobot.theta2, 3);
+    
+    glPushMatrix();
+    
+    glTranslatef(100,100,0);
+    
+    ofSetColor(0x666666);
+    
+    ofCircle(0, 0, 50);
+    
+	//tumble according to mouse
+    if (!tumble){
+        glRotatef(-mouseY,1,0,0);
+        glRotatef(-mouseX,0,1,0);
+    }else{
+        glRotatef(ofGetElapsedTimef()*13,1,0,0);
+        glRotatef(ofGetElapsedTimef()*11,0,1,0);
+        glRotatef(ofGetElapsedTimef()*7,0,0,1);
+    }
+    
+    
+    ofSetColor(0xff0000);
+    
+//    ofRect(0, 0, 1, 20);
+    
+    glBegin(GL_LINES);
+        glVertex3f(0, 0, 0);
+        glVertex3f(20, 0, 0);
+    glEnd();
+    
+    ofSetColor(0x00ff00);
+    glBegin(GL_LINES);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 20, 0);
+    glEnd();
+    
+    ofSetColor(0x0000ff);
+    glBegin(GL_LINES);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 0, 20);
+    glEnd();
+    
+    glPopMatrix();
+    
+    
 
 }
 
@@ -310,10 +381,6 @@ void testApp::padUpdates(int & touchCount) {
                         alteration--;
                     }
                     
-                    fitnessColorScale += alteration*3;
-                    
-//                    cout << "fitness color scale:"<<fitnessColorScale<<"\n";
-                    
                     current2TouchHeight = averageTouchHeight;
                 }
 
@@ -336,9 +403,6 @@ void testApp::padUpdates(int & touchCount) {
                     }else{
                         alteration--;
                     }
-                    
-                    fitnessThreshold += alteration*10; //mod himmelblau
-//                    fitnessThreshold += alteration*50000; //delta
                     
                     current3TouchHeight = averageTouchHeight;
                 }

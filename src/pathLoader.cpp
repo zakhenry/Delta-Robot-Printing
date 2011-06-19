@@ -22,6 +22,8 @@ PathLoader::PathLoader(){ //constructor
     cout << ")\n";
     
     changePathFile("test");
+    
+    cout <<"pathLoader setup complete\n";
 }
 
 bool PathLoader::listPathFiles(string dir, vector<string> &pathFiles){ //returns paths of point paths
@@ -95,7 +97,7 @@ void PathLoader::drawCurrentPath(bool showPaths){
         if (showPaths){
             glBegin(GL_LINE_STRIP);
             
-            ofSetColor(0xffffff);
+            ofSetColor(0xdddddd);
             
             for (int i=0; i<currentPathFile.points.size(); i++){
                 glVertex3f(currentPathFile.points[i].x, currentPathFile.points[i].z, currentPathFile.points[i].y); 
@@ -104,10 +106,10 @@ void PathLoader::drawCurrentPath(bool showPaths){
             glEnd();
         }
         
-        glPointSize(5.0);
+        glPointSize(8.0);
         glBegin(GL_POINTS);
         
-        ofSetColor(0xeeeeee);
+        ofSetColor(0xcccccc);
         
         for (int i=0; i<currentPathFile.points.size(); i++){
             glVertex3f(currentPathFile.points[i].x, currentPathFile.points[i].z, currentPathFile.points[i].y);
