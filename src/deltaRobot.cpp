@@ -15,24 +15,12 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
     upperArmMultiplier = 1.6; //1.5
     lowerArmMultiplier = 1.0; //0.9
     
-//    baseSideMultiplier = 24; //2
-//    upperArmMultiplier = 9; //1.5
-//    lowerArmMultiplier = 7; //0.9
-    
 	effectorSideLength = ieffectorSideLength;
 	baseSideLength = effectorSideLength*baseSideMultiplier;
 	upperArmLength = effectorSideLength*upperArmMultiplier;
 	lowerArmLength = effectorSideLength*lowerArmMultiplier;
     
-    //some constants (helps keep calcs fast)
-    
-	/*sqrt3 = sqrt(3.0);
-	pi = PI;    // PI
-	sin120 = sqrt3/2.0;
-	cos120 = -0.5;        
-	tan60 = sqrt3;
-	sin30 = 0.5;
-	tan30 = 1/sqrt3;*/
+    unitSpeed = 500;
     
      sqrt3 = sqrt(3.0);
      pi = PI;    // PI
@@ -42,14 +30,14 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
      sin30 = sin(ofDegToRad(30));
      tan30 = tan(ofDegToRad(30));
     
-//    directControl = false; //start in cartesian control mode
-//    setAngles(0, 0, 0); //set arms to home position
     
-    setCartesianPosition(0, 0, -100, true);
+    stepperControl.setupDevices();
+    
+//    setCartesianPosition(0, 0, -100, true);
     
     //calculateWorkingPointCloud(); //calculate point cloud straight away
 	
-    stepperControl.setupDevices();
+    
     
 	cout << "Delta Robot class instantiated \n";
 }
@@ -152,6 +140,10 @@ int DeltaRobot::calcForward(float theta0, float theta1, float theta2, float &x0,
 	return 0;
 }
 
+float DeltaRobot::distanceBetweenPoints(ofPoint a, ofPoint b){
+    return sqrt(powf((a.x-b.x), 2)+powf((a.y-b.y), 2)+powf((a.z-b.z), 2));
+}
+
 int DeltaRobot::setCartesianPosition(float x, float y, float z, bool setSteppers){
     
     float newTheta0, newTheta1, newTheta2;
@@ -166,9 +158,22 @@ int DeltaRobot::setCartesianPosition(float x, float y, float z, bool setSteppers
         
         if (setSteppers){
             if (stepperControl.robotReadyForData()){
-                stepperControl.setStepper(0, theta0, 1000);
-                stepperControl.setStepper(1, theta1, 1000);
-                stepperControl.setStepper(2, theta2, 1000);
+                
+                float deltaD = distanceBetweenPoints(ofPoint(x, y, z), ofPoint(effectorX, effectorY, effectorZ)); //change in distance
+                
+                float timeToMove = deltaD/unitSpeed; //in seconds
+                cout << "Delta D is "<<deltaD<<"\n";
+                cout << "Time to move is "<<timeToMove<<"\n";
+                
+                float stepper0Speed = (100000*timeToMove)/(abs(newTheta0-theta0));
+                float stepper1Speed = (100000*timeToMove)/(abs(newTheta1-theta1));
+                float stepper2Speed = (100000*timeToMove)/(abs(newTheta2-theta2));
+                
+                cout << "stepper0Speed:("<<stepper0Speed<<"), stepper1Speed:("<<stepper1Speed<<"), stepper2Speed("<<stepper2Speed<<")\n";
+                clock_t tStart = clock();
+                stepperControl.setStepper(0, newTheta0, 800);
+                stepperControl.setStepper(1, newTheta1, 800);
+                stepperControl.setStepper(2, newTheta2, 800);
             }else{
                 return -1; //dont move as steppers are not ready
             }
@@ -316,6 +321,7 @@ void DeltaRobot::drawRobot(){
         
         ofSetColor(effectorColor);
         glBegin(GL_TRIANGLES); //effector triangle
+//        glBegin(GL_LINE_LOOP); //effector triangle
         glVertex3f(-effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
         glVertex3f(effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
         glVertex3f(0, 0, (sin(ofDegToRad(60))*effectorSideLength)-(tan(ofDegToRad(30))*effectorSideLength/2));
@@ -324,6 +330,7 @@ void DeltaRobot::drawRobot(){
         
         ofSetColor(baseColor);
         glBegin(GL_TRIANGLES); //base triangle (placed down here so tranparency works)
+//        glBegin(GL_LINE_LOOP); //base triangle (placed down here so tranparency works)
         glVertex3f(-baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
         glVertex3f(baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
         glVertex3f(0, 0, (sin(ofDegToRad(60))*baseSideLength)-(tan(ofDegToRad(30))*baseSideLength/2));

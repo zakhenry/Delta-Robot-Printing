@@ -55,7 +55,6 @@ bool StepperControl::println(int stepper, string line){
             if (stepper0Connected){
                 stepper0Ready = false;
                 serial0.writeBytes(charLine,line.size());
-//                serial0.flush();
                 cout <<"output to serial0: "<<charLine<<"\n";
             }
             

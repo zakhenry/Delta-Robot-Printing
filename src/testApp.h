@@ -31,6 +31,8 @@ class testApp : public ofBaseApp{
         void removedTouch(int & r);
         
         float distanceBetweenTouches(MTouch t1, MTouch t2);
+    
+        void addDial(int x, int y, float rotation, int label);
 
 //		ofx3DModelLoader squirrelModel;
     
@@ -40,7 +42,7 @@ class testApp : public ofBaseApp{
     
         PathLoader pathLoader;
         
-    
+        ofTrueTypeFont  franklinBook;
         
 		
 };

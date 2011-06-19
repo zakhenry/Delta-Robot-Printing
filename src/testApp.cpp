@@ -19,6 +19,8 @@ float effectorCursorX, effectorCursorY, effectorCursorZ = 0;
 bool cursorPositionPossible = false;
 bool runSteppersWithCursor = false;
 
+
+
 //--------------------------------------------------------------
 void testApp::setup(){	
     
@@ -28,6 +30,8 @@ void testApp::setup(){
     ofAddListener(pad.touchRemoved, this, &testApp::removedTouch);
     
 	ofBackground(250, 250, 250);
+    
+    ofSetCircleResolution(50);
 		
 //	ofSetVerticalSync(true);
 
@@ -38,22 +42,10 @@ void testApp::setup(){
     glClear (GL_COLOR_BUFFER_BIT);
     glEnable (GL_BLEND);
     glEnable (GL_POLYGON_SMOOTH);
-    glDisable (GL_DEPTH_TEST);
-    glLineWidth(4.0);
+//    glDisable (GL_DEPTH_TEST);
+    glLineWidth(4.0);  
     
-    
-    
-    float x0 = 0;
-    float y0 = 0;
-    float z0 = -200;
-    float theta;
-    deltaRobot.calcAngleYZ(x0, y0, z0, theta);
-    
-    cout << "Deltarobot test function calcAngleYZ(float "<<x0<<", float "<<y0<<", float "<<z0<<", float &"<<theta<<")\n";
-    
-    
-    
-    
+    franklinBook.loadFont("frabk.ttf", 32);
 
 }
 
@@ -70,6 +62,9 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+    
+    glPushMatrix();
+    
     
 	glTranslatef(ofGetWidth()/2,ofGetHeight()/2,0);
 	//tumble according to mouse
@@ -154,12 +149,11 @@ void testApp::draw(){
         
         deltaRobot.releaseCoordinatesFromRobot();
     
-     
+    glPopMatrix();
             
-    
-    
-    
-    
+    addDial(100, ofGetHeight()-100, deltaRobot.theta0, 1);
+    addDial(250, ofGetHeight()-100, deltaRobot.theta1, 2);
+    addDial(400, ofGetHeight()-100, deltaRobot.theta2, 3);
 
 }
 
@@ -366,5 +360,35 @@ void testApp::removedTouch(int & r) {
 
 float testApp::distanceBetweenTouches(MTouch t1, MTouch t2){
     return powf((pow(t1.x-t2.x, 2)+pow(t1.y-t2.y, 2)), 0.5);
+}
+
+void testApp::addDial(int x, int y, float rotation, int label){
+    
+    ofSetColor(0xcccccc);
+    ofPushMatrix();
+    ofTranslate(x, y);
+    ofCircle(0, 0, 60);
+    ofSetColor(0xffffff);
+    ofCircle(0, 0, 10);
+    ofSetRectMode(OF_RECTMODE_CENTER);
+    
+    ofPushMatrix();
+    ofTranslate(-50, 13);
+    franklinBook.drawString(ofToString(label), 0,0);
+    ofPopMatrix();
+    
+    ofRotateZ(rotation);
+    ofPushMatrix();
+    ofTranslate(25, 0);
+    ofRect(0, 0, 50, 5);
+    ofPopMatrix();
+    
+    ofSetColor(0xffffff);
+    ofScale(0.6,0.6,1);
+    ofTranslate(20, -10);
+    franklinBook.drawString(ofToString((int)rotation), 0,0);
+    
+    ofPopMatrix();
+    
 }
 
