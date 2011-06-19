@@ -1,0 +1,104 @@
+<!-- Test xml file to see if program can find it -->
+
+	<parameters>
+		<units>mm</units>
+		<speed>100</speed><!--note speed is in <units> / second -->
+	</parameters>
+
+	<points><!--sequential points are reached by robot through an unknown path (for now)-->
+		<point>
+			<x>60</x>
+			<y>60</y>
+			<z>-150</z>
+		</point>
+		
+		<point>
+			<x>-60</x>
+			<y>60</y>
+			<z>-150</z>
+		</point>
+		
+		<point> 
+			<x>-60</x>
+			<y>-60</y>
+			<z>-150</z>
+		</point>
+		
+		<point> 
+			<x>60</x>
+			<y>-60</y>
+			<z>-150</z>
+		</point>
+		
+		<point>
+			<x>60</x>
+			<y>-60</y>
+			<z>-250</z>
+		</point>
+		
+		<point>
+			<x>60</x>
+			<y>60</y>
+			<z>-250</z>
+		</point>
+		
+		<point> 
+			<x>-60</x>
+			<y>60</y>
+			<z>-250</z>
+		</point>
+		
+		<point> 
+			<x>-60</x>
+			<y>-60</y>
+			<z>-250</z>
+		</point>
+	
+		<point> 
+			<x>-30</x>
+			<y>-30</y>
+			<z>-220</z>
+		</point>
+		
+		<point> 
+			<x>-30</x>
+			<y>30</y>
+			<z>-220</z>
+		</point>
+		
+		<point>
+			<x>30</x>
+			<y>30</y>
+			<z>-220</z>
+		</point>
+		
+		<point>
+			<x>30</x>
+			<y>-30</y>
+			<z>-220</z>
+		</point>
+		
+		<point>
+			<x>30</x>
+			<y>-30</y>
+			<z>-180</z>
+		</point>
+		
+		<point>
+			<x>30</x>
+			<y>30</y>
+			<z>-180</z>
+		</point>
+		
+		<point> 
+			<x>-30</x>
+			<y>30</y>
+			<z>-180</z>
+		</point>
+		
+		<point> 
+			<x>-30</x>
+			<y>-30</y>
+			<z>-180</z>
+		</point>
+	</points>
