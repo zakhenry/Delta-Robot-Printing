@@ -8,6 +8,8 @@
 #include "deltaRobot.h"
 #include "pathLoader.h"
 
+#include "oscEvents.h"
+
 class testApp : public ofBaseApp{
 	
 	public:
@@ -40,7 +42,7 @@ class testApp : public ofBaseApp{
     
         PathLoader pathLoader;
         
-    
+//      oscEvents oscListen;  // hardcoded to port 6969 for the time being
         
 		
 };

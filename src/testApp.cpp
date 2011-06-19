@@ -59,9 +59,11 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-    
+
+
 //    cout << "Serial output: "<<serial.readByte()<< "\n";
-    
+
+//    oscListen.update();     
     deltaRobot.update();
     
 //    cout <<"current2TouchHeight: "<<current2TouchHeight<<"\n";
