@@ -1,4 +1,4 @@
-Added files required for compiling.  You'll still need to add ofx3DmodelLoader and ofxMultiTouchPad addons for compilation.
+You'll need to add ofx3DmodelLoader and ofxMultiTouchPad addons for compilation.
 
 ===================================================================================================
 
@@ -13,12 +13,11 @@ y,h -> change stepper1 angle
 u,j -> change stepper2 angle
 
 p   -> toggle point cloud (possible servo location generated)
-[   -> toggle point cloud (cartesian generated)
-o   -> run genetic algorithm calculation (only runs a ga against the Himmelblau equation for now)
-k   -> toggle between showing the delta robot and the visualisation of the search space
-l   -> run the search space brute force generation algorithm (to give crude visualisation of search space)
+o   -> toggle working point cloud (even distribution of points in cartesian space)
 
-[space] -> toggle 3D tumbling
+
+
+space] -> toggle 3D tumbling
 
 z,x -> change ratio of effector side length to base side length
 c,v -> change ratio of effector side length to upper arm length
