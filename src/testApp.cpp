@@ -55,6 +55,8 @@ void testApp::setup(){
     
     franklinBook.loadFont("frabk.ttf", 32);
     
+    mouseY = 220; //initial setup so the world will be on an orientation that makes sense
+    
     cout <<"testApp setup complete\n";
 
 }
@@ -98,7 +100,7 @@ void testApp::draw(){
         glRotatef(-mouseY,1,0,0);
         glRotatef(-mouseX,0,1,0);
         
-        cout << "mousex: "<<mouseX<<" mouseY: "<<mouseY<<"\n";
+//        cout << "mousex: "<<mouseX<<" mouseY: "<<mouseY<<"\n";
     }else{
         glRotatef(-220+sin(ofGetElapsedTimef()/3)*20,1,0,0);
         glRotatef(ofGetElapsedTimef()*15,0,1,0);
@@ -108,35 +110,9 @@ void testApp::draw(){
     
 	glTranslatef(-ofGetWidth()/2,0,0);
 	
+  
     
-    
-    ofSetColor(100, 100, 100);
-    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 200, -200);
-    
- /*   
-    //fake back wall
-    ofSetColor(0xededed);
-    glBegin(GL_QUADS);
-    glVertex3f(0.0, -ofGetHeight()/2, -600);
-    glVertex3f(ofGetWidth(), -ofGetHeight()/2, -600);
-    glVertex3f(ofGetWidth(), ofGetHeight()/2, -600);
-    glVertex3f(0, ofGetHeight()/2, -600);
-    glEnd();
-    
-    //fake wall
-    ofSetColor(0xeeeeee);
-    glBegin(GL_QUADS);
-    glVertex3f(0.0, -ofGetHeight()/2, 0);
-    glVertex3f(ofGetWidth(), -ofGetHeight()/2, 0);
-    glVertex3f(ofGetWidth(), -ofGetHeight()/2, -600);
-    glVertex3f(0, -ofGetHeight()/2, -600);
-    glEnd();
-    
-    */
-    
-    
-    
-        deltaRobot.setCoordinatesToRobot();
+    deltaRobot.setCoordinatesToRobot();
         
     /*ground plane*/
     
@@ -176,9 +152,9 @@ void testApp::draw(){
     
     glPopMatrix();
             
-    addDial(100, ofGetHeight()-100, deltaRobot.theta0, 1);
-    addDial(250, ofGetHeight()-100, deltaRobot.theta1, 2);
-    addDial(400, ofGetHeight()-100, deltaRobot.theta2, 3);
+    addDial(100, ofGetHeight()-100, deltaRobot.theta0, "1");
+    addDial(250, ofGetHeight()-100, deltaRobot.theta1, "2");
+    addDial(400, ofGetHeight()-100, deltaRobot.theta2, "3");
     
     glPushMatrix();
     
@@ -222,7 +198,7 @@ void testApp::draw(){
     
     glPopMatrix();
     
-    
+    addDial(ofGetWidth()-100, ofGetHeight()-100, (int)ofGetFrameRate(), "F");
 
 }
 
@@ -424,7 +400,7 @@ float testApp::distanceBetweenTouches(MTouch t1, MTouch t2){
     return powf((pow(t1.x-t2.x, 2)+pow(t1.y-t2.y, 2)), 0.5);
 }
 
-void testApp::addDial(int x, int y, float rotation, int label){
+void testApp::addDial(int x, int y, float rotation, string label){
     
     ofSetColor(0xcccccc);
     ofPushMatrix();
@@ -436,7 +412,7 @@ void testApp::addDial(int x, int y, float rotation, int label){
     
     ofPushMatrix();
     ofTranslate(-50, 13);
-    franklinBook.drawString(ofToString(label), 0,0);
+    franklinBook.drawString(label, 0,0);
     ofPopMatrix();
     
     ofRotateZ(rotation);

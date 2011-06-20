@@ -32,7 +32,7 @@ class testApp : public ofBaseApp{
         
         float distanceBetweenTouches(MTouch t1, MTouch t2);
     
-        void addDial(int x, int y, float rotation, int label);
+        void addDial(int x, int y, float rotation, string label);
 
 //		ofx3DModelLoader squirrelModel;
     
