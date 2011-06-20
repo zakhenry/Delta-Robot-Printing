@@ -353,7 +353,7 @@ void DeltaRobot::calculateWorkingPointCloud(){ //could be really nice if this wa
 }
 
 void DeltaRobot::drawWorkingPointCloud(){
-    ofSetColor(0, 0, 255);
+    ofSetColor(0x888888);
     glPointSize(1.5);
     glBegin(GL_POINTS);
     
@@ -458,7 +458,7 @@ float DeltaRobot::calculateCartesianPointCloudSize(float baseSideMultiplier, flo
 }
 
 void DeltaRobot::drawCartesianPointCloud(){
-    ofSetColor(0, 255, 0);
+    ofSetColor(0x999999);
     glPointSize(1.5);
     glBegin(GL_POINTS);
 

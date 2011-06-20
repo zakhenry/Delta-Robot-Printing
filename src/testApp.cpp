@@ -9,6 +9,7 @@ DeltaRobot deltaRobot(effectorSideLength);
 
 float currentTouchScale = 0;
 float current3TouchHeight, current2TouchHeight = 0;
+float zoom = 1;
 
 bool tumble = false;
 
@@ -69,8 +70,10 @@ void testApp::update(){
     deltaRobot.update();
     
 //    cout <<"current2TouchHeight: "<<current2TouchHeight<<"\n";
-
+//cout <<"zoom"<<zoom<<"\n";
 }
+
+
 
 void drawGrid(int spacing, int lines, int zDepth){
     for (int i=-(lines/2); i<(lines/2); i++){
@@ -95,6 +98,7 @@ void testApp::draw(){
     
     
 	glTranslatef(ofGetWidth()/2,ofGetHeight()/2,0);
+    
 	//tumble according to mouse
     if (!tumble){
         glRotatef(-mouseY,1,0,0);
@@ -105,7 +109,7 @@ void testApp::draw(){
         glRotatef(-220+sin(ofGetElapsedTimef()/3)*20,1,0,0);
         glRotatef(ofGetElapsedTimef()*15,0,1,0);
     }
-	
+	glScalef(zoom, zoom, zoom);
     
     
 	glTranslatef(-ofGetWidth()/2,0,0);
@@ -160,7 +164,7 @@ void testApp::draw(){
     
     glTranslatef(100,100,0);
     
-    ofSetColor(0x666666);
+    ofSetColor(0xcccccc);
     
     ofCircle(0, 0, 50);
     
@@ -176,9 +180,12 @@ void testApp::draw(){
     
     
     ofSetColor(0xff0000);
+    glBegin(GL_LINES);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 0, 20);
+    glEnd();
     
-//    ofRect(0, 0, 1, 20);
-    
+    ofSetColor(0x0000ff);
     glBegin(GL_LINES);
         glVertex3f(0, 0, 0);
         glVertex3f(20, 0, 0);
@@ -190,15 +197,21 @@ void testApp::draw(){
     glVertex3f(0, 20, 0);
     glEnd();
     
-    ofSetColor(0x0000ff);
-    glBegin(GL_LINES);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 0, 20);
-    glEnd();
+    
     
     glPopMatrix();
     
-    addDial(ofGetWidth()-100, ofGetHeight()-100, (int)ofGetFrameRate(), "F");
+    
+    ofSetColor(0xcccccc);
+    ofPushMatrix();
+    ofTranslate(ofGetWidth()-100, ofGetHeight()-100);
+    ofCircle(0, 0, 60);
+    ofSetColor(0xffffff);
+    ofScale(1,1,1);
+    ofTranslate(-35, 10);
+    franklinBook.drawString(ofToString((int)ofGetFrameRate()), 0,0);
+    ofPopMatrix();
+
 
 }
 
@@ -356,6 +369,8 @@ void testApp::padUpdates(int & touchCount) {
                     }
                     
                     current2TouchHeight = averageTouchHeight;
+                    
+                    zoom -= alteration/50;
                 }
 
             }
