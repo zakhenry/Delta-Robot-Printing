@@ -13,6 +13,9 @@ float zoom = 1;
 
 bool tumble = false;
 
+bool kinectCursor = false;
+int kinectScale = 100;
+
 float effectorCursorX, effectorCursorY, effectorCursorZ = 0;
 bool cursorPositionPossible = false;
 bool runSteppersWithCursor = false;
@@ -57,7 +60,7 @@ void testApp::setup(){
     glFogf(GL_FOG_END, 4000);
     glEnable(GL_FOG);
     
-    franklinBook.loadFont("frabk.ttf", 32);
+//    franklinBook.loadFont("frabk.ttf", 32);
     
     mouseY = 220; //initial setup so the world will be on an orientation that makes sense
     
@@ -71,7 +74,14 @@ void testApp::update(){
 //    cout << "Serial output: "<<serial.readByte()<< "\n";
     
     deltaRobot.update();
-    oscListen.update();
+
+    if (kinectCursor){
+        oscListen.update();
+        if (deltaRobot.stepperControl.robotReadyForData()){
+            ofPoint newPosition = oscListen.getHighpoint();
+            cursorPositionPossible = (deltaRobot.setCartesianPosition(newPosition.x*kinectScale, newPosition.y*kinectScale, newPosition.z*kinectScale, runSteppersWithCursor)==0);
+        }
+    }
     
 //    cout <<"current2TouchHeight: "<<current2TouchHeight<<"\n";
 //cout <<"zoom"<<zoom<<"\n";
@@ -212,7 +222,7 @@ void testApp::draw(){
     ofSetColor(0xffffff);
     ofScale(1,1,1);
     ofTranslate(-35, 10);
-    franklinBook.drawString(ofToString((int)ofGetFrameRate()), 0,0);
+//    franklinBook.drawString(ofToString((int)ofGetFrameRate()), 0,0);
     ofPopMatrix();
 
 
@@ -309,6 +319,10 @@ void testApp::keyPressed  (int key){
             
         case ' ':
             tumble = !tumble;
+            break;
+            
+        case 'k':
+            kinectCursor = !kinectCursor;
             break;
             
         case 'r':
@@ -430,7 +444,7 @@ void testApp::addDial(int x, int y, float rotation, string label){
     
     ofPushMatrix();
     ofTranslate(-50, 13);
-    franklinBook.drawString(label, 0,0);
+//    franklinBook.drawString(label, 0,0);
     ofPopMatrix();
     
     ofRotateZ(rotation);
@@ -442,7 +456,7 @@ void testApp::addDial(int x, int y, float rotation, string label){
     ofSetColor(0xffffff);
     ofScale(0.6,0.6,1);
     ofTranslate(20, -10);
-    franklinBook.drawString(ofToString((int)rotation), 0,0);
+//    franklinBook.drawString(ofToString((int)rotation), 0,0);
     
     ofPopMatrix();
     
