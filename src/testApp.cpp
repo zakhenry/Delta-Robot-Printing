@@ -71,6 +71,7 @@ void testApp::update(){
 //    cout << "Serial output: "<<serial.readByte()<< "\n";
     
     deltaRobot.update();
+    oscListen.update();
     
 //    cout <<"current2TouchHeight: "<<current2TouchHeight<<"\n";
 //cout <<"zoom"<<zoom<<"\n";

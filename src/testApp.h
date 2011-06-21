@@ -7,6 +7,7 @@
 
 #include "deltaRobot.h"
 #include "pathLoader.h"
+#include "oscEvents.h"
 
 class testApp : public ofBaseApp{
 	
@@ -43,6 +44,8 @@ class testApp : public ofBaseApp{
         PathLoader pathLoader;
         
         ofTrueTypeFont  franklinBook;
+    
+        oscEvents oscListen;
         
 		
 };
