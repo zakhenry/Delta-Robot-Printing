@@ -90,6 +90,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6C4FBF4813B030DD004400C7 /* frabk.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = frabk.ttf; sourceTree = "<group>"; };
+		6C4FBF4913B030DD004400C7 /* test.drp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.drp; sourceTree = "<group>"; };
 		6C563E8F134E8B3000311C79 /* deltaRobot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deltaRobot.h; sourceTree = "<group>"; };
 		6C563EB8134E918100311C79 /* deltaRobot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = deltaRobot.cpp; sourceTree = "<group>"; };
 		6C6DB2F11398EF17000B5916 /* MultitouchSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MultitouchSupport.framework; sourceTree = "<group>"; };
@@ -192,6 +194,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6C4FBF4713B030DD004400C7 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				6C4FBF4813B030DD004400C7 /* frabk.ttf */,
+				6C4FBF4913B030DD004400C7 /* test.drp */,
+			);
+			name = data;
+			path = bin/data;
+			sourceTree = SOURCE_ROOT;
+		};
 		6C6DB2F31398EF51000B5916 /* ofxMultiTouchPad */ = {
 			isa = PBXGroup;
 			children = (
@@ -487,6 +499,7 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				6C4FBF4713B030DD004400C7 /* data */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,

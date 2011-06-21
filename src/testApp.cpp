@@ -20,8 +20,11 @@ bool runSteppersWithCursor = false;
 
 
 //--------------------------------------------------------------
-void testApp::setup(){	
+void testApp::setup(){
     
+    ofSetDataPathRoot("./");
+    
+    ofHideCursor();
     // --- add the listeners
     ofAddListener(pad.update, this, &testApp::padUpdates);
     ofAddListener(pad.touchAdded, this, &testApp::newTouch);
@@ -173,9 +176,8 @@ void testApp::draw(){
         glRotatef(-mouseY,1,0,0);
         glRotatef(-mouseX,0,1,0);
     }else{
-        glRotatef(ofGetElapsedTimef()*13,1,0,0);
-        glRotatef(ofGetElapsedTimef()*11,0,1,0);
-        glRotatef(ofGetElapsedTimef()*7,0,0,1);
+        glRotatef(-220+sin(ofGetElapsedTimef()/3)*20,1,0,0);
+        glRotatef(ofGetElapsedTimef()*15,0,1,0);
     }
     
     

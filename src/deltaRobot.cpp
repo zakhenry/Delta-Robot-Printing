@@ -171,9 +171,9 @@ int DeltaRobot::setCartesianPosition(float x, float y, float z, bool setSteppers
                 
                 cout << "stepper0Speed:("<<stepper0Speed<<"), stepper1Speed:("<<stepper1Speed<<"), stepper2Speed("<<stepper2Speed<<")\n";
                 clock_t tStart = clock();
-                stepperControl.setStepper(0, newTheta0, 800);
-                stepperControl.setStepper(1, newTheta1, 800);
-                stepperControl.setStepper(2, newTheta2, 800);
+                stepperControl.setStepper(0, newTheta0, 2000);
+                stepperControl.setStepper(1, newTheta1, 2000);
+                stepperControl.setStepper(2, newTheta2, 2000);
             }else{
                 return -1; //dont move as steppers are not ready
             }
