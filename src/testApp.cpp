@@ -14,7 +14,7 @@ float zoom = 1;
 bool tumble = false;
 
 bool kinectCursor = false;
-int kinectScale = 100;
+int kinectScale = 500;
 
 float effectorCursorX, effectorCursorY, effectorCursorZ = 0;
 bool cursorPositionPossible = false;
@@ -77,10 +77,14 @@ void testApp::update(){
 
     if (kinectCursor){
         oscListen.update();
-        if (deltaRobot.stepperControl.robotReadyForData()){
             ofPoint newPosition = oscListen.getHighpoint();
-            cursorPositionPossible = (deltaRobot.setCartesianPosition(newPosition.x*kinectScale, newPosition.y*kinectScale, newPosition.z*kinectScale, runSteppersWithCursor)==0);
-        }
+            effectorCursorX = (newPosition.x-0.5)*kinectScale;
+            effectorCursorY = (newPosition.y-0.5)*kinectScale;
+            effectorCursorZ = -(300-newPosition.z*kinectScale);
+            
+            
+            cursorPositionPossible = (deltaRobot.setCartesianPosition(effectorCursorX, effectorCursorY, effectorCursorZ, runSteppersWithCursor)==0);
+            cout << "x:"<<effectorCursorX<<", y:"<<effectorCursorX<<", z: "<<effectorCursorZ<<"\n";
     }
     
 //    cout <<"current2TouchHeight: "<<current2TouchHeight<<"\n";

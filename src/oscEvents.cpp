@@ -43,7 +43,7 @@ void oscEvents::update(){
             z = m.getArgAsFloat( 2 );
             
             setHighpoint(x, y, z);
-            cout << "delta highpoint received as: " << highpoint.z;
+            cout << "delta highpoint received as: " << highpoint.z<<"\n";
             
 		}
         
