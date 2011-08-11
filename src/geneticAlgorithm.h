@@ -86,6 +86,7 @@ class GeneticAlgorithm {
     
 public:
     
+    bool showWalls;
     int generations;
     int populationSize;
     float breedingPopulationSize; //percentage of population size (must be less than 66.66). This size also defines the randoms added each cull

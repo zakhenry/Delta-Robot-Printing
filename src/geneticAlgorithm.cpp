@@ -14,29 +14,15 @@ GeneticAlgorithm::GeneticAlgorithm() : deltaRobot(115.0){ //constructor ( after 
     
     //best for himmelblaus' modified function
     ///*
-    parms.maxX = 5;
-    parms.minX = -5;
-    parms.maxY = 5;
-    parms.minY = -5;
-    parms.maxZ = 5;
-    parms.minZ = -5;
-    parms.mutationFactor = 0.2; //percentage each phenotype of parent is mutated by
-    //*/
-    //best for delta bot calcs - x = baseSideMultiplier, y = upperArmMultiplier, z = lowerArmMultiplier
-    /*
-    
-    
-    
-    parms.maxX = 5;
-    parms.minX = 1;
-    parms.maxY = 5;
+    parms.maxX = 1;
+    parms.minX = 0;
+    parms.maxY = 1;
     parms.minY = 0;
-    parms.maxZ = 5;
+    parms.maxZ = 1;
     parms.minZ = 0;
     parms.mutationFactor = 0.2; //percentage each phenotype of parent is mutated by
-     */
-    
-    
+    //*/
+    showWalls = false;
     
     populationSize = 100;
     breedingPopulationSize = 0.666;
@@ -327,7 +313,9 @@ int GeneticAlgorithm::nextIdNumber(){
 
 vector<GeneticAlgorithm::specimen>GeneticAlgorithm::bruteForceSearchSpace(parameters parms){
     
-    searchIncrement = 0.3;
+    int individualsToBruteForce = 100000;
+    
+    searchIncrement = 1/pow(individualsToBruteForce, (double)1/3);
     vector<specimen>specimens;
     
     int idNum = 0;
@@ -338,9 +326,9 @@ vector<GeneticAlgorithm::specimen>GeneticAlgorithm::bruteForceSearchSpace(parame
                 specimen newSpecimen;
                     //i found shifting the vector in a random direction makes visualisation more comfortable as it removes moire artifacts
                     
-                newSpecimen.x = xVal+ofRandom(-1, 1);
-                newSpecimen.y = yVal+ofRandom(-1, 1);
-                newSpecimen.z = zVal+ofRandom(-1, 1);
+                newSpecimen.x = xVal+ofRandom(-0.01, 0.01);
+                newSpecimen.y = yVal+ofRandom(-0.01, 0.01);
+                newSpecimen.z = zVal+ofRandom(-0.01, 0.01);
                 
                 newSpecimen.fitness = deltaRobot.calculateCartesianPointCloudSize(newSpecimen.x, newSpecimen.y, newSpecimen.z, newSpecimen.fitnessTimeCalc); //this is likely going to be the choke point (not actually running point cloud algo yet)
 //                newSpecimen.fitness = 150;
@@ -384,6 +372,8 @@ void GeneticAlgorithm::drawSearchSpace(float fitnessThreshold, float fitnessColo
     
     
     glTranslatef(ofGetWidth()/2,ofGetHeight()/2-400,0); //moves coordinates to centre (ish) of scene
+    ofScale(1000, 1000, 1000);
+    ofTranslate(-0.5, -0.5, -0.5);
     
     if (allSpecimens.size()>0){
         
@@ -405,8 +395,18 @@ void GeneticAlgorithm::drawSearchSpace(float fitnessThreshold, float fitnessColo
                 
                 ofSetColor(newColor.r, newColor.g, newColor.b);
                 
-                glVertex3f(allSpecimens[i].x*100, allSpecimens[i].z*100, allSpecimens[i].y*100);
+                
+                
+                if (showWalls){
+                    glVertex3f(allSpecimens[i].x, 0, allSpecimens[i].y);
+                    glVertex3f(allSpecimens[i].x, allSpecimens[i].z, 0);
+                    glVertex3f(0, allSpecimens[i].z, allSpecimens[i].y);
+                }else{
+                    glVertex3f(allSpecimens[i].x, allSpecimens[i].z, allSpecimens[i].y);
+                }
             }
+            
+            
             
             
         }
@@ -424,8 +424,9 @@ void GeneticAlgorithm::drawCurrentPopulation(float fitnessThreshold, float fitne
     
     glPushMatrix();
     
-    
     glTranslatef(ofGetWidth()/2,ofGetHeight()/2-400,0); //moves coordinates to centre (ish) of scene
+    ofScale(1000, 1000, 1000);
+    ofTranslate(-0.5, -0.5, -0.5);
     
     if (population.size()>0){
         
@@ -447,7 +448,13 @@ void GeneticAlgorithm::drawCurrentPopulation(float fitnessThreshold, float fitne
                 
                 ofSetColor(newColor.r, newColor.g, newColor.b);
                 
-                glVertex3f(population[i].x*100, population[i].z*100, population[i].y*100);
+                if (showWalls){
+                    glVertex3f(population[i].x, 0, population[i].y);
+                    glVertex3f(population[i].x, population[i].z, 0);
+                    glVertex3f(0, population[i].z, population[i].y);
+                }else{
+                    glVertex3f(population[i].x, population[i].z, population[i].y);
+                }
             }
             
             

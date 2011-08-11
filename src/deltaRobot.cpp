@@ -404,7 +404,7 @@ float DeltaRobot::calculateCartesianPointCloudSize(float baseSideMultiplier, flo
     
 //    float fitness = 200.0-(powf(powf(baseSideMultiplier, 2)+upperArmMultiplier-11, 2)+powf((baseSideMultiplier+powf(upperArmMultiplier, 2)-7), 2)); //Himmelblau's function modified to give maximums at 200
     
-    float fitness = 200.0-(powf(powf(baseSideMultiplier, 2)+upperArmMultiplier-11, 2)+powf((baseSideMultiplier+powf(upperArmMultiplier, 2)-7), 2))-10*(powf(lowerArmMultiplier, 2)); //Himmelblau's modified function to give a 4d graph. 4 maximums give 200
+    float fitness = 200.0-(powf(powf((baseSideMultiplier*10)-5, 2)+(upperArmMultiplier*10)-5-11, 2)+powf(((baseSideMultiplier*10)-5+powf((upperArmMultiplier*10)-5, 2)-7), 2))-10*(powf((lowerArmMultiplier*10)-5, 2)); //Himmelblau's modified function to give a 4d graph. 4 maximums give 200
 
 //    float fitness = 200-5*sin(baseSideMultiplier)-5*sin(upperArmMultiplier)-5*sin(lowerArmMultiplier);
     

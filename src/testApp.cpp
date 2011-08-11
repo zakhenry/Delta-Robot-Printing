@@ -81,6 +81,10 @@ void testApp::keyPressed  (int key){
             tumble = !tumble;
             break;
             
+        case 'w':
+            ga.showWalls = !ga.showWalls;
+            break;
+            
 			
 		default:
             cout <<"Key ("<<key<<") pressed\n";
