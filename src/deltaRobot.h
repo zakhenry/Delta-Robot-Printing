@@ -30,6 +30,11 @@ public: //temporarily here so I can test functions out
     
     struct workingPoint{
         float x, y, z;
+        void set(float _x, float _y, float _z){
+            x = _x;
+            y = _y;
+            z = _z;
+        }
     };
     
     StepperControl stepperControl;
@@ -74,6 +79,11 @@ public: //temporarily here so I can test functions out
     vector<workingPoint>cartesianPointCloud;
     void calculateCartesianPointCloud();
     void drawCartesianPointCloud();
+    
+    vector<workingPoint>workingCubicSpaceLimits;
+    void calculateWorkingCubicSpacePosition();
+    bool workingPointsAreValid(vector<workingPoint> testPoints);
+    void drawWorkingCubicSpace();
     
     float calculateCartesianPointCloudSize(float, float, float, float &elapsedTime); //this is the fitness function that the ga runs
     

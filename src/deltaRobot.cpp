@@ -11,9 +11,9 @@
 
 DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
     
-    baseSideMultiplier = 1.674; //2
-    upperArmMultiplier = 1.242; //1.5
-    lowerArmMultiplier = 0.06; //0.9
+    baseSideMultiplier = 2; //2
+    upperArmMultiplier = 1.5; //1.5
+    lowerArmMultiplier = 0.9; //0.9
     
 	effectorSideLength = ieffectorSideLength;
 	baseSideLength = effectorSideLength*baseSideMultiplier;
@@ -381,6 +381,7 @@ void DeltaRobot::changeProportions(float ibaseSideMultiplier, float iupperArmMul
 //    setAngles(-45, -45, 45);
     calculateCartesianPointCloud();
     calculateWorkingPointCloud();
+    calculateWorkingCubicSpacePosition();
     
 //    cout << "New proportions ("<<baseSideMultiplier<<","<<upperArmMultiplier<<","<<lowerArmMultiplier<<") \n\n";
 }
@@ -469,6 +470,169 @@ void DeltaRobot::drawCartesianPointCloud(){
     
     glEnd();
     
+}
+
+bool DeltaRobot::workingPointsAreValid(vector<workingPoint> testPoints){
+    
+    for (int i = 0; i<testPoints.size(); i++){
+        if (!positionIsPossible(testPoints[i].x, testPoints[i].y, testPoints[i].z)){
+            return false;
+        }
+    }
+    
+    return true;
+    
+}
+
+
+void DeltaRobot::calculateWorkingCubicSpacePosition(){
+    
+    workingCubicSpaceLimits.clear();
+    
+    
+    float sideLength = 40, bestSideLength = 0;
+    float zHeight = 0; //bottom of base to bottom of cube
+    
+    vector<workingPoint> testCube, bestCube;
+    
+    while (zHeight>-(upperArmLength+lowerArmLength)){
+        
+        zHeight -= 10;
+        
+        sideLength = 10;
+        
+        do {
+            testCube.clear();
+            
+            sideLength+=10;
+            
+            workingPoint limit1;
+            limit1.set(-(sideLength/2), -(sideLength/2), zHeight);
+            testCube.push_back(limit1);
+            workingPoint limit2;
+            limit2.set(-(sideLength/2), (sideLength/2), zHeight);
+            testCube.push_back(limit2);
+            workingPoint limit3;
+            limit3.set((sideLength/2), -(sideLength/2), zHeight);
+            testCube.push_back(limit3);
+            workingPoint limit4;
+            limit4.set((sideLength/2), (sideLength/2), zHeight);
+            testCube.push_back(limit4);
+            workingPoint limit5;
+            limit5.set(-(sideLength/2), -(sideLength/2), zHeight+sideLength);
+            testCube.push_back(limit5);
+            workingPoint limit6;
+            limit6.set(-(sideLength/2), (sideLength/2), zHeight+sideLength);
+            testCube.push_back(limit6);
+            workingPoint limit7;
+            limit7.set((sideLength/2), -(sideLength/2), zHeight+sideLength);
+            testCube.push_back(limit7);
+            workingPoint limit8;
+            limit8.set((sideLength/2), (sideLength/2), zHeight+sideLength);
+            testCube.push_back(limit8);
+            
+            workingPoint mid1;
+            mid1.set(0, 0, zHeight);
+            testCube.push_back(mid1);
+            workingPoint mid2;
+            mid2.set(0, 0, zHeight+sideLength);
+            testCube.push_back(mid2);
+            
+            workingPoint mid3;
+            mid3.set(-(sideLength/2), 0, (zHeight+sideLength/2));
+            testCube.push_back(mid3);
+            workingPoint mid4;
+            mid4.set((sideLength/2), 0, (zHeight+sideLength/2));
+            testCube.push_back(mid4);
+            
+            workingPoint mid5;
+            mid5.set(0, -(sideLength/2), (zHeight+sideLength/2));
+            testCube.push_back(mid5);
+            workingPoint mid6;
+            mid6.set(0, (sideLength/2), (zHeight+sideLength/2));
+            testCube.push_back(mid6);
+
+            
+        }while (workingPointsAreValid(testCube));
+        
+            if (sideLength>bestSideLength){
+                bestCube.clear();
+                bestCube = testCube;
+                
+                bestSideLength = sideLength;
+                
+//                cout << "best side length is now "<<bestSideLength<<endl;
+            }
+
+//        cout << "testing z depth "<<zHeight<<endl;
+            
+    }
+    
+    
+    workingCubicSpaceLimits = bestCube;
+    
+    
+    
+}
+
+void DeltaRobot::drawWorkingCubicSpace(){
+    
+    
+    if (workingCubicSpaceLimits.size()>0){
+        
+        ofPushStyle();
+        
+        ofSetColor(200, 200, 200);
+        glPointSize(5);
+        
+        glBegin(GL_QUADS);
+        
+        glVertex3f(workingCubicSpaceLimits[0].x, workingCubicSpaceLimits[0].z, workingCubicSpaceLimits[0].y);
+        glVertex3f(workingCubicSpaceLimits[1].x, workingCubicSpaceLimits[1].z, workingCubicSpaceLimits[1].y);
+        glVertex3f(workingCubicSpaceLimits[3].x, workingCubicSpaceLimits[3].z, workingCubicSpaceLimits[3].y);
+        glVertex3f(workingCubicSpaceLimits[2].x, workingCubicSpaceLimits[2].z, workingCubicSpaceLimits[2].y);
+        
+        glVertex3f(workingCubicSpaceLimits[4].x, workingCubicSpaceLimits[4].z, workingCubicSpaceLimits[4].y);
+        glVertex3f(workingCubicSpaceLimits[5].x, workingCubicSpaceLimits[5].z, workingCubicSpaceLimits[5].y);
+        glVertex3f(workingCubicSpaceLimits[7].x, workingCubicSpaceLimits[7].z, workingCubicSpaceLimits[7].y);
+        glVertex3f(workingCubicSpaceLimits[6].x, workingCubicSpaceLimits[6].z, workingCubicSpaceLimits[6].y);
+        
+        glVertex3f(workingCubicSpaceLimits[0].x, workingCubicSpaceLimits[0].z, workingCubicSpaceLimits[0].y);
+        glVertex3f(workingCubicSpaceLimits[1].x, workingCubicSpaceLimits[1].z, workingCubicSpaceLimits[1].y);
+        glVertex3f(workingCubicSpaceLimits[5].x, workingCubicSpaceLimits[5].z, workingCubicSpaceLimits[5].y);
+        glVertex3f(workingCubicSpaceLimits[4].x, workingCubicSpaceLimits[4].z, workingCubicSpaceLimits[4].y);
+        
+        glVertex3f(workingCubicSpaceLimits[3].x, workingCubicSpaceLimits[3].z, workingCubicSpaceLimits[3].y);
+        glVertex3f(workingCubicSpaceLimits[2].x, workingCubicSpaceLimits[2].z, workingCubicSpaceLimits[2].y);
+        glVertex3f(workingCubicSpaceLimits[6].x, workingCubicSpaceLimits[6].z, workingCubicSpaceLimits[6].y);
+        glVertex3f(workingCubicSpaceLimits[7].x, workingCubicSpaceLimits[7].z, workingCubicSpaceLimits[7].y);
+        
+        glVertex3f(workingCubicSpaceLimits[1].x, workingCubicSpaceLimits[1].z, workingCubicSpaceLimits[1].y);
+        glVertex3f(workingCubicSpaceLimits[3].x, workingCubicSpaceLimits[3].z, workingCubicSpaceLimits[3].y);
+        glVertex3f(workingCubicSpaceLimits[7].x, workingCubicSpaceLimits[7].z, workingCubicSpaceLimits[7].y);
+        glVertex3f(workingCubicSpaceLimits[5].x, workingCubicSpaceLimits[5].z, workingCubicSpaceLimits[5].y);
+        
+        glVertex3f(workingCubicSpaceLimits[0].x, workingCubicSpaceLimits[0].z, workingCubicSpaceLimits[0].y);
+        glVertex3f(workingCubicSpaceLimits[2].x, workingCubicSpaceLimits[2].z, workingCubicSpaceLimits[2].y);
+        glVertex3f(workingCubicSpaceLimits[6].x, workingCubicSpaceLimits[6].z, workingCubicSpaceLimits[6].y);
+        glVertex3f(workingCubicSpaceLimits[4].x, workingCubicSpaceLimits[4].z, workingCubicSpaceLimits[4].y);
+        
+    
+        //    for (int i=0; i<6; i++){
+        //        
+        //        glVertex3f(workingCubicSpaceLimits[i].x, workingCubicSpaceLimits[i].z, workingCubicSpaceLimits[i].y);
+        //        
+        //    }
+        
+        glEnd();
+        
+        ofPopStyle();
+    }
+    
+
+    
+    
+//    cout << "drawing "<<workingCubicSpaceLimits.size()<<" points in working cubic space"<<endl;
 }
 
 bool DeltaRobot::currentPathFileIsPossible(PathLoader::pathFile file){

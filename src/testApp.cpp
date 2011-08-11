@@ -40,6 +40,11 @@ void testApp::setup(){
 
 //	ofSetVerticalSync(true);
 
+    
+    //some model / light stuff
+    glEnable (GL_DEPTH_TEST);
+    glShadeModel (GL_SMOOTH);
+    
     //some model / light stuffx
 
     glEnable(GL_LINE_SMOOTH);
@@ -158,6 +163,8 @@ void testApp::draw(){
         if (deltaRobot.cartesianPointCloud.size()>0&&showCartesianPointCloud){
             deltaRobot.drawCartesianPointCloud();
         }
+    
+            deltaRobot.drawWorkingCubicSpace();
         
     /*Effector cursor*/
     glPointSize(5.0);
