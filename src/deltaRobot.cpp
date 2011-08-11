@@ -11,9 +11,9 @@
 
 DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
     
-    baseSideMultiplier = 2; //2
-    upperArmMultiplier = 1.6; //1.5
-    lowerArmMultiplier = 1.0; //0.9
+    baseSideMultiplier = 1.674; //2
+    upperArmMultiplier = 1.242; //1.5
+    lowerArmMultiplier = 0.06; //0.9
     
 	effectorSideLength = ieffectorSideLength;
 	baseSideLength = effectorSideLength*baseSideMultiplier;

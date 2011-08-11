@@ -1,6 +1,6 @@
 #include "testApp.h"
 
-float effectorSideLength =  115.0; //every dimension is based off this master length
+float effectorSideLength =  250.0; //every dimension is based off this master length
 
 bool showWorkPointCloud = false;
 bool showCartesianPointCloud = false;
@@ -19,6 +19,7 @@ int kinectScale = 500;
 float effectorCursorX, effectorCursorY, effectorCursorZ = 0;
 bool cursorPositionPossible = false;
 bool runSteppersWithCursor = false;
+
 
 
 
@@ -229,6 +230,7 @@ void testApp::draw(){
 //    franklinBook.drawString(ofToString((int)ofGetFrameRate()), 0,0);
     ofPopMatrix();
 
+    
 
 }
 
