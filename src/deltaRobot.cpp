@@ -400,13 +400,13 @@ float DeltaRobot::calculateCartesianPointCloudSize(float baseSideMultiplier, flo
         
     
     
-//    float fitness = 100*powf((y-powf(x, 2)), 2)+powf((1-x), 2); //Rosenbrock's banana function
+//    float fitness = 200-50*powf(((upperArmMultiplier*2)-powf((baseSideMultiplier*2), 2)), 2)+powf((1-(lowerArmMultiplier*2)), 2)+5*powf(upperArmMultiplier*5, 3); //Rosenbrock's banana function modified
     
 //    float fitness = 200.0-(powf(powf(baseSideMultiplier, 2)+upperArmMultiplier-11, 2)+powf((baseSideMultiplier+powf(upperArmMultiplier, 2)-7), 2)); //Himmelblau's function modified to give maximums at 200
     
     float fitness = 200.0-(powf(powf((baseSideMultiplier*10)-5, 2)+(upperArmMultiplier*10)-5-11, 2)+powf(((baseSideMultiplier*10)-5+powf((upperArmMultiplier*10)-5, 2)-7), 2))-10*(powf((lowerArmMultiplier*10)-5, 2)); //Himmelblau's modified function to give a 4d graph. 4 maximums give 200
 
-//    float fitness = 200-5*sin(baseSideMultiplier)-5*sin(upperArmMultiplier)-5*sin(lowerArmMultiplier);
+//    float fitness = 200-80*sin(baseSideMultiplier*80)-40*sin(upperArmMultiplier*50)-80*sin(lowerArmMultiplier*10);
     
     elapsedTime = (double)(clock() - tStart)/CLOCKS_PER_SEC;
     

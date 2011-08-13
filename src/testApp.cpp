@@ -21,8 +21,6 @@ void testApp::setup(){
     ofAddListener(pad.touchRemoved, this, &testApp::removedTouch);
     
 	ofBackground(0,0,0);
-		
-//	ofSetVerticalSync(true);
 
     //some model / light stuff
     glEnable (GL_DEPTH_TEST);
