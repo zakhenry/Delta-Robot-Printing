@@ -72,6 +72,9 @@ public: //temporarily here so I can test functions out
     void update();
     
 //    vector<workingPoint>calculateWorkingPointCloud();
+    
+    bool workingPointsAreValid(vector<workingPoint> testPoints);
+    
     vector<workingPoint>workingPointCloud;
     void calculateWorkingPointCloud();
     void drawWorkingPointCloud();
@@ -81,9 +84,12 @@ public: //temporarily here so I can test functions out
     void drawCartesianPointCloud();
     
     vector<workingPoint>workingCubicSpaceLimits;
-    void calculateWorkingCubicSpacePosition();
-    bool workingPointsAreValid(vector<workingPoint> testPoints);
+    void calculateWorkingCubicSpaceLimits();
     void drawWorkingCubicSpace();
+    
+    vector<workingPoint>workingPointsInCubicSpace;
+    void calculateWorkingPointsInCubicSpace();
+    void drawWorkingPointsInCubicSpace();
     
     float calculateCartesianPointCloudSize(float, float, float, float &elapsedTime); //this is the fitness function that the ga runs
     

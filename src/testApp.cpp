@@ -4,6 +4,8 @@ float effectorSideLength =  250.0; //every dimension is based off this master le
 
 bool showWorkPointCloud = false;
 bool showCartesianPointCloud = false;
+bool showWorkingPointsInCubicSpace = false;
+bool showWorkingCube = false;
 
 DeltaRobot deltaRobot(effectorSideLength);
 
@@ -163,8 +165,16 @@ void testApp::draw(){
         if (deltaRobot.cartesianPointCloud.size()>0&&showCartesianPointCloud){
             deltaRobot.drawCartesianPointCloud();
         }
+        
+        if (deltaRobot.workingPointsInCubicSpace.size()>0&&showWorkingPointsInCubicSpace){
+            deltaRobot.drawWorkingPointsInCubicSpace();
+        }
     
+        if(showWorkingCube){
             deltaRobot.drawWorkingCubicSpace();
+        }
+    
+            
         
     /*Effector cursor*/
     glPointSize(5.0);
@@ -243,6 +253,8 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){ 
+    
+    cout << "about to switch "<<key<<endl;
 	
 	switch (key) {
             
@@ -319,6 +331,7 @@ void testApp::keyPressed  (int key){
             }
             showWorkPointCloud = !showWorkPointCloud;
             showCartesianPointCloud = false;
+            showWorkingPointsInCubicSpace = false;
 			break;
             
         case '[':
@@ -327,6 +340,25 @@ void testApp::keyPressed  (int key){
             }
             showCartesianPointCloud = !showCartesianPointCloud;
             showWorkPointCloud = false;
+            showWorkingPointsInCubicSpace = false;
+			break;
+            
+        case ']':
+        {
+            if (!(deltaRobot.workingPointsInCubicSpace.size()>0)){
+                deltaRobot.calculateWorkingPointsInCubicSpace();
+            }
+            showWorkingPointsInCubicSpace = !showWorkingPointsInCubicSpace;
+            showWorkPointCloud = false;
+            showCartesianPointCloud = false;
+        }
+			break;
+            
+        case 'o':
+            if (!(deltaRobot.workingCubicSpaceLimits.size()>0)){
+                deltaRobot.calculateWorkingCubicSpaceLimits();
+            }
+            showWorkingCube = !showWorkingCube;
 			break;
 
             

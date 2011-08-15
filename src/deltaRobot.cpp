@@ -331,7 +331,7 @@ void DeltaRobot::calculateWorkingPointCloud(){ //could be really nice if this wa
     int degreesToCheck = 180;
     int topValue = degreesToCheck/2;
     int bottomValue = -topValue;
-    int increment = 10; //this is key to how many points are generated
+    int increment = 5; //this is key to how many points are generated
     
     for (int testTheta0=bottomValue; testTheta0<=topValue; testTheta0+=increment){ //increment by 1 degree at a time
         for (int testTheta1=bottomValue; testTheta1<=topValue; testTheta1+=increment){ //increment by 1 degree at a time
@@ -381,7 +381,8 @@ void DeltaRobot::changeProportions(float ibaseSideMultiplier, float iupperArmMul
 //    setAngles(-45, -45, 45);
     calculateCartesianPointCloud();
     calculateWorkingPointCloud();
-    calculateWorkingCubicSpacePosition();
+    calculateWorkingCubicSpaceLimits();
+    calculateWorkingPointsInCubicSpace();
     
 //    cout << "New proportions ("<<baseSideMultiplier<<","<<upperArmMultiplier<<","<<lowerArmMultiplier<<") \n\n";
 }
@@ -485,7 +486,7 @@ bool DeltaRobot::workingPointsAreValid(vector<workingPoint> testPoints){
 }
 
 
-void DeltaRobot::calculateWorkingCubicSpacePosition(){
+void DeltaRobot::calculateWorkingCubicSpaceLimits(){
     
     workingCubicSpaceLimits.clear();
     
@@ -633,6 +634,63 @@ void DeltaRobot::drawWorkingCubicSpace(){
     
     
 //    cout << "drawing "<<workingCubicSpaceLimits.size()<<" points in working cubic space"<<endl;
+}
+
+
+void DeltaRobot::calculateWorkingPointsInCubicSpace(){
+    
+    if (!(workingPointCloud.size()>0)){
+        calculateWorkingPointCloud();
+    }
+    
+    if (!(workingCubicSpaceLimits.size()>0)){
+        calculateWorkingCubicSpaceLimits();
+    }
+    
+    workingPointsInCubicSpace.clear();
+    
+    float ceiling = workingCubicSpaceLimits[4].z;
+    float floor = workingCubicSpaceLimits[0].z;
+    float xLimitOne = workingCubicSpaceLimits[0].x;
+    float xLimitTwo = workingCubicSpaceLimits[2].x;
+    float yLimitOne = workingCubicSpaceLimits[0].y;
+    float yLimitTwo = workingCubicSpaceLimits[2].y;
+    
+//    cout << "ceiling is "<<ceiling<<endl;
+//    cout << "floor is "<<floor<<endl;
+    
+    for (int i=0; i<workingPointCloud.size(); i++){
+        
+        workingPoint test = workingPointCloud[i];
+        
+//        cout << "test z is "<<test.z<<endl;
+        
+        if ((test.z<ceiling)&&(test.z>floor)){
+            if ((test.x>xLimitOne)&&(test.x<xLimitTwo)){
+                if ((test.y>xLimitOne)&&(test.y<xLimitTwo)){
+                    //continue
+//                    cout << "ceiling is "<<ceiling<<endl;
+//                    cout << "added test z is "<<test.z<<endl;
+                    workingPointsInCubicSpace.push_back(test);
+                }
+            }
+        }
+        
+    }
+    
+}
+
+void DeltaRobot::drawWorkingPointsInCubicSpace(){
+    ofSetColor(0x0000ff);
+    glPointSize(2.5);
+    glBegin(GL_POINTS);
+    
+    for (int i=0; i<workingPointsInCubicSpace.size(); i++){
+        glVertex3f(workingPointsInCubicSpace[i].x, workingPointsInCubicSpace[i].z, workingPointsInCubicSpace[i].y);
+        //        cout << "Point drawn in position ("<<cartesianPointCloud[i].x<<","<<cartesianPointCloud[i].y<<","<<cartesianPointCloud[i].z<<")\n";
+    }
+    
+    glEnd();
 }
 
 bool DeltaRobot::currentPathFileIsPossible(PathLoader::pathFile file){
