@@ -8,9 +8,8 @@ float current3TouchHeight, current2TouchHeight = 0;
 
 bool tumble = false;
 
-float fitnessThreshold = 100; //mod himmelblau
-float fitnessColorScale = 400;
-//float fitnessThreshold = 5000; //delta
+float fitnessThreshold = 0.5; //normalized
+float fitnessColorScale = 1;
 
 //--------------------------------------------------------------
 void testApp::setup(){	
@@ -132,7 +131,7 @@ void testApp::padUpdates(int & touchCount) {
                         alteration--;
                     }
                     
-                    fitnessColorScale += alteration*3;
+                    fitnessColorScale += alteration/20;
                     
 //                    cout << "fitness color scale:"<<fitnessColorScale<<"\n";
                     
@@ -159,8 +158,9 @@ void testApp::padUpdates(int & touchCount) {
                         alteration--;
                     }
                     
-                    fitnessThreshold += alteration*10; //mod himmelblau
-//                    fitnessThreshold += alteration*50000; //delta
+                    fitnessThreshold += alteration/20;
+                    
+                    cout << fitnessThreshold<<endl;
                     
                     current3TouchHeight = averageTouchHeight;
                 }

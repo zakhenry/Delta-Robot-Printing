@@ -12,13 +12,15 @@
 // than once which would confuse the compiler
 
 #include "ofMain.h"
+//#include "pathLoader.h"
+//#include "stepperControl.h"
 
 class StepperControl; //forward declaration allows access to methods
 
 class DeltaRobot {
 	
 public: //temporarily here so I can test functions out	
-//	float /*e, f, re, rf*/;
+    //	float /*e, f, re, rf*/;
     float effectorSideLength, baseSideLength, upperArmLength, lowerArmLength;
     
 	// trigonometric constants
@@ -28,27 +30,36 @@ public: //temporarily here so I can test functions out
     
     struct workingPoint{
         float x, y, z;
+        void set(float _x, float _y, float _z){
+            x = _x;
+            y = _y;
+            z = _z;
+        }
     };
+    
+//    StepperControl stepperControl;
     
     vector<ofPoint>queuedWaypoints;
     void gotoNextWaypt();
     
-    int hackCount;
+    float distanceBetweenPoints(ofPoint a, ofPoint b);
+    
+    float unitSpeed; //units/second
 	
-//public:
+    //public:
     
     float baseSideMultiplier, upperArmMultiplier, lowerArmMultiplier; //these multipliers define the ratio of the proportions of the robot (to be worked out by genetic search function, and made static)
 	void changeProportions(float baseSideMultiplier, float upperArmMultiplier, float lowerArmMultiplier);
     
 	DeltaRobot(float effectorSideLength); //constructor
     
-//    bool directControl;
+    //    bool directControl;
     float effectorX, effectorY, effectorZ, theta0, theta1, theta2;
 	
 	int calcInverse(float, float, float, float&, float&, float&); // inverse kinematics
 	int calcForward(float, float, float, float&, float&, float&); //forward kinematics
     
-    int setCartesianPosition(float x, float y, float z); // inverse kinematics
+    int setCartesianPosition(float x, float y, float z, bool setSteppers); // inverse kinematics
     int setAngles(float theta0, float theta1, float theta2); //forward kinematics
 	
 	bool positionIsPossible(float, float, float);
@@ -60,7 +71,10 @@ public: //temporarily here so I can test functions out
     void drawRobot();
     void update();
     
-//    vector<workingPoint>calculateWorkingPointCloud();
+    //    vector<workingPoint>calculateWorkingPointCloud();
+    
+    bool workingPointsAreValid(vector<workingPoint> testPoints);
+    
     vector<workingPoint>workingPointCloud;
     void calculateWorkingPointCloud();
     void drawWorkingPointCloud();
@@ -69,10 +83,24 @@ public: //temporarily here so I can test functions out
     void calculateCartesianPointCloud();
     void drawCartesianPointCloud();
     
-    float calculateCartesianPointCloudSize(float, float, float, float &elapsedTime); //this is the fitness function that the ga runs
+    vector<workingPoint>workingCubicSpaceLimits;
+    void calculateWorkingCubicSpaceLimits();
+    void drawWorkingCubicSpace();
+    
+    float workingCubicSpaceSize;
+    vector<workingPoint>workingPointsInCubicSpace;
+    void calculateWorkingPointsInCubicSpace();
+    void drawWorkingPointsInCubicSpace();
+    
+//    float calculateCartesianPointCloudSize(float, float, float, float &elapsedTime); //this is the fitness function that the ga runs
+    
+    float calculateFitness(float baseSideMultiplier, float upperArmMultiplier, float lowerArmMultiplier, float&elapsedTime); //main fitness function for GA
 
+    
+//    bool currentPathFileIsPossible(PathLoader::pathFile);
+//    void runPath(PathLoader::pathFile);
 };
 
 
 
-#endif 
+#endif

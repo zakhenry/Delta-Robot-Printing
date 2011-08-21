@@ -112,7 +112,7 @@ GeneticAlgorithm::specimen GeneticAlgorithm::generateRandomSpecimen(parameters p
     newSpecimen.y = ofRandom(parms.minY, parms.maxY);
     newSpecimen.z = ofRandom(parms.minZ, parms.maxZ);
     
-    newSpecimen.fitness = deltaRobot.calculateCartesianPointCloudSize(newSpecimen.x, newSpecimen.y, newSpecimen.z, newSpecimen.fitnessTimeCalc); //this is likely going to be the choke point (not actually running point cloud algo yet)
+    newSpecimen.fitness = deltaRobot.calculateFitness(newSpecimen.x, newSpecimen.y, newSpecimen.z, newSpecimen.fitnessTimeCalc); //this is likely going to be the choke point (not actually running point cloud algo yet)
     
 //    cout << "new specimen fitness is: ()" <<newSpecimen.fitness<<"\n";
     } while (newSpecimen.fitness==-1);
@@ -276,7 +276,7 @@ GeneticAlgorithm::specimen GeneticAlgorithm::createChild(specimen parentA, speci
 */    
     //fitness test
     
-    child.fitness = deltaRobot.calculateCartesianPointCloudSize(child.x, child.y, child.z, child.fitnessTimeCalc);
+    child.fitness = deltaRobot.calculateFitness(child.x, child.y, child.z, child.fitnessTimeCalc);
     
     //assign basic parms
     
@@ -313,7 +313,7 @@ int GeneticAlgorithm::nextIdNumber(){
 
 vector<GeneticAlgorithm::specimen>GeneticAlgorithm::bruteForceSearchSpace(parameters parms){
     
-    int individualsToBruteForce = 100000;
+    int individualsToBruteForce = 3000;
     
     searchIncrement = 1/pow(individualsToBruteForce, (double)1/3);
     vector<specimen>specimens;
@@ -330,7 +330,7 @@ vector<GeneticAlgorithm::specimen>GeneticAlgorithm::bruteForceSearchSpace(parame
                 newSpecimen.y = yVal+ofRandom(-0.01, 0.01);
                 newSpecimen.z = zVal+ofRandom(-0.01, 0.01);
                 
-                newSpecimen.fitness = deltaRobot.calculateCartesianPointCloudSize(newSpecimen.x, newSpecimen.y, newSpecimen.z, newSpecimen.fitnessTimeCalc); //this is likely going to be the choke point (not actually running point cloud algo yet)
+                newSpecimen.fitness = deltaRobot.calculateFitness(newSpecimen.x, newSpecimen.y, newSpecimen.z, newSpecimen.fitnessTimeCalc); //this is likely going to be the choke point (not actually running point cloud algo yet)
 //                newSpecimen.fitness = 150;
                 newSpecimen.age = 0; //any member of population created randomly will have an age of 0
                 newSpecimen.generation = 0;
@@ -361,9 +361,32 @@ void GeneticAlgorithm::calculateSearchSpace(){
     }
         
     allSpecimens = bruteForceSearchSpace(parms);
-    
     cout <<"Search space brute forced\n";
+    
+    normalizeFitness();
+    cout <<"Search space normalized\n";
+    
 
+}
+
+void GeneticAlgorithm::normalizeFitness(){
+    
+    int maxFitness = 1;
+    
+    for (int i=0; i<allSpecimens.size(); i++){
+        if (allSpecimens[i].fitness>maxFitness){
+            maxFitness = allSpecimens[i].fitness;
+        }
+    }
+    
+    for (int i=0; i<allSpecimens.size(); i++){
+        if (allSpecimens[i].fitness>0){
+            allSpecimens[i].normalizedFitness = allSpecimens[i].fitness/(float)maxFitness;
+            
+            cout << "fitness:  "<<allSpecimens[i].fitness<<" normalized: "<<allSpecimens[i].normalizedFitness<<endl;
+        }
+    }
+    
 }
 
 void GeneticAlgorithm::drawSearchSpace(float fitnessThreshold, float fitnessColorScale){
@@ -388,10 +411,10 @@ void GeneticAlgorithm::drawSearchSpace(float fitnessThreshold, float fitnessColo
         
         for (int i=0; i<allSpecimens.size(); i++){
             
-            if (allSpecimens[i].fitness>fitnessThreshold){
+            if (allSpecimens[i].normalizedFitness>fitnessThreshold){
                 
 //                ofColor newColor = HSVToRGB(allSpecimens[i].fitness/40000, 0.5, 1, color);
-                ofColor newColor = HSVToRGB(allSpecimens[i].fitness/fitnessColorScale, 0.5, 1, color);
+                ofColor newColor = HSVToRGB(allSpecimens[i].normalizedFitness/fitnessColorScale, 0.5, 1, color);
                 
                 ofSetColor(newColor.r, newColor.g, newColor.b);
                 

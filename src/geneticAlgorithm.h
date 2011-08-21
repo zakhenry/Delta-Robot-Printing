@@ -26,7 +26,7 @@ class GeneticAlgorithm {
     } parms;
     
     struct specimen {
-        float x, y, z, fitness, fitnessTimeCalc;
+        float x, y, z, fitness, fitnessTimeCalc, normalizedFitness;
         unsigned int age, generation, children, idNum;
     };
     
@@ -71,7 +71,7 @@ class GeneticAlgorithm {
     //new ga method:
     void rutAndBreedIndividuals(); //three individuals are chosen from population (at random for now) and weakest is killed then fittest two breed to produce one child to keep the population stable
     
-    
+    void normalizeFitness();
     
     
     /*Drawing functions*/
