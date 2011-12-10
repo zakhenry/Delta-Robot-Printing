@@ -1,6 +1,6 @@
 #include "testApp.h"
 
-float effectorSideLength =  250.0; //every dimension is based off this master length
+float effectorSideLength =  100.0; //every dimension is based off this master length //340.0
 
 bool showWorkPointCloud = false;
 bool showCartesianPointCloud = false;
@@ -22,13 +22,20 @@ float effectorCursorX, effectorCursorY, effectorCursorZ = 0;
 bool cursorPositionPossible = false;
 bool runSteppersWithCursor = false;
 
+int activeConsole = 0;
+
 
 
 
 //--------------------------------------------------------------
 void testApp::setup(){
     
-    ofSetDataPathRoot("./");
+    ofSetLogLevel(OF_LOG_VERBOSE);
+    
+//    ofSetDataPathRoot("./");
+    
+    textEntryMode = false;
+    serialHUDvisible = false;
     
     ofHideCursor();
     // --- add the listeners
@@ -68,7 +75,7 @@ void testApp::setup(){
     glFogf(GL_FOG_END, 4000);
     glEnable(GL_FOG);
     
-//    franklinBook.loadFont("frabk.ttf", 32);
+    franklinBook.loadFont("frabk.ttf", 32);
     
     mouseY = 220; //initial setup so the world will be on an orientation that makes sense
     
@@ -122,79 +129,75 @@ void testApp::draw(){
     
     glPushMatrix();
     
-    
-	glTranslatef(ofGetWidth()/2,ofGetHeight()/2,0);
-    
-	//tumble according to mouse
-    if (!tumble){
-        glRotatef(-mouseY,1,0,0);
-        glRotatef(-mouseX,0,1,0);
         
-//        cout << "mousex: "<<mouseX<<" mouseY: "<<mouseY<<"\n";
-    }else{
-        glRotatef(-220+sin(ofGetElapsedTimef()/3)*20,1,0,0);
-        glRotatef(ofGetElapsedTimef()*15,0,1,0);
-    }
-	glScalef(zoom, zoom, zoom);
-    
-    
-	glTranslatef(-ofGetWidth()/2,0,0);
-	
-  
-    
-    deltaRobot.setCoordinatesToRobot();
+        glTranslatef(ofGetWidth()/2,ofGetHeight()/2,0);
         
-    /*ground plane*/
-    
-    ofSetColor(0xdddddd);
-    glLineWidth(1);
-    drawGrid(50, 150, -500);
-    glLineWidth(4);
-    
-        
-        if (pathLoader.currentPathFile.points.size()>0){
-            pathLoader.drawCurrentPath(true);
-        }
-    
-        deltaRobot.drawRobot();
-        
-        if (deltaRobot.workingPointCloud.size()>0&&showWorkPointCloud){
-            deltaRobot.drawWorkingPointCloud();
-        }
-        
-        if (deltaRobot.cartesianPointCloud.size()>0&&showCartesianPointCloud){
-            deltaRobot.drawCartesianPointCloud();
-        }
-        
-        if (deltaRobot.workingPointsInCubicSpace.size()>0&&showWorkingPointsInCubicSpace){
-            deltaRobot.drawWorkingPointsInCubicSpace();
-        }
-    
-        if(showWorkingCube){
-            deltaRobot.drawWorkingCubicSpace();
-        }
-    
+        //tumble according to mouse
+        if (!tumble){
+            glRotatef(-mouseY,1,0,0);
+            glRotatef(-mouseX,0,1,0);
             
+    //        cout << "mousex: "<<mouseX<<" mouseY: "<<mouseY<<"\n";
+        }else{
+            glRotatef(-220+sin(ofGetElapsedTimef()/3)*20,1,0,0);
+            glRotatef(ofGetElapsedTimef()*15,0,1,0);
+        }
+        glScalef(zoom, zoom, zoom);
         
-    /*Effector cursor*/
-    glPointSize(5.0);
-    glBegin(GL_POINTS);
-    if (cursorPositionPossible){
-        ofSetColor(0x000000);  
-    }else{
-        ofSetColor(0xff0000);
-    }
-    
-    glVertex3f(effectorCursorX, effectorCursorZ, effectorCursorY);
-    glEnd();
         
-        deltaRobot.releaseCoordinatesFromRobot();
-    
+        glTranslatef(-ofGetWidth()/2,0,0);
+        
+      
+        
+        deltaRobot.setCoordinatesToRobot();
+            
+        /*ground plane*/
+        
+        ofSetColor(0xdddddd);
+        glLineWidth(1);
+        drawGrid(50, 150, -500);
+        glLineWidth(4);
+        
+            
+            if (pathLoader.currentPathFile.points.size()>0){
+                pathLoader.drawCurrentPath(true);
+            }
+        
+            deltaRobot.drawRobot();
+            
+            if (deltaRobot.workingPointCloud.size()>0&&showWorkPointCloud){
+                deltaRobot.drawWorkingPointCloud();
+            }
+            
+            if (deltaRobot.cartesianPointCloud.size()>0&&showCartesianPointCloud){
+                deltaRobot.drawCartesianPointCloud();
+            }
+            
+            if (deltaRobot.workingPointsInCubicSpace.size()>0&&showWorkingPointsInCubicSpace){
+                deltaRobot.drawWorkingPointsInCubicSpace();
+            }
+        
+            if(showWorkingCube){
+                deltaRobot.drawWorkingCubicSpace();
+            }
+        
+                
+            
+        /*Effector cursor*/
+        glPointSize(5.0);
+        glBegin(GL_POINTS);
+        if (cursorPositionPossible){
+            ofSetColor(0x000000);  
+        }else{
+            ofSetColor(0xff0000);
+        }
+        
+        glVertex3f(effectorCursorX, effectorCursorZ, effectorCursorY);
+        glEnd();
+            
+            deltaRobot.releaseCoordinatesFromRobot();
+        
     glPopMatrix();
-            
-    addDial(100, ofGetHeight()-100, deltaRobot.theta0, "1");
-    addDial(250, ofGetHeight()-100, deltaRobot.theta1, "2");
-    addDial(400, ofGetHeight()-100, deltaRobot.theta2, "3");
     
     glPushMatrix();
     
@@ -204,7 +207,9 @@ void testApp::draw(){
     
     ofCircle(0, 0, 50);
     
-	//tumble according to mouse
+    glTranslatef(80, 50, 100);
+    
+    //tumble according to mouse
     if (!tumble){
         glRotatef(-mouseY,1,0,0);
         glRotatef(-mouseX,0,1,0);
@@ -222,8 +227,8 @@ void testApp::draw(){
     
     ofSetColor(0x0000ff);
     glBegin(GL_LINES);
-        glVertex3f(0, 0, 0);
-        glVertex3f(20, 0, 0);
+    glVertex3f(0, 0, 0);
+    glVertex3f(20, 0, 0);
     glEnd();
     
     ofSetColor(0x00ff00);
@@ -235,30 +240,73 @@ void testApp::draw(){
     
     
     glPopMatrix();
-    
-    
-    ofSetColor(0xcccccc);
-    ofPushMatrix();
-    ofTranslate(ofGetWidth()-100, ofGetHeight()-100);
-    ofCircle(0, 0, 60);
-    ofSetColor(0xffffff);
-    ofScale(1,1,1);
-    ofTranslate(-35, 10);
-//    franklinBook.drawString(ofToString((int)ofGetFrameRate()), 0,0);
-    ofPopMatrix();
 
     
+    if (serialHUDvisible){
+    
+        ofPushMatrix();
+        
+//        ofScale(.3, .3);
+        glTranslatef(ofGetWidth()/2, ofGetHeight()/2, 800);
+        ofScale(.23, .23);
+        
+            ofSetColor(0, 220);
+            ofRect(0, 0, ofGetWidth(), ofGetHeight());
+
+            glTranslatef(-ofGetWidth()/2, -ofGetHeight()/2, 10);
+                    
+            addDial(150, ofGetHeight()-120, deltaRobot.theta0, "1");
+            addDial(300, ofGetHeight()-120, deltaRobot.theta1, "2");
+            addDial(450, ofGetHeight()-120, deltaRobot.theta2, "3");
+
+        
+            for (int i=0; i<4; i++){
+                
+                int upperWidth = 550;
+                int upperHeight = 500;
+                int spacing = 30;
+                
+                if (i==0){
+                    drawConsole(i, activeConsole==i, 100, 100+upperHeight+spacing, upperWidth*3+spacing*2, 50);
+                }else{
+                    drawConsole(i, activeConsole==i, 100+(i-1)*(upperWidth+spacing), 100, upperWidth, upperHeight);
+                }
+                
+                
+                
+            }
+            
+            ofSetColor(0x353535, 100);
+            ofPushMatrix();
+                ofTranslate(ofGetWidth()-150, ofGetHeight()-120);
+                ofCircle(0, 0, 60);
+                ofSetColor(0x888888);
+                ofScale(1,1,1);
+                glTranslatef(-35, 10, 0.1);
+                franklinBook.drawString(ofToString((int)ofGetFrameRate()), 0,0);
+            ofPopMatrix();
+        
+//            glTranslatef(0, 0, 2);
+//            ofSetColor(0xffffff);
+//            ofRect(mouseX, mouseY, 2, 20); //cursor
+        
+        ofPopMatrix();
+        
+    }//if hud visible
 
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){ 
     
+    if (!textEntryMode){ //if not in text entry mode 
+    
     cout << "about to switch "<<key<<endl;
 	
 	switch (key) {
             
-            if (deltaRobot.stepperControl.robotReadyForData()){
+   
+            if (deltaRobot.serialConnection.robotReadyForData()){
                 
             
 		case 'd':
@@ -378,6 +426,11 @@ void testApp::keyPressed  (int key){
             runSteppersWithCursor = !runSteppersWithCursor;
             break;
             
+        case 96:
+            serialHUDvisible = true;
+            textEntryMode = true;
+            break;
+            
 			
 		default:
             cout <<"Key ("<<key<<") pressed\n";
@@ -386,6 +439,55 @@ void testApp::keyPressed  (int key){
 	
 	cout << "Theta 0: " << deltaRobot.theta0 << " Theta 1: " << deltaRobot.theta1 <<" Theta 2: " << deltaRobot.theta2 << "\n";
 //	cout << "EffectorX: " << deltaRobot.effectorX << " EffectorY: " << deltaRobot.effectorY << " EffectorZ: " << deltaRobot.effectorZ << "\n\n\n";
+            
+    }else{ //text entry mode
+        
+        switch (key) {
+            
+                
+            case 96: //tilde
+                serialHUDvisible = false;
+                textEntryMode = false;
+            break;
+            
+            case 9: //tab
+                activeConsole = (activeConsole>2)?0:activeConsole+1; //cycle 4 numbers
+                cout << "activeConsole is now "<<activeConsole<<endl;
+            break;
+                
+            case 13: //enter
+                //trigger new text entry event
+                if (activeConsole==0){
+                    deltaRobot.serialConnection.println(0, textEntryBuffer);
+                    deltaRobot.serialConnection.println(1, textEntryBuffer);
+                    deltaRobot.serialConnection.println(2, textEntryBuffer);
+                }else{
+                    deltaRobot.serialConnection.println(activeConsole-1, textEntryBuffer);
+                }
+                
+                
+                textEntryBuffer.clear();
+            break;
+                
+            case 127: //backspace
+            {
+                if (textEntryBuffer.size()>0){
+                    textEntryBuffer.erase(textEntryBuffer.end()-1);
+                }
+                
+            }
+            break;
+                
+            
+                
+            default:
+                textEntryBuffer.append(1, key);
+                break;
+        }
+        
+        
+        
+    }
     
 }
 
@@ -479,31 +581,118 @@ float testApp::distanceBetweenTouches(MTouch t1, MTouch t2){
 
 void testApp::addDial(int x, int y, float rotation, string label){
     
-    ofSetColor(0xcccccc);
+    ofSetColor(0x353535, 100);
     ofPushMatrix();
-    ofTranslate(x, y);
+    glTranslatef(x, y, .1);
     ofCircle(0, 0, 60);
-    ofSetColor(0xffffff);
+    glTranslatef(0, 0, .1);
+    ofSetColor(0x888888);
     ofCircle(0, 0, 10);
     ofSetRectMode(OF_RECTMODE_CENTER);
     
     ofPushMatrix();
     ofTranslate(-50, 13);
-//    franklinBook.drawString(label, 0,0);
+    franklinBook.drawString(label, 0,0);
     ofPopMatrix();
     
     ofRotateZ(rotation);
     ofPushMatrix();
-    ofTranslate(25, 0);
+    glTranslatef(25, 0, .1);
     ofRect(0, 0, 50, 5);
     ofPopMatrix();
     
-    ofSetColor(0xffffff);
+    ofSetColor(0x888888);
     ofScale(0.6,0.6,1);
-    ofTranslate(20, -10);
-//    franklinBook.drawString(ofToString((int)rotation), 0,0);
+    glTranslatef(20, -10, .1);
+    franklinBook.drawString(ofToString((int)rotation), 0,0);
     
     ofPopMatrix();
+    
+}
+
+void testApp::drawConsole(int idNum, bool active, int x, int y, int width, int height){
+    
+    ofSetRectMode(OF_RECTMODE_CORNER);
+    
+    ofPushMatrix();
+    
+        ofSetColor(0x353535, 100);
+        ofRect(x, y, width, height);
+        glTranslatef(0, 0, .1);
+        ofSetColor(0x333333, 200);
+        ofRect(x, y+height-50, width, 50);
+        if (active){
+            glTranslatef(0, 0, .1);
+            ofSetColor(0x222222);
+            ofRect(x+5, y+height-45, width-10, 40);
+            ofSetColor(0x888888);
+            glTranslatef(0, 0, .1);
+            franklinBook.drawString(textEntryBuffer, x+15,y+height-10);
+        }
+    
+    
+    
+    vector<serialMessage> messageList;
+    
+    switch (idNum) {
+        case 1:
+            messageList = deltaRobot.serialConnection.stepper0io;
+        break;
+            
+        case 2:
+            messageList = deltaRobot.serialConnection.stepper1io;
+        break;
+            
+        case 3:
+            messageList = deltaRobot.serialConnection.stepper2io;
+        break;
+            
+        default:
+            break;
+    }
+    
+    int messageListSize = messageList.size();
+    
+    int lines = (messageListSize>22)? 22 : messageListSize;
+    
+    if (messageListSize>0){
+        
+        ofSetColor(0x888888);
+        
+//        cout << "there is "<<messageListSize<<" messages"<<endl;
+        
+        glTranslatef(0, 0, .1);
+        if (idNum!=0){
+            for (int i=0; i<lines; i++){
+                
+                int elementId = 0;
+                
+                if (messageListSize>lines){
+                    elementId = messageListSize-(lines-i);
+                }else{
+                    elementId = i;
+                }
+                
+//                cout << "attempting to access id #"<<elementId<<endl;
+                
+                serialMessage currentMessage = messageList[elementId];
+                
+                ofPushMatrix();
+                ofTranslate(x+20, y+20+i*20);
+                ofScale(.6, .6);
+                franklinBook.drawString(currentMessage.message, 0, 0);
+                ofPopMatrix();
+                
+            }
+        }
+    }
+    
+
+    
+    
+    ofPopMatrix();
+    
+    ofSetRectMode(OF_RECTMODE_CENTER);
     
 }
 

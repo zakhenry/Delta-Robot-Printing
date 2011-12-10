@@ -10,17 +10,27 @@
 #include "deltaRobot.h"
 
 DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
-    
-    baseSideMultiplier = 2; //2
-    upperArmMultiplier = 1.5; //1.5
-    lowerArmMultiplier = 0.9; //0.9
-    
+    //effector side is 320mm
+//    baseSideMultiplier = 1.471; //500mm
+//    upperArmMultiplier = 2.352; //700mm
+//    lowerArmMultiplier = 3.235; //1100mm
+//    
 	effectorSideLength = ieffectorSideLength;
-	baseSideLength = effectorSideLength*baseSideMultiplier;
-	upperArmLength = effectorSideLength*upperArmMultiplier;
-	lowerArmLength = effectorSideLength*lowerArmMultiplier;
+//	baseSideLength = effectorSideLength*baseSideMultiplier;
+//	upperArmLength = effectorSideLength*upperArmMultiplier;
+//	lowerArmLength = effectorSideLength*lowerArmMultiplier;
     
-    unitSpeed = 500;
+    baseSideLength = 500;
+    upperArmLength = 700;
+    lowerArmLength = 1100;
+    
+    baseSideMultiplier = baseSideLength/effectorSideLength;
+    upperArmMultiplier = upperArmLength/effectorSideLength;
+    lowerArmMultiplier = lowerArmLength/effectorSideLength;
+    
+    effectorHeadDepth = 200; //distance from plane of wrist axis to dot of laser
+    
+    unitSpeed = 500; // mm/s
     
      sqrt3 = sqrt(3.0);
      pi = PI;    // PI
@@ -31,7 +41,7 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
      tan30 = tan(ofDegToRad(30));
     
     
-    stepperControl.setupDevices();
+    serialConnection.setupDevices();
     
 //    setCartesianPosition(0, 0, -100, true);
     
@@ -43,7 +53,7 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
 }
 
 void DeltaRobot::update(){
-    stepperControl.update();
+    serialConnection.update();
     
     if (queuedWaypoints.size()>0){
         gotoNextWaypt();
@@ -157,7 +167,7 @@ int DeltaRobot::setCartesianPosition(float x, float y, float z, bool setSteppers
         
         
         if (setSteppers){
-            if (stepperControl.robotReadyForData()){
+            if (serialConnection.robotReadyForData()){
                 
                 float deltaD = distanceBetweenPoints(ofPoint(x, y, z), ofPoint(effectorX, effectorY, effectorZ)); //change in distance
                 
@@ -171,9 +181,9 @@ int DeltaRobot::setCartesianPosition(float x, float y, float z, bool setSteppers
                 
                 cout << "stepper0Speed:("<<stepper0Speed<<"), stepper1Speed:("<<stepper1Speed<<"), stepper2Speed("<<stepper2Speed<<")\n";
                 clock_t tStart = clock();
-                stepperControl.setStepper(0, newTheta0, 2000);
-                stepperControl.setStepper(1, newTheta1, 2000);
-                stepperControl.setStepper(2, newTheta2, 2000);
+                serialConnection.setStepper(0, newTheta0, 2000);
+                serialConnection.setStepper(1, newTheta1, 2000);
+                serialConnection.setStepper(2, newTheta2, 2000);
             }else{
                 return -1; //dont move as steppers are not ready
             }
@@ -308,6 +318,11 @@ void DeltaRobot::drawRobot(){
         glVertex3f(0, 0, (sin(ofDegToRad(60))*effectorSideLength)-(tan(ofDegToRad(30))*effectorSideLength/2));
         glEnd();
         glPopMatrix();
+    
+        glBegin(GL_LINE);
+            glVertex3f(0, 0, 0);
+            glVertex3f(0, 0, effectorHeadDepth);
+        glEnd();
         
         ofSetColor(baseColor);
 //        glBegin(GL_TRIANGLES); //base triangle (placed down here so tranparency works)
@@ -725,7 +740,7 @@ void DeltaRobot::gotoNextWaypt(){
     
     
     
-    if (stepperControl.robotReadyForData()){
+    if (serialConnection.robotReadyForData()){
         
         ofPoint nextWaypt = queuedWaypoints[0];
         

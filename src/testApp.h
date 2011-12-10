@@ -8,6 +8,9 @@
 #include "deltaRobot.h"
 #include "pathLoader.h"
 #include "oscEvents.h"
+#include "serialConnection.h"
+
+struct serialMessage; //forward decl
 
 class testApp : public ofBaseApp{
 	
@@ -46,6 +49,11 @@ class testApp : public ofBaseApp{
         ofTrueTypeFont  franklinBook;
     
         oscEvents oscListen;
+    
+        bool textEntryMode, serialHUDvisible;
+        string textEntryBuffer;
+    
+        void drawConsole(int idNum, bool active, int x, int y, int width, int height);
         
 		
 };

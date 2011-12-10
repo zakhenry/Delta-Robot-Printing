@@ -13,15 +13,15 @@
 
 #include "ofMain.h"
 #include "pathLoader.h"
-#include "stepperControl.h"
+#include "serialConnection.h"
 
-class StepperControl; //forward declaration allows access to methods
+class SerialConnection; //forward declaration allows access to methods
 
 class DeltaRobot {
 	
 public: //temporarily here so I can test functions out	
 //	float /*e, f, re, rf*/;
-    float effectorSideLength, baseSideLength, upperArmLength, lowerArmLength;
+    float effectorSideLength, baseSideLength, upperArmLength, lowerArmLength, effectorHeadDepth;
     
 	// trigonometric constants
 	float sqrt3, pi, sin120, cos120, tan60, sin30, tan30;
@@ -37,7 +37,7 @@ public: //temporarily here so I can test functions out
         }
     };
     
-    StepperControl stepperControl;
+    SerialConnection serialConnection;
     
     vector<ofPoint>queuedWaypoints;
     void gotoNextWaypt();
