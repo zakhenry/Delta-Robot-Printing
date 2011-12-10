@@ -24,21 +24,18 @@ void SerialConnection::setupDevices(){
     serial0.enumerateDevices();
     printf("enumerated serial0 devices\n");
     
-//    if(!serial0.setup(/*"tty.usbserial-A9007Mbm"*/5, 9600)){
     if(!serial0.setup("/dev/tty.usbserial-A4005jpk", 9600)){
         printf("Serial0 setup failed!\n");
     }else{
         stepper0Connected = true;
     }
     
-//    if(!serial1.setup(/*"tty.usbserial-A9007Mbm"*/7, 9600)){
     if(!serial1.setup("/dev/tty.usbserial-A4005jpl", 9600)){
         printf("Serial1 setup failed!\n");
     }else{
         stepper1Connected = true;
     }
     
-//    if(!serial2.setup(/*"tty.usbserial-A9007Mbm"*/9, 9600)){
     if(!serial2.setup("/dev/tty.usbserial-A4005jpn", 9600)){
         printf("Serial2 setup failed!\n");
     }else{

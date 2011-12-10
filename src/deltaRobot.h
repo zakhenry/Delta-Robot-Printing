@@ -14,19 +14,18 @@
 #include "ofMain.h"
 #include "pathLoader.h"
 #include "serialConnection.h"
+#include "kinematics.h"
+
 
 class SerialConnection; //forward declaration allows access to methods
 
 class DeltaRobot {
 	
+    Kinematics *kinematics;
+    
 public: //temporarily here so I can test functions out	
 //	float /*e, f, re, rf*/;
     float effectorSideLength, baseSideLength, upperArmLength, lowerArmLength, effectorHeadDepth;
-    
-	// trigonometric constants
-	float sqrt3, pi, sin120, cos120, tan60, sin30, tan30;
-	
-	int calcAngleYZ(float, float, float, float&); // helper function
     
     struct workingPoint{
         float x, y, z;

@@ -54,6 +54,8 @@ class testApp : public ofBaseApp{
         string textEntryBuffer;
     
         void drawConsole(int idNum, bool active, int x, int y, int width, int height);
+    
+        float effectorCursorX, effectorCursorY, effectorCursorZ;
         
 		
 };

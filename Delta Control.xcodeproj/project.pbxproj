@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6C47693B1493685E000D7702 /* kinematics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C4769391493685E000D7702 /* kinematics.cpp */; };
 		6C563EB9134E918100311C79 /* deltaRobot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C563EB8134E918100311C79 /* deltaRobot.cpp */; };
 		6C6DB2F21398EF17000B5916 /* MultitouchSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C6DB2F11398EF17000B5916 /* MultitouchSupport.framework */; };
 		6C6DB2F81398EF51000B5916 /* ofxMultiTouchPad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C6DB2F61398EF51000B5916 /* ofxMultiTouchPad.cpp */; };
@@ -100,6 +101,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6C4769391493685E000D7702 /* kinematics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kinematics.cpp; sourceTree = "<group>"; };
+		6C47693A1493685E000D7702 /* kinematics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kinematics.h; sourceTree = "<group>"; };
 		6C4FBF4813B030DD004400C7 /* frabk.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = frabk.ttf; sourceTree = "<group>"; };
 		6C4FBF4913B030DD004400C7 /* test.drp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.drp; sourceTree = "<group>"; };
 		6C563E8F134E8B3000311C79 /* deltaRobot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deltaRobot.h; sourceTree = "<group>"; };
@@ -688,6 +691,8 @@
 				6CB2CA0713B04F910037AD96 /* oscEvents.cpp */,
 				6C563E8F134E8B3000311C79 /* deltaRobot.h */,
 				6C563EB8134E918100311C79 /* deltaRobot.cpp */,
+				6C47693A1493685E000D7702 /* kinematics.h */,
+				6C4769391493685E000D7702 /* kinematics.cpp */,
 				6C73B7DA13AAFD8F0099D70D /* pathLoader.h */,
 				6C73B7D913AAFD8F0099D70D /* pathLoader.cpp */,
 				6C73B7DC13AAFD8F0099D70D /* serialConnection.h */,
@@ -870,6 +875,7 @@
 				6CB2CA4D13B0504C0037AD96 /* ofxOscMessage.cpp in Sources */,
 				6CB2CA4E13B0504C0037AD96 /* ofxOscReceiver.cpp in Sources */,
 				6CB2CA4F13B0504C0037AD96 /* ofxOscSender.cpp in Sources */,
+				6C47693B1493685E000D7702 /* kinematics.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

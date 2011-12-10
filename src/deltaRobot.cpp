@@ -14,6 +14,8 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
 //    baseSideMultiplier = 1.471; //500mm
 //    upperArmMultiplier = 2.352; //700mm
 //    lowerArmMultiplier = 3.235; //1100mm
+    
+    
 //    
 	effectorSideLength = ieffectorSideLength;
 //	baseSideLength = effectorSideLength*baseSideMultiplier;
@@ -24,6 +26,8 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
     upperArmLength = 700;
     lowerArmLength = 1100;
     
+    kinematics = new Kinematics(effectorSideLength, baseSideLength, lowerArmLength, upperArmLength);
+    
     baseSideMultiplier = baseSideLength/effectorSideLength;
     upperArmMultiplier = upperArmLength/effectorSideLength;
     lowerArmMultiplier = lowerArmLength/effectorSideLength;
@@ -32,16 +36,9 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
     
     unitSpeed = 500; // mm/s
     
-     sqrt3 = sqrt(3.0);
-     pi = PI;    // PI
-     sin120 = sin(ofDegToRad(120));
-     cos120 = cos(ofDegToRad(120));     
-     tan60 = tan(ofDegToRad(60));
-     sin30 = sin(ofDegToRad(30));
-     tan30 = tan(ofDegToRad(30));
-    
-    
     serialConnection.setupDevices();
+    
+    setCartesianPosition(0, 0, 1000, false);
     
 //    setCartesianPosition(0, 0, -100, true);
     
@@ -53,101 +50,19 @@ DeltaRobot::DeltaRobot(float ieffectorSideLength){ //constructor
 }
 
 void DeltaRobot::update(){
-    serialConnection.update();
+//    serialConnection.update();
     
     if (queuedWaypoints.size()>0){
         gotoNextWaypt();
     }
 }
-
-int DeltaRobot::calcAngleYZ(float x0, float y0, float z0, float &theta) { //returns 0 if ok, -1 if not
-	float y1 = -0.5 * tan30 * baseSideLength; // f/2 * tan 30
-//    cout << y1 << "\n";
-	y0 -= 0.5 * tan30 * effectorSideLength;    // shift center to edge
-	// z = a + b*y
-	float a = (x0*x0 + y0*y0 + z0*z0 +lowerArmLength*lowerArmLength - upperArmLength*upperArmLength - y1*y1)/(2*z0);
-	float b = (y1-y0)/z0;
-	// discriminant
-	float d = -(a+b*y1)*(a+b*y1)+lowerArmLength*(b*b*lowerArmLength+lowerArmLength); 
-	if (d < 0) return -1; // non-existing point
-	float yj = (y1 - a*b - sqrt(d))/(b*b + 1); // choosing outer point
-	float zj = a + b*yj;
-	theta = 180.0*atan(-zj/(y1 - yj))/pi + ((yj>y1)?180.0:0.0);
-	return 0;
-}
-
+ 
 int DeltaRobot::calcInverse(float x0, float y0, float z0, float &theta0, float &theta1, float &theta2) {
-    float t0, t1, t2;
-	int status = calcAngleYZ(x0, y0, z0, t0);
-	if (status == 0){
-		status = calcAngleYZ(x0*cos120 + y0*sin120, y0*cos120-x0*sin120, z0, t1);  // rotate coords to +120 deg
-	}
-	if (status == 0){
-		status = calcAngleYZ(x0*cos120 - y0*sin120, y0*cos120+x0*sin120, z0, t2);  // rotate coords to -120 deg
-	}
-    
-    if ((t0>-90)&&(t0<90)&&(t1>-90)&&(t1<90)&&(t2>-90)&&(t2<90)){
-        theta0 = t0;
-        theta1 = t1;
-        theta2 = t2;
-    }else{
-        status = -1;
-//        cout <<"position impossible (theta0 tried to be "<<t0<<", theta1 tried to be "<<t1<<", theta2 tried to be "<<t2<<")\n";
-    }
-    
-	return status;
+    return kinematics->delta_calcInverse(x0, y0, z0, theta0, theta1, theta2);
 }
-
+ 
 int DeltaRobot::calcForward(float theta0, float theta1, float theta2, float &x0, float &y0, float &z0) {
-	float t = (baseSideLength-effectorSideLength)*tan30/2;
-	float dtr = pi/(float)180.0;
-	
-	theta0 *= dtr;
-	theta1 *= dtr;
-	theta2 *= dtr;
-	
-	float y1 = -(t + lowerArmLength*cos(theta0));
-	float z1 = -lowerArmLength*sin(theta0);
-	
-	float y2 = (t + lowerArmLength*cos(theta1))*sin30;
-	float x2 = y2*tan60;
-	float z2 = -lowerArmLength*sin(theta1);
-	
-	float y3 = (t + lowerArmLength*cos(theta2))*sin30;
-	float x3 = -y3*tan60;
-	float z3 = -lowerArmLength*sin(theta2);
-	
-	float dnm = (y2-y1)*x3-(y3-y1)*x2;
-	
-	float w1 = y1*y1 + z1*z1;
-	float w2 = x2*x2 + y2*y2 + z2*z2;
-	float w3 = x3*x3 + y3*y3 + z3*z3;
-	
-	// x = (a1*z + b1)/dnm
-	float a1 = (z2-z1)*(y3-y1)-(z3-z1)*(y2-y1);
-	float b1 = -((w2-w1)*(y3-y1)-(w3-w1)*(y2-y1))/2.0;
-	
-	// y = (a2*z + b2)/dnm;
-	float a2 = -(z2-z1)*x3+(z3-z1)*x2;
-	float b2 = ((w2-w1)*x3 - (w3-w1)*x2)/2.0;
-	
-	// a*z^2 + b*z + c = 0
-	float a = a1*a1 + a2*a2 + dnm*dnm;
-	float b = 2*(a1*b1 + a2*(b2-y1*dnm) - z1*dnm*dnm);
-	float c = (b2-y1*dnm)*(b2-y1*dnm) + b1*b1 + dnm*dnm*(z1*z1 - upperArmLength*upperArmLength);
-	
-	// discriminant
-	float d = b*b - (float)4.0*a*c;
-	if (d < 0) return -1; // non-existing point
-	
-	z0 = -(float)0.5*(b+sqrt(d))/a;
-    if (z0>0){
-        return -1;
-    }
-    
-	x0 = (a1*z0 + b1)/dnm;
-	y0 = (a2*z0 + b2)/dnm;
-	return 0;
+    return kinematics->delta_calcForward(theta0, theta1, theta2, x0, y0, z0);
 }
 
 float DeltaRobot::distanceBetweenPoints(ofPoint a, ofPoint b){
@@ -156,11 +71,15 @@ float DeltaRobot::distanceBetweenPoints(ofPoint a, ofPoint b){
 
 int DeltaRobot::setCartesianPosition(float x, float y, float z, bool setSteppers){
     
+    int ex = x;
+    int ey = y;
+    int ez = z+effectorHeadDepth;
+    
     float newTheta0, newTheta1, newTheta2;
     
-    int result = calcInverse(x, y, z, newTheta0, newTheta1, newTheta2);
+    int result = calcInverse(ex, ey, ez, newTheta0, newTheta1, newTheta2);
     
-    if (result != 0){
+    if (!positionIsPossible(x, y, z)){ //takes into account physical limitations
         cout << "Position is not possible\n";
     }else{
         
@@ -193,9 +112,9 @@ int DeltaRobot::setCartesianPosition(float x, float y, float z, bool setSteppers
         theta1 = newTheta1;
         theta2 = newTheta2;
         
-        effectorX = x;
-        effectorY = y;
-        effectorZ = z;
+        effectorX = ex;
+        effectorY = ey;
+        effectorZ = ez;
         
     }
 //    cout << "input value is ("<<x<<","<<y<<","<<z<<")\n";
@@ -209,10 +128,21 @@ int DeltaRobot::setCartesianPosition(float x, float y, float z, bool setSteppers
 }
 
 int DeltaRobot::setAngles(float theta0, float theta1, float theta2){
-    int result = calcForward(theta0, theta1, theta2, effectorX, effectorY, effectorZ);
+    float x, y, z;
     
-    if (result != 0){
+    calcForward(theta0, theta1, theta2, x, y, z);
+    
+    int result;
+    
+    if (!positionIsPossible(x, y, z)){
         cout << "Position is not possible\n";
+        result = 0;
+    }else{
+        
+        effectorX = x;
+        effectorY = y;
+        effectorZ = z;
+        result = 1;
     }
     
     return result;
@@ -222,8 +152,8 @@ bool DeltaRobot::positionIsPossible(float x0, float y0, float z0){
 	float a, b, c;
 	//cout << "a: " << a << " b: " << b << " c: " << c << "|| x0: " << x0 << " y0: " << y0 << " z0: " << z0 << "\n""\n";
 	//cout << "calc inverse  = " << calcInverse(x0, y0, x0, a, b, c) <<"\n";
-	if (calcInverse(x0, y0, z0, a, b, c)==0){
-        if ((a>-90)&&(a<90)&&(b>-90)&&(b<90)&&(c>-90)&&(c<90)){
+	if (calcInverse(x0, y0, z0+effectorHeadDepth, a, b, c)==0){ //kinematically possible
+        if ((a>-18)&&(a<72)&&(b>-18)&&(b<72)&&(c>-18)&&(c<72)){ //within physical limitations ###needs confirmation
             return true;
         }
 	}
@@ -239,7 +169,7 @@ void DeltaRobot::setCoordinatesToRobot(){
     glPushMatrix();
     
     
-    glTranslatef(ofGetWidth()/2,ofGetHeight()/2-200,50); //moves robot to coordinates to centre (ish) of scene
+    glTranslatef(ofGetWidth()/2,ofGetHeight()/2+100,50); //moves robot to coordinates to centre (ish) of scene
 }
 void DeltaRobot::releaseCoordinatesFromRobot(){
     glPopMatrix();
@@ -317,16 +247,19 @@ void DeltaRobot::drawRobot(){
         glVertex3f(effectorSideLength/2, 0, -tan(ofDegToRad(30))*effectorSideLength/2);
         glVertex3f(0, 0, (sin(ofDegToRad(60))*effectorSideLength)-(tan(ofDegToRad(30))*effectorSideLength/2));
         glEnd();
+    
+        glBegin(GL_LINES);
+            glVertex3f(0, -effectorHeadDepth, 0);
+            glVertex3f(0, 0, 0);
+        glEnd();
+    
         glPopMatrix();
     
-        glBegin(GL_LINE);
-            glVertex3f(0, 0, 0);
-            glVertex3f(0, 0, effectorHeadDepth);
-        glEnd();
+        
         
         ofSetColor(baseColor);
-//        glBegin(GL_TRIANGLES); //base triangle (placed down here so tranparency works)
-        glBegin(GL_LINE_LOOP); //base triangle (placed down here so tranparency works)
+//        glBegin(GL_TRIANGLES); //base triangle (placed down here so transparency works)
+        glBegin(GL_LINE_LOOP); //base triangle (placed down here so transparency works)
         glVertex3f(-baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
         glVertex3f(baseSideLength/2, 0, -tan(ofDegToRad(30))*baseSideLength/2);
         glVertex3f(0, 0, (sin(ofDegToRad(60))*baseSideLength)-(tan(ofDegToRad(30))*baseSideLength/2));
@@ -343,19 +276,25 @@ void DeltaRobot::calculateWorkingPointCloud(){ //could be really nice if this wa
     
     workingPointCloud.clear(); //wipe existing point cloud if present
 
-    int degreesToCheck = 180;
-    int topValue = degreesToCheck/2;
-    int bottomValue = -topValue;
-    int increment = 5; //this is key to how many points are generated
+    int topValue = 72;
+    int bottomValue = -18;
+    float increment = 2; //this is key to how many points are generated
     
-    for (int testTheta0=bottomValue; testTheta0<=topValue; testTheta0+=increment){ //increment by 1 degree at a time
-        for (int testTheta1=bottomValue; testTheta1<=topValue; testTheta1+=increment){ //increment by 1 degree at a time
-            for (int testTheta2=bottomValue; testTheta2<=topValue; testTheta2+=increment){ //increment by 1 degree at a time
-                workingPoint newPoint;
+    for (float testTheta0=bottomValue; testTheta0<=topValue; testTheta0+=increment){ //increment by 1 degree at a time
+        for (float testTheta1=bottomValue; testTheta1<=topValue; testTheta1+=increment){ //increment by 1 degree at a time
+            for (float testTheta2=bottomValue; testTheta2<=topValue; testTheta2+=increment){ //increment by 1 degree at a time
                 
-                int result = calcForward(testTheta0, testTheta1, testTheta2, newPoint.x, newPoint.y, newPoint.z);
+                float x, y, z;
+                
+                int result = calcForward(testTheta0, testTheta1, testTheta2, x, y, z);
                 
                 if (result == 0){
+                    
+                    workingPoint newPoint;
+                    newPoint.x = x/*+ofRandom(-10, 10)*/; //randomness is added to give noise to dataset which makes visualisation better
+                    newPoint.y = y/*+ofRandom(-10, 10)*/;
+                    newPoint.z = z/*+ofRandom(-10, 10)*/-effectorHeadDepth;
+                    
                     workingPointCloud.push_back(newPoint);
                 }
                 
@@ -364,7 +303,7 @@ void DeltaRobot::calculateWorkingPointCloud(){ //could be really nice if this wa
     }
     
     
-//    cout << "Finished working point cloud calculation, "<<workingPointCloud.size()<<" points added\n";
+    cout << "Finished working point cloud calculation, "<<workingPointCloud.size()<<" points added\n";
 }
 
 void DeltaRobot::drawWorkingPointCloud(){
@@ -410,12 +349,12 @@ void DeltaRobot::calculateCartesianPointCloud(){
     
     int increment = 20;
     
-    maxZ = 0; //no point can be above the base
-//    minZ = -(upperArmLength+lowerArmLength);
-    minZ = -500;
+    maxZ = -effectorHeadDepth; //effector cannot be above the base
+    minZ = -(upperArmLength+lowerArmLength);
+//    minZ = -1500;
     
-//    maxX = upperArmLength+lowerArmLength; //it is in reality slightly less
-    maxX = 500; //it is in reality slightly less
+    maxX = upperArmLength+lowerArmLength; //it is in reality slightly less
+//    maxX = 500; //it is in reality slightly less
     maxY = maxX;
     
     minY = minX = -(maxX);
@@ -428,9 +367,9 @@ void DeltaRobot::calculateCartesianPointCloud(){
                 
                 if (positionIsPossible(xInc, yInc, zInc)){
                     workingPoint newPoint;
-                    newPoint.x = xInc+ofRandom(-5, 5);
-                    newPoint.y = yInc+ofRandom(-5, 5);
-                    newPoint.z = zInc+ofRandom(-5, 5);
+                    newPoint.x = xInc+ofRandom(-10, 10);
+                    newPoint.y = yInc+ofRandom(-10, 10);
+                    newPoint.z = zInc+ofRandom(-10, 10);
                     cartesianPointCloud.push_back(newPoint);
                 }
                 

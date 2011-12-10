@@ -1,6 +1,6 @@
 #include "testApp.h"
 
-float effectorSideLength =  100.0; //every dimension is based off this master length //340.0
+float effectorSideLength =  320.0; //every dimension is based off this master length
 
 bool showWorkPointCloud = false;
 bool showCartesianPointCloud = false;
@@ -11,14 +11,14 @@ DeltaRobot deltaRobot(effectorSideLength);
 
 float currentTouchScale = 0;
 float current3TouchHeight, current2TouchHeight = 0;
-float zoom = 1;
+float zoom = .5;
 
 bool tumble = false;
 
 bool kinectCursor = false;
 int kinectScale = 500;
 
-float effectorCursorX, effectorCursorY, effectorCursorZ = 0;
+
 bool cursorPositionPossible = false;
 bool runSteppersWithCursor = false;
 
@@ -30,7 +30,7 @@ int activeConsole = 0;
 //--------------------------------------------------------------
 void testApp::setup(){
     
-    ofSetLogLevel(OF_LOG_VERBOSE);
+//    ofSetLogLevel(OF_LOG_VERBOSE);
     
 //    ofSetDataPathRoot("./");
     
@@ -80,6 +80,8 @@ void testApp::setup(){
     mouseY = 220; //initial setup so the world will be on an orientation that makes sense
     
     cout <<"testApp setup complete\n";
+    
+    effectorCursorZ = -1000;
 
 }
 
@@ -155,7 +157,7 @@ void testApp::draw(){
         
         ofSetColor(0xdddddd);
         glLineWidth(1);
-        drawGrid(50, 150, -500);
+        drawGrid(100, 150, -1000);
         glLineWidth(4);
         
             
@@ -186,11 +188,11 @@ void testApp::draw(){
         /*Effector cursor*/
         glPointSize(5.0);
         glBegin(GL_POINTS);
-        if (cursorPositionPossible){
-            ofSetColor(0x000000);  
-        }else{
+//        if (cursorPositionPossible){
+//            ofSetColor(0x000000);  
+//        }else{
             ofSetColor(0xff0000);
-        }
+//        }
         
         glVertex3f(effectorCursorX, effectorCursorZ, effectorCursorY);
         glEnd();
@@ -604,7 +606,7 @@ void testApp::addDial(int x, int y, float rotation, string label){
     ofSetColor(0x888888);
     ofScale(0.6,0.6,1);
     glTranslatef(20, -10, .1);
-    franklinBook.drawString(ofToString((int)rotation), 0,0);
+    franklinBook.drawString(ofToString(rotation), 0,0);
     
     ofPopMatrix();
     
